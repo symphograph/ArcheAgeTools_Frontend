@@ -4,7 +4,7 @@
             borderless
             option-value="id"
             option-label="name"
-            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 63%)', color: '#4B3A23' }"
+            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
             @update:model-value="save()"
@@ -55,6 +55,7 @@ function save() {
           closeBtn: 'Закрыть'
         })
         emit('saved')
+        inputClass.value = 'Input'
         return true
       }
 
