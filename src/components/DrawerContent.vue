@@ -46,6 +46,12 @@ const linksList = [
     link: '/item/'
   },
   {
+    title: 'Мои цены',
+    caption: 'Цены предметов',
+    ava: '/img/crafcul.png',
+    link: '/prices'
+  },
+  {
     title: 'Сообщество',
     caption: 'Цены игроков',
     ava: '/img/comunity.png',

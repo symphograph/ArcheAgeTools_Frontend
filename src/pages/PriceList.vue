@@ -13,13 +13,25 @@
                 @blur="inputClass = 'Input'"
                 :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
       >
-
       </q-select>
+      <div>
+        <q-checkbox label="Крафтабельные" v-model="filters.craftable"></q-checkbox>
+        <q-checkbox label="Некрафтабельные" v-model="filters.uncraftable"></q-checkbox>
+      </div>
+      <q-input v-model="searchText" class="Input" style="width: 100%" label="фильтр">
+        <template v-slot:prepend>
+          <q-icon name="search"></q-icon>
+        </template>
+        <template v-slot:append>
+          <q-icon v-if="searchText !== ''" name="close" @click="searchText = ''" class="cursor-pointer"></q-icon>
+        </template>
+      </q-input>
+      <q-btn class="DefBtn" label="Добавить" href="/item"></q-btn>
     </div>
     <q-scroll-area v-if="Prices" class="col" :style="'width: 100%;'">
       <div class="PricesArea">
         <template v-for="price in sortedList" :key="price.itemId">
-          <PriceItem :price="price"></PriceItem>
+          <PriceItem :price="price" @delPrice="delPrice(price.itemId)"></PriceItem>
         </template>
       </div>
     </q-scroll-area>
@@ -32,7 +44,8 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {computed, inject, onMounted, ref} from "vue";
 import ServerSelect from "components/account/ServerSelect.vue";
-import PriceItem from "components/PriceItem.vue";
+import PriceItem from "components/price/PriceItem.vue";
+import {layoutFix} from 'src/myFuncts.js'
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -57,29 +70,82 @@ const sortOpts = ref([
   }
 ])
 
+const searchText = ref('')
+const filters = ref({
+  craftable: true,
+  uncraftable: true
+})
+
+const onlyCraftable = computed(() => {
+  if (!filters.value.craftable)
+    return []
+  let result = Prices.value
+  return result.filter(price => price.craftable)
+})
+
+const onlyUnCraftable = computed(() => {
+  if (!filters.value.uncraftable)
+    return []
+  let result = Prices.value
+  return result.filter(price => !price.craftable)
+})
+
+const myFilters = computed(() => {
+  if (!Prices.value || !Prices.value.length) {
+    return []
+  }
+  let result = []
+
+  result.push(...onlyCraftable.value)
+  result.push(...onlyUnCraftable.value)
+  return result
+})
+
+const filtredList = computed(() => {
+  if (!myFilters.value || !myFilters.value.length) {
+    return []
+  }
+  let result = myFilters.value
+  let fixedText = layoutFix(searchText.value)
+  if (fixedText !== '') {
+    let search = fixedText.toLowerCase()
+    result = result.filter(price =>
+      price.name.toLowerCase().indexOf(search) !== -1
+    )
+  }
+  return result
+})
 
 const sortByName = (a, b) => (a.name > b.name) ? 1 : -1
 const sortByDate = (a, b) => (a.datetime < b.datetime) ? 1 : -1
 
 const sortedList = computed(() => {
-  if (!Prices.value.length) {
+  if (!filtredList.value.length) {
     return []
   }
   switch (SortSelected.value) {
     case 1:
-      return [...Prices.value].sort(sortByDate)
+      return [...filtredList.value].sort(sortByDate)
 
     case 2:
-      return [...Prices.value].sort(sortByName)
+      return [...filtredList.value].sort(sortByName)
 
     default:
-      return Prices.value
+      return filtredList.value
   }
 })
 
 onMounted(() => {
   loadPrices()
 })
+
+function delPrice(itemId){
+  let Element = Prices.value.find(el => el.itemId === itemId)
+  let index = Prices.value.indexOf(Element)
+  //console.log(Prices.value.indexOf(Element))
+  Prices.value.splice(index,1)
+  //Element.del
+}
 
 function loadPrices() {
   api.post(apiUrl + '/api/get/prices.php', {
@@ -118,6 +184,10 @@ function loadPrices() {
 </script>
 
 <style scoped>
+.navigator {
+  flex-wrap: wrap;
+}
+
 .PricesArea {
   padding: 1em;
   display: flex;

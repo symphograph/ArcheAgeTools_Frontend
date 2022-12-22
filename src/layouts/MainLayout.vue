@@ -341,6 +341,7 @@ body {
   background-image: url(/img/interface/reward2.png);
   background-repeat: no-repeat;
   width: 100%;
+  height: 4.5em;
   max-width: 25em;
   padding: 0 2em;
   background-size: 100% 100%;

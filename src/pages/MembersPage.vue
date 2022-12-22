@@ -67,7 +67,7 @@ import MemberList from "components/members/MemberList.vue";
 import {api} from "boot/axios";
 import ItemIcon from "components/ItemIcon.vue";
 import ServerSelect from "components/account/ServerSelect.vue";
-import PriceImager from "components/items/PriceImager.vue";
+import PriceImager from "components/price/PriceImager.vue";
 
 const route = useRoute()
 const router = useRouter()

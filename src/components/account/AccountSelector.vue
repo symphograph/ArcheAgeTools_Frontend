@@ -14,7 +14,7 @@
             option-label="nickName"
   >
     <template v-slot:append v-if="curAccount">
-      <div style="width: 40px">
+      <div style="width: 40px" v-if="curAccount.Avatar">
         <ItemIcon :locIcon="apiUrl + curAccount.Avatar.src" :grade="curAccount.AccSets.grade"></ItemIcon>
       </div>
     </template>

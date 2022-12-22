@@ -27,8 +27,8 @@ import {onMounted, ref, provide, inject, watch, computed} from "vue"
 import SearchSelect from "components/items/SearchSelect.vue";
 import ItemArea from "components/ItemArea.vue";
 import {useRoute, useRouter} from 'vue-router'
-import PriceInput from "components/items/PriceInput.vue";
-import PriceImager from "components/items/PriceImager.vue";
+import PriceInput from "components/price/PriceInput.vue";
+import PriceImager from "components/price/PriceImager.vue";
 
 const route = useRoute()
 const router = useRouter()

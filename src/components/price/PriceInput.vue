@@ -46,7 +46,7 @@ function logShow(){
 
 function savePrice() {
   priceRef.value.blur()
-  api.post(apiUrl + 'api/set/price.php', {
+  api.post(apiUrl + 'api/set/price/price.php', {
     params: {
       token: token.value,
       price: Item.value.Pricing.Price.price,
