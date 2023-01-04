@@ -28,15 +28,6 @@
           <q-item-label>Профиль</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item clickable>
-        <q-item-section avatar>
-          <q-avatar icon="ionicon settings outline"></q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label caption class="text-grey">Настройки расчетов</q-item-label>
-          <q-item-label>Параметры</q-item-label>
-        </q-item-section>
-      </q-item>
     </template>
     <template v-slot:option="scope">
         <q-item v-bind="scope.itemProps" v-if="scope.opt.id !== curAccount.id">

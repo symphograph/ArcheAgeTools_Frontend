@@ -21,7 +21,7 @@
 
 <script setup>
 import EssentialLink from 'components/EssentialLink.vue'
-import {computed, inject, onMounted, ref, watch} from "vue";
+import {computed, inject, onMounted} from "vue";
 import {useRoute} from "vue-router";
 import CategoryTree from "components/items/CategoryTree.vue";
 import AccountSelector from "components/account/AccountSelector.vue";
@@ -61,7 +61,7 @@ const linksList = [
     title: 'Настройки',
     caption: 'Настройте свои параметры',
     ava: '/img/settings.png',
-    link: '/settings'
+    link: '/account'
   }
 ]
 

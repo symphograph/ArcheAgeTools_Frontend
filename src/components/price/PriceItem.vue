@@ -1,13 +1,13 @@
 <template>
     <q-item dense class="PriceCell">
       <q-item-section>
-        <q-item-label caption>{{fDate(price.datetime)}}</q-item-label>
         <q-item-label :lines="1">
           <div class="PriceLabel">{{price.name}}</div>
         </q-item-label>
         <q-input
           mask="## ## ##"
           class="PriceInput"
+          :label="fDate(price.datetime)"
           dense
           filled
           borderless
@@ -21,8 +21,6 @@
            <q-btn class="no-padding" dense flat :href="'/item/' + price.itemId" @click="goTo(price.itemId)">
              <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
            </q-btn>
-
-
           </template>
           <template v-slot:append>
             <q-btn label="Ok"
@@ -32,7 +30,6 @@
                    no-caps
                    flat
                    @click="savePrice" ></q-btn>
-
           </template>
           <template v-slot:after>
             <q-tooltip>Удалить</q-tooltip>
@@ -235,6 +232,7 @@ function savePrice() {
   min-width: 12em;
 }
 .PriceCell {
+  padding: 0.5em 0;
   width: 20em;
   font-size: 12px;
 }

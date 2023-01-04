@@ -1,22 +1,44 @@
 <template>
 <div>cr</div>
+  <template v-if="MainCraft">
+    <CraftCard :Craft="MainCraft" :key="MainCraft.id"></CraftCard>
+    <q-expansion-item label="Все материалы">
+      <q-card class="card">hgh</q-card>
+    </q-expansion-item>
+  </template>
+
   <template v-if="CraftList">
-    <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
+    <q-expansion-item label="Другие рецепты">
+      <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
+    </q-expansion-item>
+
+
+
+  </template>
+  <template v-else-if="Lost.length">
+    <LostList :Lost="Lost"></LostList>
   </template>
   <div v-else>Рецепты не найдены</div>
 
 </template>
 
 <script setup>
-import {onMounted, ref, provide, inject, watch} from "vue"
+import {onMounted, ref, inject, watch} from "vue"
 import {api} from 'boot/axios'
 import {useQuasar} from 'quasar'
-import CraftCard from "components/items/CraftCard.vue";
+import CraftCard from "components/items/CraftCard.vue"
+import LostList from "components/price/LostList.vue"
 
+const q = useQuasar()
 const apiUrl = String(process.env.API)
+const token = inject('token')
 const Item = inject('Item')
 const itemId = inject('itemId')
+const MainCraft = ref(null)
 const CraftList = ref(null)
+const Lost = ref([])
+
+
 
 watch(itemId, () => {
   if(itemId.value) {
@@ -29,9 +51,10 @@ onMounted(() => {
 })
 
 function loadCrafts() {
+  Lost.value = [];
   api.post(apiUrl + 'api/get/crafts.php', {
     params: {
-      token: '12345',
+      token: token.value,
       itemId: itemId.value
     }
   })
@@ -45,14 +68,23 @@ function loadCrafts() {
           closeBtn: 'Закрыть'
         })
         CraftList.value = null
+        MainCraft.value = null
         return false
       }
       if (response.data.result) {
-        CraftList.value = response.data.data
+        if(response.data.data.Lost && response.data.data.Lost.length){
+          Lost.value = response.data.data.Lost
+          CraftList.value = null
+          MainCraft.value = null
+          return
+        }
+        CraftList.value = response.data.data.otherCrafts
+        MainCraft.value = response.data.data.mainCraft
       }
     })
     .catch(() => {
       CraftList.value = null
+      MainCraft.value = null
       q.notify({
         color: 'negative',
         position: 'center',
@@ -65,5 +97,9 @@ function loadCrafts() {
 </script>
 
 <style scoped>
-
+.card {
+  background: none;
+  box-shadow: 0 0 1em 0 rgb(0 0 0 / 9%);
+  padding: 1em;
+}
 </style>

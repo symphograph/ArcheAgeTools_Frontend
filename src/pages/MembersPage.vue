@@ -9,7 +9,7 @@
           <q-item-section avatar>
             <q-btn round glossy class="MemberAva">
               <q-avatar size="40px">
-                <img style="width: 100%; height: 100%" :src="apiUrl + member.Avatar.src">
+                <img style="width: 100%; height: 100%" :src="apiUrl + member.Avatar.src" alt="">
               </q-avatar>
             </q-btn>
           </q-item-section>
@@ -40,6 +40,7 @@
           </q-item-section>
           <q-item-section  side>
             <q-toggle v-model="member.Member.isFollow"
+                      v-if="member.id !== curAccount.id"
                       @update:model-value="update(
                         {
                         id: member.Member.accountId,
@@ -47,7 +48,7 @@
                         }
                         )"
             >
-
+            <q-tooltip>Доверять</q-tooltip>
             </q-toggle>
           </q-item-section>
         </q-item>
@@ -63,7 +64,6 @@ import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from "quasar";
 import {inject, onMounted, ref} from "vue";
 import {fDate} from "src/myFuncts.js"
-import MemberList from "components/members/MemberList.vue";
 import {api} from "boot/axios";
 import ItemIcon from "components/ItemIcon.vue";
 import ServerSelect from "components/account/ServerSelect.vue";

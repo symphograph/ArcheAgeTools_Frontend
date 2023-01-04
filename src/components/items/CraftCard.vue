@@ -1,78 +1,53 @@
 <template>
   <q-card class="CraftCard" v-if="Item">
-    <div class="CraftInfo">
-      <div class="InfoCell">
-        <div style="display: flex; justify-content: flex-start">
-          <ItemIcon :grade="Craft.Prof.lvl"
-                    :locIcon="'/img/profs/' + Craft.Prof.id + '.png'"
-                    :tool-text="Craft.Prof.name"
-                    :size="'30px'"></ItemIcon>
-          <div class="TextBottom">{{ Craft.Prof.name }}</div>
+    <q-card-section>
+      <CraftInfo></CraftInfo>
+    </q-card-section>
+    <q-card-section>
+      <q-item>
+        <q-item-section>
+          <MatRow></MatRow>
+        </q-item-section>
+        <q-item-section side>
+          <q-btn class="DefBtn" label="Предпочитать" v-if="!Craft.countData.isUBest"></q-btn>
+          <q-btn v-else class="DefBtn" label="Сбросить"></q-btn>
+        </q-item-section>
+      </q-item>
+    </q-card-section>
 
-        </div>
-        <div class="TextBottom">{{ profNeed(Craft.prof_need) }}</div>
-      </div>
-    </div>
-    <div class="MatRow">
-      <ItemIcon :grade="Item.grade"
-                :icon="Item.icon"
-                :amount="Craft.resultAmount"
-                :tool-text="Item.name"
-                :size="'70px'"
-                @click="goToItem(Item.id)"></ItemIcon>
-      <template v-for="mat in Craft.Mats" :key="mat.id">
-        <ItemIcon :grade="mat.grade"
-                  :icon="mat.Item.icon"
-                  :amount="mat.need"
-                  :tool-text="mat.Item.name"
-                  @click="goToItem(mat.id)"></ItemIcon>
-      </template>
-
-    </div>
   </q-card>
 </template>
 
 <script setup>
 
 
-import {inject, ref, watch} from "vue";
-import ItemIcon from "components/ItemIcon.vue";
-import ItemCell from "components/ItemCell.vue";
+import {inject, provide, ref} from "vue";
+import CraftInfo from "components/items/CraftInfo.vue";
+import MatRow from "components/craft/MatRow.vue";
 
 const itemId = inject('itemId')
 const Item = inject('Item')
 const props = defineProps({
   Craft: ref(null)
 })
+provide('Craft', props.Craft)
 
-function goToItem(id) {
-  itemId.value = id
-}
 
-function profNeed(need)
-{
-  if (!need){
-    return ''
-  }
-  if(need < 1000){
-    return need
-  }
-  return Math.round(need/1000)  + 'k'
-}
+
 </script>
 
 <style scoped>
+.listItem {
+  min-height: 1px;
+}
 .CraftCard {
-  background-color: #efddc3e6;
+  background-color: rgba(211, 238, 144, 0.06);
+  box-shadow: 0 0 1em 0 rgb(0 0 0 / 9%);
   margin: 1em 0;
   padding: 1em;
 }
 
-.MatRow {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-}
+
 
 .CraftInfo {
   display: flex;
@@ -87,6 +62,10 @@ function profNeed(need)
 }
 .TextBottom {
   height: 100%;display: flex; align-items: flex-end;
+}
+
+.DefBtn {
+  font-size: 12px;
 }
 @media screen and (min-width: 600px){
 

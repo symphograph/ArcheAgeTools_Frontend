@@ -1,11 +1,16 @@
 <template>
-  <q-btn icon="delete" @click="confirm" flat round size="xs"></q-btn>
+  <q-btn icon="delete" :disable="disable" @click="confirm" flat round size="xs"></q-btn>
 </template>
 
 <script setup>
 import {useQuasar} from "quasar";
 import DialogWindow from "components/DialogWindow.vue";
+import {ref} from "vue";
 const $q = useQuasar()
+
+const props = defineProps({
+  disable: ref(false)
+})
 
 const emit = defineEmits(['onOk','Cancel','Dismiss'])
 

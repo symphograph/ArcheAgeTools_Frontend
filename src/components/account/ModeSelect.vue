@@ -5,7 +5,7 @@
             option-value="mode"
             option-label="name"
             options-html
-            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 63%)', color: '#4B3A23' }"
+            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
             @update:model-value="save()"

@@ -18,14 +18,7 @@
         <q-checkbox label="Крафтабельные" v-model="filters.craftable"></q-checkbox>
         <q-checkbox label="Некрафтабельные" v-model="filters.uncraftable"></q-checkbox>
       </div>
-      <q-input v-model="searchText" class="Input" style="width: 100%" label="фильтр">
-        <template v-slot:prepend>
-          <q-icon name="search"></q-icon>
-        </template>
-        <template v-slot:append>
-          <q-icon v-if="searchText !== ''" name="close" @click="searchText = ''" class="cursor-pointer"></q-icon>
-        </template>
-      </q-input>
+      <FilterInput></FilterInput>
       <q-btn class="DefBtn" label="Добавить" href="/item"></q-btn>
     </div>
     <q-scroll-area v-if="Prices" class="col" :style="'width: 100%;'">
@@ -42,10 +35,11 @@
 
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
-import {computed, inject, onMounted, ref} from "vue";
+import {computed, inject, onMounted, provide, ref} from "vue";
 import ServerSelect from "components/account/ServerSelect.vue";
 import PriceItem from "components/price/PriceItem.vue";
 import {layoutFix} from 'src/myFuncts.js'
+import FilterInput from "components/price/FilterInput.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -71,6 +65,8 @@ const sortOpts = ref([
 ])
 
 const searchText = ref('')
+provide('searchText', searchText)
+
 const filters = ref({
   craftable: true,
   uncraftable: true
@@ -188,10 +184,5 @@ function loadPrices() {
   flex-wrap: wrap;
 }
 
-.PricesArea {
-  padding: 1em;
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-}
+
 </style>

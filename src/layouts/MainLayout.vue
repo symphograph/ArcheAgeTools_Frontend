@@ -21,7 +21,7 @@
         </q-tabs>
         <template v-else>
           <ItemIcon v-if="curAccount"
-                    :locIcon="curAccount.authTypeId > 1 ? curAccount.avatar : apiUrl + curAccount.avatar"
+                    :locIcon="curAccount.authTypeId > 1 ? apiUrl + curAccount.Avatar.src : apiUrl + curAccount.Avatar.src"
                     :grade="curAccount.AccSets.grade"
                     @click="toggleLeftDrawer"
           ></ItemIcon>
@@ -57,14 +57,14 @@
 </template>
 
 <script setup>
-import {ref, provide, inject, onMounted, watch, onBeforeMount} from 'vue'
-import {api} from "boot/axios";
-import {LocalStorage, useQuasar} from "quasar";
-import AccountSelector from "components/account/AccountSelector.vue";
-import {useRoute} from "vue-router";
-import LoginList from "components/account/LoginList.vue";
-import DrawerContent from "components/DrawerContent.vue";
-import ItemIcon from "components/ItemIcon.vue";
+import {ref, provide, onMounted, watch, onBeforeMount} from 'vue'
+import {api} from "boot/axios"
+import {LocalStorage, useQuasar} from "quasar"
+import AccountSelector from "components/account/AccountSelector.vue"
+import {useRoute} from "vue-router"
+import LoginList from "components/account/LoginList.vue"
+import DrawerContent from "components/DrawerContent.vue"
+import ItemIcon from "components/ItemIcon.vue"
 
 
 const q = useQuasar()
@@ -341,7 +341,7 @@ body {
   background-image: url(/img/interface/reward2.png);
   background-repeat: no-repeat;
   width: 100%;
-  height: 4.5em;
+  height: 4.2em;
   max-width: 25em;
   padding: 0 2em;
   background-size: 100% 100%;
@@ -349,5 +349,22 @@ body {
 
 .InputActive {
   background-image: url(/img/interface/reward-active.png);
+}
+
+.PricesArea {
+  padding: 1em;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.smallIcon {
+  width: 1em;
+  height: 1em;
+}
+
+.imgValut {
+  height: 0.9em;
+  width: 0.9em;
 }
 </style>

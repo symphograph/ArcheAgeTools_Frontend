@@ -1,25 +1,39 @@
 <template>
   <div class="WindowArea  column">
-    <q-scroll-area v-if="curAccount" class="col">
+    <div class="navigator">
       <AccSets></AccSets>
-      <ProfList></ProfList>
+    </div>
+    <q-scroll-area v-if="curAccount" class="col">
+      <q-tabs v-model="tab">
+        <q-tab name="basedPrices" label="Базовые цены"></q-tab>
+        <q-tab name="profs" label="Профессии"></q-tab>
+      </q-tabs>
+      <q-tab-panels v-model="tab" animated class="TabPanels">
+        <q-tab-panel name="basedPrices">
+          <BasedPrices></BasedPrices>
+        </q-tab-panel>
+        <q-tab-panel name="profs">
+          <ProfList></ProfList>
+        </q-tab-panel>
+      </q-tab-panels>
+
     </q-scroll-area>
   </div>
 </template>
 
 <script setup>
-import {computed, inject, onMounted, ref} from "vue";
-import AccountArea from "components/account/AccountArea.vue";
-import {api} from "boot/axios";
-import {LocalStorage, useQuasar} from "quasar";
-import TelegramAccount from "components/account/TelegramAccount.vue";
-import AccSets from "components/account/AccSets.vue";
-import ProfList from "components/account/ProfList.vue";
+import {inject, onMounted, ref} from "vue"
+import {api} from "boot/axios"
+import {useQuasar} from "quasar"
+import AccSets from "components/account/AccSets.vue"
+import ProfList from "components/account/ProfList.vue"
+import BasedPrices from "components/price/BasedPrices.vue"
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const tab = ref('basedPrices')
 
 onMounted(() => {
   loadAccount()
@@ -59,6 +73,8 @@ function loadAccount() {
 }
 </script>
 
-<style>
-
+<style scoped>
+.TabPanels {
+  background: none;
+}
 </style>
