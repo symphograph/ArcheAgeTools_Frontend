@@ -1,5 +1,9 @@
 <template>
-  <q-card class="CraftCard" v-if="Item">
+  <q-card class="CraftCard"
+          v-if="Item && !progress"
+          transition-show="jump-down"
+          transition-hide="jump-up"
+  >
     <q-card-section>
       <CraftInfo :Craft="Craft"></CraftInfo>
     </q-card-section>
@@ -25,12 +29,13 @@ import {inject, provide, ref} from "vue";
 import CraftInfo from "components/craft/CraftInfo.vue";
 import MatRow from "components/craft/MatRow.vue";
 
+
 const itemId = inject('itemId')
 const Item = inject('Item')
 const props = defineProps({
   Craft: ref(null)
 })
-//provide('Craft', props.Craft)
+const progress = inject('progress')
 
 
 

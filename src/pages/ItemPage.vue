@@ -14,6 +14,7 @@
 
       </div>
     </div>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="indeterminate"></q-linear-progress>
     <q-scroll-area v-if="Item" class="col" :style="'width: 100%;'">
       <ItemArea v-if="Item.Info"></ItemArea>
     </q-scroll-area>
@@ -37,7 +38,12 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 const price = ref(122345678)
 const navigatorRef = ref(null)
+const progress = ref(false)
+provide('progress',progress)
+const indeterminate = computed(()=> {
+  return !!progress.value;
 
+})
 
 const itemId = ref(0)
 provide('itemId', itemId)

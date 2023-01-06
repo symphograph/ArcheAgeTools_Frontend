@@ -23,7 +23,7 @@
           <q-item-section>
             <q-item dense>
               <q-item-section avatar>
-                <q-btn dense flat :href="'/item/' + member.Member.LastPricedItem.id">
+                <q-btn dense flat :to="'/item/' + member.Member.LastPricedItem.id">
                   <ItemIcon :icon="member.Member.LastPricedItem.icon"
                             :grade="member.Member.LastPricedItem.grade"
                   ></ItemIcon>

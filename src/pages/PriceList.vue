@@ -19,7 +19,7 @@
         <q-checkbox label="Некрафтабельные" v-model="filters.uncraftable"></q-checkbox>
       </div>
       <FilterInput></FilterInput>
-      <q-btn class="DefBtn" label="Добавить" href="/item"></q-btn>
+      <q-btn class="DefBtn" label="Добавить" to="/item"></q-btn>
     </div>
     <q-scroll-area v-if="Prices" class="col" :style="'width: 100%;'">
       <div class="PricesArea">

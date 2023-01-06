@@ -18,7 +18,7 @@
         @blur="focused = false"
       >
         <template v-slot:before>
-          <q-btn class="no-padding" dense flat :href="'/item/' + price.itemId" @click="goTo(price.itemId)">
+          <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
             <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
           </q-btn>
         </template>

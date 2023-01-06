@@ -13,10 +13,10 @@
 
 import {inject} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
-import CraftResults from "components/items/CraftResults.vue";
-import CraftList from "components/craft/CraftList.vue";
+import CraftResults from "components/items/CraftResults.vue"
+import CraftList from "components/craft/CraftList.vue"
 const Item = inject('Item')
-
+const progress = inject('progress')
 
 </script>
 

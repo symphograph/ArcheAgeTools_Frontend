@@ -1,21 +1,25 @@
 <template>
 <div>cr</div>
-  <template v-if="MainCraft">
-    <CraftCard :Craft="MainCraft" :key="MainCraft.id"></CraftCard>
-    <q-expansion-item label="Все материалы">
-      <q-card class="card">hgh</q-card>
-    </q-expansion-item>
+  <template v-if="!progress">
+    <template v-if="MainCraft">
+      <CraftCard :Craft="MainCraft" :key="MainCraft.id"></CraftCard>
+      <q-expansion-item label="Все материалы">
+        <q-card class="card">hgh</q-card>
+      </q-expansion-item>
+    </template>
+
+
+    <template v-if="CraftList">
+      <q-expansion-item label="Другие рецепты">
+        <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
+      </q-expansion-item>
+    </template>
+    <template v-else-if="Lost.length">
+      <LostList :Lost="Lost"></LostList>
+    </template>
+    <div v-else-if="!progress">Рецепты не найдены</div>
   </template>
 
-  <template v-if="CraftList">
-    <q-expansion-item label="Другие рецепты">
-      <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
-    </q-expansion-item>
-  </template>
-  <template v-else-if="Lost.length">
-    <LostList :Lost="Lost"></LostList>
-  </template>
-  <div v-else>Рецепты не найдены</div>
 
 </template>
 
@@ -36,9 +40,10 @@ const CraftList = ref(null)
 const Lost = ref([])
 
 const needUpdate = inject('needUpdate')
+const progress = inject('progress')
 
 watch(needUpdate, () => {
-  if(needUpdate.value) {
+  if(needUpdate.value && Item.value.craftable) {
    loadCrafts()
   }
 }, {deep: true})
@@ -49,6 +54,8 @@ onMounted(() => {
 
 function loadCrafts() {
   Lost.value = [];
+  progress.value = true
+  CraftList.value = null
   api.post(apiUrl + 'api/get/crafts.php', {
     params: {
       token: token.value,
@@ -66,9 +73,11 @@ function loadCrafts() {
         })
         CraftList.value = null
         MainCraft.value = null
+        progress.value = false
         return false
       }
       if (response.data.result) {
+        progress.value = false
         if(response.data.data.Lost && response.data.data.Lost.length){
           Lost.value = response.data.data.Lost
           CraftList.value = null
@@ -83,6 +92,7 @@ function loadCrafts() {
     .catch(() => {
       CraftList.value = null
       MainCraft.value = null
+      progress.value = false
       q.notify({
         color: 'negative',
         position: 'center',
