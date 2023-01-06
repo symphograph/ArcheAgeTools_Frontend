@@ -22,10 +22,10 @@
 
 <script setup>
 import {api} from 'boot/axios'
-import {useMeta, useQuasar} from 'quasar'
+import {LocalStorage, useMeta, useQuasar} from 'quasar'
 import {onMounted, ref, provide, inject, watch, computed} from "vue"
 import SearchSelect from "components/items/SearchSelect.vue";
-import ItemArea from "components/ItemArea.vue";
+import ItemArea from "components/items/ItemArea.vue";
 import {useRoute, useRouter} from 'vue-router'
 import PriceInput from "components/price/PriceInput.vue";
 import PriceImager from "components/price/PriceImager.vue";
@@ -43,6 +43,8 @@ const itemId = ref(0)
 provide('itemId', itemId)
 const Item = ref(null)
 provide('Item', Item)
+const needUpdate = ref(false)
+provide('needUpdate', needUpdate)
 
 const CategoriesList = inject('CategoriesList')
 
@@ -64,6 +66,7 @@ watch(route, () => {
 }, {deep: true})
 
 function loadItem() {
+  //Item.value = null
   api.post(apiUrl + '/api/get/item.php', {
     params: {
       token: token.value,
@@ -84,6 +87,8 @@ function loadItem() {
       }
       if (response.data.result) {
         Item.value = response.data.data
+        needUpdate.value = true
+        LocalStorage.set('lastItem', Item.value.id)
       }
     })
     .catch(() => {
@@ -98,6 +103,8 @@ function loadItem() {
     })
 }
 
+
+
 function npcPrice() {
   if (Item.value.Pricing.currencyId === 500) {
     return Item.value.Pricing.priceFromNPC
@@ -109,6 +116,10 @@ function npcPrice() {
 onMounted(() => {
   if (route.params.id) {
     itemId.value = route.params.id * 1
+  }else {
+    if(LocalStorage.getItem('lastItem')){
+      itemId.value = LocalStorage.getItem('lastItem')
+    }
   }
 })
 

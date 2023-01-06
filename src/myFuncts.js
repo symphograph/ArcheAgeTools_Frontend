@@ -109,7 +109,7 @@ export function priceImager(value, vid = 500) {
 
 
   }
-  row = minus + row
+  //row = minus + row
   row += '<img class="imgValut" src="/img/valuta/bronze.png" alt="b"/>';
   return row;
 }
@@ -118,6 +118,12 @@ export function priceColor(method){
   switch (method){
     case 'byAny':
       return 'red'
+
+    case 'byCraft':
+      return 'gray'
+
+    case 'byFromNPC':
+      return 'gray'
 
     case 'byFriends':
       return 'green'
@@ -129,7 +135,7 @@ export function priceColor(method){
       return 'green'
 
     default:
-      return 'gray'
+      return 'red'
   }
 }
 

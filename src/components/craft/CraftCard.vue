@@ -1,12 +1,12 @@
 <template>
   <q-card class="CraftCard" v-if="Item">
     <q-card-section>
-      <CraftInfo></CraftInfo>
+      <CraftInfo :Craft="Craft"></CraftInfo>
     </q-card-section>
     <q-card-section>
       <q-item>
         <q-item-section>
-          <MatRow></MatRow>
+          <MatRow :Craft="Craft"></MatRow>
         </q-item-section>
         <q-item-section side>
           <q-btn class="DefBtn" label="Предпочитать" v-if="!Craft.countData.isUBest"></q-btn>
@@ -22,7 +22,7 @@
 
 
 import {inject, provide, ref} from "vue";
-import CraftInfo from "components/items/CraftInfo.vue";
+import CraftInfo from "components/craft/CraftInfo.vue";
 import MatRow from "components/craft/MatRow.vue";
 
 const itemId = inject('itemId')
@@ -30,7 +30,7 @@ const Item = inject('Item')
 const props = defineProps({
   Craft: ref(null)
 })
-provide('Craft', props.Craft)
+//provide('Craft', props.Craft)
 
 
 

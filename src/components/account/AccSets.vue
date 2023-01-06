@@ -1,7 +1,7 @@
 <template>
     <NickInput></NickInput>
-    <ServerSelect></ServerSelect>
-    <ModeSelect></ModeSelect>
+    <ServerSelect @saved="emit('saved')"></ServerSelect>
+    <ModeSelect @saved="emit('saved')"></ModeSelect>
 </template>
 
 <script setup>
@@ -16,7 +16,7 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
 
-
+const emit = defineEmits(['saved'])
 
 
 

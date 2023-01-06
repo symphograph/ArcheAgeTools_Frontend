@@ -17,9 +17,14 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
 
+
 const Prices = ref(null)
 onMounted(() => {
   loadPrices()
+})
+
+defineExpose({
+  loadPrices
 })
 
 function loadPrices() {

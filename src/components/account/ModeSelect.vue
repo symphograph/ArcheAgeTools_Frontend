@@ -37,6 +37,7 @@ const token = inject('token')
 const curAccount = inject('curAccount')
 const PriceModes = inject('PriceModes')
 const inputClass = ref('Input')
+const emit = defineEmits(['saved'])
 
 function save() {
   api.post(apiUrl + 'api/set/mode.php', {
@@ -55,6 +56,7 @@ function save() {
           timeout: 100,
           closeBtn: 'Закрыть'
         })
+        emit('saved')
         return true
       }
 

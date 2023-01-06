@@ -11,9 +11,6 @@
     <q-expansion-item label="Другие рецепты">
       <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
     </q-expansion-item>
-
-
-
   </template>
   <template v-else-if="Lost.length">
     <LostList :Lost="Lost"></LostList>
@@ -26,7 +23,7 @@
 import {onMounted, ref, inject, watch} from "vue"
 import {api} from 'boot/axios'
 import {useQuasar} from 'quasar'
-import CraftCard from "components/items/CraftCard.vue"
+import CraftCard from "components/craft/CraftCard.vue"
 import LostList from "components/price/LostList.vue"
 
 const q = useQuasar()
@@ -38,11 +35,11 @@ const MainCraft = ref(null)
 const CraftList = ref(null)
 const Lost = ref([])
 
+const needUpdate = inject('needUpdate')
 
-
-watch(itemId, () => {
-  if(itemId.value) {
-    loadCrafts()
+watch(needUpdate, () => {
+  if(needUpdate.value) {
+   loadCrafts()
   }
 }, {deep: true})
 
@@ -80,6 +77,7 @@ function loadCrafts() {
         }
         CraftList.value = response.data.data.otherCrafts
         MainCraft.value = response.data.data.mainCraft
+        needUpdate.value = false
       }
     })
     .catch(() => {

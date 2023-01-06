@@ -1,7 +1,7 @@
 <template>
   <div class="WindowArea  column">
     <div class="navigator">
-      <AccSets></AccSets>
+      <AccSets @saved="refBasedPrices.loadPrices()"></AccSets>
     </div>
     <q-scroll-area v-if="curAccount" class="col">
       <q-tabs v-model="tab">
@@ -10,7 +10,7 @@
       </q-tabs>
       <q-tab-panels v-model="tab" animated class="TabPanels">
         <q-tab-panel name="basedPrices">
-          <BasedPrices></BasedPrices>
+          <BasedPrices ref="refBasedPrices"></BasedPrices>
         </q-tab-panel>
         <q-tab-panel name="profs">
           <ProfList></ProfList>
@@ -32,8 +32,10 @@ import BasedPrices from "components/price/BasedPrices.vue"
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
+const refBasedPrices = ref(null)
 const curAccount = inject('curAccount')
 const tab = ref('basedPrices')
+
 
 onMounted(() => {
   loadAccount()

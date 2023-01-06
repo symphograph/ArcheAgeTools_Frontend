@@ -8,7 +8,6 @@
             :disable="!!!Item.Pricing.isGoldable"
            reverse-fill-mask
             :rules="[val => !priceErr.length || priceErr]"
-           @update:model-value="logShow()"
   >
     <template v-slot:append>
       <q-btn label="Ok"
@@ -40,9 +39,6 @@ const priceErr = computed(()=> {
   return ''
 })
 
-function logShow(){
-  console.log(price.value)
-}
 
 function savePrice() {
   priceRef.value.blur()

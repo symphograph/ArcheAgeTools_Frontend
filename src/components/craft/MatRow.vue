@@ -18,14 +18,17 @@
 
 <script setup>
 
-import {inject} from "vue"
+import {inject, ref} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
-import {priceColor} from "src/myFuncts.js"
-import {priceImager} from "src/myFuncts.js"
+import {priceColor, priceImager} from "src/myFuncts.js"
 
 const itemId = inject('itemId')
 const Item = inject('Item')
-const Craft = inject('Craft')
+
+const props = defineProps({
+  Craft: ref(null)
+})
+//const Craft = inject('Craft')
 
 function toolTip(mat){
   return mat.Item.name
