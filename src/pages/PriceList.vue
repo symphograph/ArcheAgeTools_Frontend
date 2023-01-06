@@ -21,6 +21,7 @@
       <FilterInput></FilterInput>
       <q-btn class="DefBtn" label="Добавить" to="/item"></q-btn>
     </div>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
     <q-scroll-area v-if="Prices" class="col" :style="'width: 100%;'">
       <div class="PricesArea">
         <template v-for="price in sortedList" :key="price.itemId">
@@ -47,6 +48,9 @@ const token = inject('token')
 const curAccount = inject('curAccount')
 const Prices = ref(null)
 const inputClass = ref('Input')
+
+const progress = ref(false)
+provide('progress',progress)
 
 const SortSelected = ref(1)
 const sortOpts = ref([
@@ -144,6 +148,7 @@ function delPrice(itemId){
 }
 
 function loadPrices() {
+  progress.value = true
   api.post(apiUrl + '/api/get/prices.php', {
     params: {
       token: token.value,
@@ -151,6 +156,7 @@ function loadPrices() {
     }
   })
     .then((response) => {
+      progress.value = false
       if (response.data.error) {
         q.notify({
           color: 'negative',
@@ -167,6 +173,7 @@ function loadPrices() {
       }
     })
     .catch(() => {
+      progress.value = false
       Prices.value = null
       q.notify({
         color: 'negative',

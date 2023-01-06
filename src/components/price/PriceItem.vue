@@ -1,52 +1,52 @@
 <template>
-    <q-item dense class="PriceCell">
-      <q-item-section>
-        <q-item-label :lines="1">
-          <div class="PriceLabel">{{price.name}}</div>
-        </q-item-label>
-        <q-input
-          mask="## ## ##"
-          class="PriceInput"
-          :label="fDate(price.datetime)"
-          dense
-          filled
-          borderless
-          reverse-fill-mask
-          ref="priceRef"
-          v-model="nPrice"
-          @focus="focused = true"
-          @blur="focused = false"
-        >
-          <template v-slot:before>
-           <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
-             <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
-           </q-btn>
-          </template>
-          <template v-slot:append>
-            <q-btn label="Ok"
-                   v-if="focused"
-                   class="DefBtn"
-                   dense
-                   no-caps
-                   flat
-                   @click="savePrice" ></q-btn>
-          </template>
-          <template v-slot:after>
-            <q-tooltip>Удалить</q-tooltip>
-            <DelBtn @onOk="delPrice"></DelBtn>
-          </template>
-        </q-input>
-        <q-checkbox v-model="buyable"
-                    dense
-                    v-if="price.craftable"
-                    @update:model-value="setBuyable"
-        >
-          <q-tooltip>Предпочитать цену покупки вместо крафта</q-tooltip>
-          Покупаемый
-        </q-checkbox>
-        <q-item-label v-else>некрафтабельно</q-item-label>
-      </q-item-section>
-    </q-item>
+  <q-item dense class="PriceCell">
+    <q-item-section>
+      <q-item-label :lines="1">
+        <div class="PriceLabel">{{ price.name }}</div>
+      </q-item-label>
+      <q-input
+        mask="## ## ##"
+        class="PriceInput"
+        :label="fDate(price.datetime)"
+        dense
+        filled
+        borderless
+        reverse-fill-mask
+        ref="priceRef"
+        v-model="nPrice"
+        @focus="focused = true"
+        @blur="focused = false"
+      >
+        <template v-slot:before>
+          <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
+            <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
+          </q-btn>
+        </template>
+        <template v-slot:append>
+          <q-btn label="Ok"
+                 v-if="focused"
+                 class="DefBtn"
+                 dense
+                 no-caps
+                 flat
+                 @click="savePrice"></q-btn>
+        </template>
+        <template v-slot:after>
+          <q-tooltip>Удалить</q-tooltip>
+          <DelBtn @onOk="delPrice"></DelBtn>
+        </template>
+      </q-input>
+      <q-checkbox v-model="buyable"
+                  dense
+                  v-if="price.craftable"
+                  @update:model-value="setBuyable"
+      >
+        <q-tooltip>Предпочитать цену покупки вместо крафта</q-tooltip>
+        Покупаемый
+      </q-checkbox>
+      <q-item-label v-else>некрафтабельно</q-item-label>
+    </q-item-section>
+  </q-item>
 </template>
 
 <script setup>
@@ -75,11 +75,11 @@ const priceRef = ref(null)
 const focused = ref(false)
 const buyable = ref(Props.price.buyOnly)
 
-function goTo(id){
-  router.push({ path: '/item/' + id })
+function goTo(id) {
+  router.push({path: '/item/' + id})
 }
 
-function setBuyable(){
+function setBuyable() {
   api.post(apiUrl + 'api/set/price/buyable.php', {
     params: {
       token: token.value,
@@ -127,7 +127,7 @@ function setBuyable(){
     })
 }
 
-function delPrice(){
+function delPrice() {
   api.post(apiUrl + 'api/set/price/del.php', {
     params: {
       token: token.value,
@@ -227,10 +227,11 @@ function savePrice() {
 </script>
 
 <style scoped>
-.PriceInput{
+.PriceInput {
   padding: 0;
   min-width: 12em;
 }
+
 .PriceCell {
   padding: 0.5em 0;
   width: 20em;
