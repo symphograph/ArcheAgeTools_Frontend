@@ -35,9 +35,34 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
-const PriceModes = inject('PriceModes')
 const inputClass = ref('Input')
 const emit = defineEmits(['saved'])
+
+const PriceModes = ref([
+  {
+    mode: 1,
+    name: 'С миру по нитке',
+    description:
+      'Предпочитает Ваши цены или более новые из доверенных.<br>' +
+      'Если их нет, ищет у других.<br>' +
+      'Спрашивает только, если никто и никогда не указывал цену.'
+  },
+  {
+    mode: 2,
+    name: 'Доверие',
+    description:
+      'Не видит ничьих цен, кроме Ваших и тех, кому Вы доверяете.<br>' +
+      'Предпочитает более новые.<br>' +
+      'ОР, РР, Честь и прочие субъективные предпочитает Ваши независимо от их новизны.'
+  },
+  {
+    mode: 3,
+    name: 'Хардкор',
+    description:
+      'Видит только Ваши цены.<br>' +
+      'В любой непонятной ситуации будет спрашивать.'
+  }
+])
 
 function save() {
   api.post(apiUrl + 'api/set/mode.php', {
