@@ -4,20 +4,25 @@
     <template v-if="MainCraft">
       <CraftCard :Craft="MainCraft" :key="MainCraft.id"></CraftCard>
       <q-expansion-item label="Все материалы">
-        <q-card class="card">hgh</q-card>
+        <q-card class="card">
+          <MatPool :matPool="MainCraft.matPool"
+                   :resultAmount="MainCraft.resultAmount"
+          >
+          </MatPool>
+        </q-card>
       </q-expansion-item>
     </template>
+    <div v-else>Рецепты не найдены</div>
 
 
-    <template v-if="CraftList">
+    <template v-if="CraftList && CraftList.length">
       <q-expansion-item label="Другие рецепты">
         <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft"></CraftCard>
       </q-expansion-item>
     </template>
-    <template v-else-if="Lost.length">
+    <template v-if="Lost && Lost.length">
       <LostList :Lost="Lost"></LostList>
     </template>
-    <div v-else-if="!progress">Рецепты не найдены</div>
   </template>
 
 
@@ -29,6 +34,7 @@ import {api} from 'boot/axios'
 import {useQuasar} from 'quasar'
 import CraftCard from "components/craft/CraftCard.vue"
 import LostList from "components/price/LostList.vue"
+import MatPool from "components/craft/MatPool.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

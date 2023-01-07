@@ -23,13 +23,13 @@
 
 <script setup>
 import {api} from 'boot/axios'
-import {LocalStorage, useMeta, useQuasar} from 'quasar'
+import {LocalStorage, useQuasar} from 'quasar'
 import {onMounted, ref, provide, inject, watch, computed} from "vue"
-import SearchSelect from "components/items/SearchSelect.vue";
-import ItemArea from "components/items/ItemArea.vue";
+import SearchSelect from "components/items/SearchSelect.vue"
+import ItemArea from "components/items/ItemArea.vue"
 import {useRoute, useRouter} from 'vue-router'
-import PriceInput from "components/price/PriceInput.vue";
-import PriceImager from "components/price/PriceImager.vue";
+import PriceInput from "components/price/PriceInput.vue"
+import PriceImager from "components/price/PriceImager.vue"
 
 const route = useRoute()
 const router = useRouter()

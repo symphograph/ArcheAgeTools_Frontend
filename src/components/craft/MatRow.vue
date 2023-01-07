@@ -20,7 +20,7 @@
 
 import {inject, ref} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
-import {priceColor, priceImager} from "src/myFuncts.js"
+import {priceColor, priceImager, priceMethod} from "src/myFuncts.js"
 
 const itemId = inject('itemId')
 const Item = inject('Item')
@@ -39,24 +39,7 @@ function toolTip(mat){
     + priceImager(mat.Price.price,500)
 }
 
-function priceMethod(Price){
-  switch (Price.method){
-    case 'bySolo':
-      return 'Ваша цена'
-    case 'byCraft':
-      return 'Себестоимость'
-    case 'byFromNPC':
-      return 'Куплено у НПС'
-    case 'byFriends':
-      return Price.author
-    case 'byWellKnown':
-      return Price.author
-    case 'byAny':
-      return Price.author
-    default:
-      return 'Неизветно:'
-  }
-}
+
 
 function goToItem(id) {
   itemId.value = id

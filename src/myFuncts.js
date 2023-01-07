@@ -85,11 +85,7 @@ export function isPermis(needPows, userPows) {
 }
 
 export function priceImager(value, vid = 500) {
-  let minus = ''
-  if (value < 0) {
-    minus = '-'
-  }
-  //value = toNums(value)
+
   if (vid !== 500) {
     return value + '<img class="imgValut" src="/img/valuta/' + vid + '.png" ' + ' alt="v"/>';
   }
@@ -106,10 +102,7 @@ export function priceImager(value, vid = 500) {
       row += '<img class="imgValut" src="/img/valuta/gold.png" alt="g"/>';
     }
     row += str.charAt(i);
-
-
   }
-  //row = minus + row
   row += '<img class="imgValut" src="/img/valuta/bronze.png" alt="b"/>';
   return row;
 }
@@ -139,3 +132,21 @@ export function priceColor(method){
   }
 }
 
+export function priceMethod(Price){
+  switch (Price.method){
+    case 'bySolo':
+      return 'Ваша цена'
+    case 'byCraft':
+      return 'Себестоимость'
+    case 'byFromNPC':
+      return 'Куплено у НПС'
+    case 'byFriends':
+      return Price.author
+    case 'byWellKnown':
+      return Price.author
+    case 'byAny':
+      return Price.author
+    default:
+      return 'Неизветно:'
+  }
+}
