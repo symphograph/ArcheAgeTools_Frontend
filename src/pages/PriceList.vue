@@ -101,7 +101,7 @@ const myFilters = computed(() => {
   return result
 })
 
-const filtredList = computed(() => {
+const filteredList = computed(() => {
   if (!myFilters.value || !myFilters.value.length) {
     return []
   }
@@ -120,7 +120,7 @@ const sortByName = (a, b) => (a.name > b.name) ? 1 : -1
 const sortByDate = (a, b) => (a.datetime < b.datetime) ? 1 : -1
 
 const sortedList = computed(() => {
-  if (!filtredList.value.length) {
+  if (!filteredList.value.length) {
     return []
   }
   switch (SortSelected.value) {

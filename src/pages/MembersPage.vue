@@ -6,39 +6,11 @@
     <q-scroll-area v-if="Members" class="col" :style="'width: 100%;'">
       <q-list dense separator>
         <q-item v-for="member in Members" :key="member.id" dense>
-          <q-item-section avatar>
-            <q-btn round glossy class="MemberAva">
-              <q-avatar size="40px">
-                <img style="width: 100%; height: 100%" :src="apiUrl + member.Avatar.src" alt="">
-              </q-avatar>
-            </q-btn>
-          </q-item-section>
-          <q-item-section class="MemberInfo">
-            <q-item-label>{{member.AccSets.publicNick}}</q-item-label>
-            <q-item-label caption>Записей:{{ member.Member.pricesCount }}</q-item-label>
-            <q-item-label caption v-if="member.Member.followersCount">
-              Доверяют:{{ member.Member.followersCount }}
-            </q-item-label>
-          </q-item-section>
+          <MemberAvaCell :member="member"></MemberAvaCell>
           <q-item-section>
-            <q-item dense>
-              <q-item-section avatar>
-                <q-btn dense flat :to="'/item/' + member.Member.LastPricedItem.id">
-                  <ItemIcon :icon="member.Member.LastPricedItem.icon"
-                            :grade="member.Member.LastPricedItem.grade"
-                  ></ItemIcon>
-                </q-btn>
-              </q-item-section>
-              <q-item-section avatar>
-                <q-item-label caption>{{ fDate(member.Member.LastPricedItem.Price.datetime) }}</q-item-label>
-                <q-item-label>{{ member.Member.LastPricedItem.name }}</q-item-label>
-                <q-item-label>
-                  <PriceImager :currencyId="500" :price="member.Member.LastPricedItem.Price.price"></PriceImager>
-                </q-item-label>
-              </q-item-section>
-            </q-item>
+            <MemberLastItem :member="member"></MemberLastItem>
           </q-item-section>
-          <q-item-section  side>
+          <q-item-section side>
             <q-toggle v-model="member.Member.isFollow"
                       v-if="member.id !== curAccount.id"
                       @update:model-value="update(
@@ -63,11 +35,10 @@
 import {useRoute, useRouter} from "vue-router";
 import {useQuasar} from "quasar";
 import {inject, onMounted, ref} from "vue";
-import {fDate} from "src/myFuncts.js"
 import {api} from "boot/axios";
-import ItemIcon from "components/ItemIcon.vue";
 import ServerSelect from "components/account/ServerSelect.vue";
-import PriceImager from "components/price/PriceImager.vue";
+import MemberLastItem from "components/members/MemberLastItem.vue";
+import MemberAvaCell from "components/members/MemberAvaCell.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -119,7 +90,7 @@ function update(member){
       return false
 
     })
-    .catch((error) => {
+    .catch(() => {
       q.notify({
         color: 'negative',
         position: 'center',
@@ -177,15 +148,6 @@ function loadMembers() {
 .navigator {
   width: 100%;
 }
-.MemberAva{
-  /*width: 40px;*/
-  /*height: 40px;*/
-  /*border-radius: 20px;*/
-}
-.MemberAva:hover{
-  box-shadow: 0 0 4px 2px green;
-}
-.MemberInfo {
-  max-width: 16em;
-}
+
+
 </style>
