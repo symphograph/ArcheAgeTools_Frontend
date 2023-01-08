@@ -23,6 +23,7 @@ const progress = inject('progress')
 <style scoped>
 .ItemArea {
   padding: 1em;
+  max-width: 100vw;
 }
 
 

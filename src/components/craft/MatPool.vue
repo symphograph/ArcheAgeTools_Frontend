@@ -13,19 +13,19 @@
 
 <script setup>
 
-import {ref} from "vue"
+import {inject, ref} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {priceColor, priceImager, priceMethod} from "src/myFuncts.js"
 
 const props = defineProps({
-  matPool: ref(null),
-  resultAmount: ref(1)
+  matPool: ref(null)
 })
 
+const resultAmount = inject('resultAmount')
 function toolTip(mat) {
   return mat.Item.name
   + '<br>'
-  + amount(mat.need) + 'шт'
+  + amount(mat.need  * resultAmount) + 'шт'
   + '<br>'
   + '<span style="color: ' + priceColor(mat.Price.method) +'">'
   + priceMethod(mat.Price)

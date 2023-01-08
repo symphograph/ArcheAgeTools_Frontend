@@ -15,7 +15,7 @@
       </div>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="indeterminate"></q-linear-progress>
-    <q-scroll-area v-if="Item" class="col" :style="'width: 100%;'">
+    <q-scroll-area v-if="Item" class="col" style="width: 100%; max-width: 100vw;">
       <ItemArea v-if="Item.Info"></ItemArea>
     </q-scroll-area>
   </div>
@@ -132,6 +132,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.myScroll {
+  overflow-x: hidden;
+}
 .navigator {
   flex-wrap: wrap;
 }

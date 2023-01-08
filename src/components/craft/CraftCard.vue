@@ -8,17 +8,23 @@
       <CraftInfo :Craft="Craft"></CraftInfo>
     </q-card-section>
     <q-card-section>
-      <q-item>
-        <q-item-section>
+      <div class="wrapContainer">
+        <div class="wrapElement">
           <MatRow :Craft="Craft"></MatRow>
-        </q-item-section>
-        <q-item-section side>
+        </div>
+        <div class="wrapElement">
           <q-btn class="DefBtn" label="Предпочитать" v-if="!Craft.countData.isUBest"></q-btn>
           <q-btn v-else class="DefBtn" label="Сбросить"></q-btn>
-        </q-item-section>
-      </q-item>
+        </div>
+      </div>
     </q-card-section>
-
+    <q-card-section>
+      <q-expansion-item class="CraftCard" label="Все материалы" popup default-opened>
+        <q-card class="CraftCard">
+          <MatPool :matPool="Craft.matPool"></MatPool>
+        </q-card>
+      </q-expansion-item>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -28,6 +34,7 @@
 import {inject, provide, ref} from "vue";
 import CraftInfo from "components/craft/CraftInfo.vue";
 import MatRow from "components/craft/MatRow.vue";
+import MatPool from "components/craft/MatPool.vue";
 
 
 const itemId = inject('itemId')
@@ -36,12 +43,20 @@ const props = defineProps({
   Craft: ref(null)
 })
 const progress = inject('progress')
-
-
+//const resultAmount = ref(props.Craft.resultAmount)
+provide('resultAmount', props.Craft.resultAmount)
 
 </script>
 
 <style scoped>
+.wrapContainer{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.wrapElement {
+  padding: 1em;
+}
 .listItem {
   min-height: 1px;
 }

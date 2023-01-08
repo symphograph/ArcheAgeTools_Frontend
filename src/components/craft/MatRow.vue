@@ -50,6 +50,6 @@ function goToItem(id) {
 .MatRow {
   display: flex;
   justify-content: flex-start;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 </style>

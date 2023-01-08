@@ -33,10 +33,22 @@ const Item = inject('Item')
 const price = ref(12345678)
 const priceRef = ref(null)
 const priceErr = computed(()=> {
-  if(!Item.value.Pricing.Price.price){
-    return 'Не вижу'
+  if(Item.value.Pricing.Price.price > 0){
+    return ''
   }
-  return ''
+
+  switch (Item.value.Pricing.Price.price) {
+    case 0:
+      return ''
+    case null:
+      return 'Не вижу'
+    case '':
+      return 'Не вижу'
+    case undefined:
+      return 'Не вижу'
+    default:
+      return  ''
+  }
 })
 
 

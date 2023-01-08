@@ -3,14 +3,7 @@
   <template v-if="!progress">
     <template v-if="MainCraft">
       <CraftCard :Craft="MainCraft" :key="MainCraft.id"></CraftCard>
-      <q-expansion-item label="Все материалы">
-        <q-card class="card">
-          <MatPool :matPool="MainCraft.matPool"
-                   :resultAmount="MainCraft.resultAmount"
-          >
-          </MatPool>
-        </q-card>
-      </q-expansion-item>
+
     </template>
     <div v-else>Рецепты не найдены</div>
 
