@@ -1,20 +1,50 @@
 <template>
   <q-item dense class="PriceCell">
-    <q-item-section avatar>
-      <q-item-label caption :lines="1">
-        {{fDate(price.datetime)}}
-      </q-item-label>
-      <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
-        <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
-      </q-btn>
-    </q-item-section>
-    <q-item-section top>
-      <q-item-label>
+    <q-item-section>
+      <q-item-label :lines="1">
         <div class="PriceLabel">{{ price.name }}</div>
       </q-item-label>
-      <q-item-label :lines="1">
-        <PriceImager :price="price.price" :currency-id="500"></PriceImager>
-      </q-item-label>
+      <q-input
+        mask="## ## ##"
+        class="PriceInput"
+        :label="fDate(price.datetime)"
+        dense
+        filled
+        borderless
+        reverse-fill-mask
+        ref="priceRef"
+        v-model="nPrice"
+        @focus="focused = true"
+        @blur="focused = false"
+      >
+        <template v-slot:before>
+          <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
+            <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
+          </q-btn>
+        </template>
+        <template v-slot:append>
+          <q-btn label="Ok"
+                 v-if="focused"
+                 class="DefBtn"
+                 dense
+                 no-caps
+                 flat
+                 @click="savePrice"></q-btn>
+        </template>
+        <template v-slot:after>
+          <q-tooltip>Удалить</q-tooltip>
+          <DelBtn @onOk="delPrice"></DelBtn>
+        </template>
+      </q-input>
+      <q-checkbox v-model="buyable"
+                  dense
+                  v-if="price.craftable"
+                  @update:model-value="setBuyable"
+      >
+        <q-tooltip>Предпочитать цену покупки вместо крафта</q-tooltip>
+        Покупаемый
+      </q-checkbox>
+      <q-item-label v-else>некрафтабельно</q-item-label>
     </q-item-section>
   </q-item>
 </template>
@@ -28,7 +58,6 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
 import {useRouter} from "vue-router";
-import PriceImager from "components/price/PriceImager.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

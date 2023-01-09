@@ -1,17 +1,17 @@
 <template>
   <q-item dense>
     <q-item-section avatar>
-      <q-btn dense flat :to="'/item/' + member.Member.LastPricedItem.id">
-        <ItemIcon :icon="member.Member.LastPricedItem.icon"
-                  :grade="member.Member.LastPricedItem.grade"
+      <q-btn dense flat :to="'/item/' + member.LastPricedItem.id">
+        <ItemIcon :icon="member.LastPricedItem.icon"
+                  :grade="member.LastPricedItem.grade"
         ></ItemIcon>
       </q-btn>
     </q-item-section>
     <q-item-section avatar>
-      <q-item-label caption>{{ fDate(member.Member.LastPricedItem.Price.datetime) }}</q-item-label>
-      <q-item-label>{{ member.Member.LastPricedItem.name }}</q-item-label>
+      <q-item-label caption>{{ fDate(member.LastPricedItem.Price.datetime) }}</q-item-label>
+      <q-item-label>{{ member.LastPricedItem.name }}</q-item-label>
       <q-item-label>
-        <PriceImager :currencyId="500" :price="member.Member.LastPricedItem.Price.price"></PriceImager>
+        <PriceImager :currencyId="500" :price="member.LastPricedItem.Price.price"></PriceImager>
       </q-item-label>
     </q-item-section>
   </q-item>

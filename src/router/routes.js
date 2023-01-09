@@ -58,7 +58,7 @@ const routes = [
     ]
   },
   {
-    path: '/prices',
+    path: '/prices/:accId',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PriceList.vue') }

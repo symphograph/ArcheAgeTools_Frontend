@@ -1,6 +1,9 @@
 <template>
   <div class="WindowArea column">
     <div class="navigator" ref="navigatorRef">
+      <div v-if="priceMember">
+        <PriceMasterAva></PriceMasterAva>
+      </div>
       <ServerSelect @saved="loadPrices()"></ServerSelect>
       <q-select :options="sortOpts"
                 label="Порядок"
@@ -22,10 +25,11 @@
       <q-btn class="DefBtn" label="Добавить" to="/item"></q-btn>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
-    <q-scroll-area v-if="Prices" class="col" :style="'width: 100%;'">
+    <q-scroll-area v-if="Prices" class="col" style="width: 100%">
       <div class="PricesArea">
         <template v-for="price in sortedList" :key="price.itemId">
-          <PriceItem :price="price" @delPrice="delPrice(price.itemId)"></PriceItem>
+          <PriceItemInput v-if="route.params.accId*1 === curAccount.id" :price="price" @delPrice="delPrice(price.itemId)"></PriceItemInput>
+          <PriceItem v-else :price="price"></PriceItem>
         </template>
       </div>
     </q-scroll-area>
@@ -41,12 +45,20 @@ import ServerSelect from "components/account/ServerSelect.vue";
 import PriceItem from "components/price/PriceItem.vue";
 import {layoutFix} from 'src/myFuncts.js'
 import FilterInput from "components/price/FilterInput.vue";
+import {useRoute} from "vue-router";
+import PriceItemInput from "components/price/PriceItemInput.vue";
+import PriceMasterAva from "components/members/PriceMasterAva.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const route = useRoute()
 const Prices = ref(null)
+
+const priceMember = ref(null)
+provide('priceMember', priceMember)
+
 const inputClass = ref('Input')
 
 const progress = ref(false)
@@ -125,13 +137,13 @@ const sortedList = computed(() => {
   }
   switch (SortSelected.value) {
     case 1:
-      return [...filtredList.value].sort(sortByDate)
+      return [...filteredList.value].sort(sortByDate)
 
     case 2:
-      return [...filtredList.value].sort(sortByName)
+      return [...filteredList.value].sort(sortByName)
 
     default:
-      return filtredList.value
+      return filteredList.value
   }
 })
 
@@ -152,7 +164,8 @@ function loadPrices() {
   api.post(apiUrl + '/api/get/prices.php', {
     params: {
       token: token.value,
-      serverId: curAccount.value.AccSets.serverId
+      serverId: curAccount.value.AccSets.serverId,
+      accId: route.params.accId
     }
   })
     .then((response) => {
@@ -170,6 +183,7 @@ function loadPrices() {
       }
       if (response.data.result) {
         Prices.value = response.data.data.Prices
+        priceMember.value = response.data.data.priceMember
       }
     })
     .catch(() => {

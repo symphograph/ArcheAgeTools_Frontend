@@ -11,12 +11,12 @@
             <MemberLastItem :member="member"></MemberLastItem>
           </q-item-section>
           <q-item-section side>
-            <q-toggle v-model="member.Member.isFollow"
+            <q-toggle v-model="member.isFollow"
                       v-if="member.id !== curAccount.id"
                       @update:model-value="update(
                         {
-                        id: member.Member.accountId,
-                        isFollow: member.Member.isFollow
+                        id: member.accountId,
+                        isFollow: member.isFollow
                         }
                         )"
             >
