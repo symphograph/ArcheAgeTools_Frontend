@@ -1,23 +1,83 @@
 <template>
-
       <div class="ItemArea" v-if="Item">
         <CraftResults v-if="Item && Item.Info.CraftResults !== undefined"
                       :CraftResults="Item.Info.CraftResults">
         </CraftResults>
-        <CraftList v-if="Item.craftable"></CraftList>
-        <div v-else>Некрафтабельно</div>
+        <CraftList ref="refCraftList"></CraftList>
+        <div v-if="!Item.craftable">Некрафтабельно</div>
       </div>
 </template>
 
 <script setup>
 
-import {inject} from "vue";
+import {inject, onMounted, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
 import CraftResults from "components/items/CraftResults.vue"
-import CraftList from "components/craft/CraftList.vue"
-const Item = inject('Item')
-const progress = inject('progress')
+import CraftList from "components/craft/CraftList.vue";
+import {api} from "boot/axios";
+import {LocalStorage, useQuasar} from "quasar";
+import {useRoute} from "vue-router";
 
+const q = useQuasar()
+const apiUrl = String(process.env.API)
+const token = inject('token')
+const route = useRoute()
+
+const Item = inject('Item')
+const itemId = inject('itemId')
+const progress = inject('progress')
+const refCraftList = ref(null)
+
+defineExpose({
+  loadItem
+})
+
+onMounted(()=> {
+  loadItem()
+})
+
+function loadItem() {
+  //Item.value = null
+  api.post(apiUrl + '/api/get/item.php', {
+    params: {
+      token: token.value,
+      id: route.params.id
+    }
+  })
+    .then((response) => {
+      if (response.data.error) {
+        q.notify({
+          color: 'negative',
+          position: 'center',
+          message: response.data.error,
+          icon: 'report_problem',
+          closeBtn: 'Закрыть'
+        })
+        Item.value = null
+        return false
+      }
+
+      if (response.data.result) {
+        Item.value = response.data.data
+        LocalStorage.set('lastItem', Item.value.id)
+      }
+    })
+    .catch(() => {
+      Item.value = null
+      q.notify({
+        color: 'negative',
+        position: 'center',
+        message: 'Сервер не отвечает_ььь',
+        icon: 'report_problem',
+        closeBtn: 'Закрыть'
+      })
+    })
+    .finally(() => {
+      progress.value = false
+      console.log('finally')
+      refCraftList.value.loadCrafts()
+    })
+}
 </script>
 
 <style scoped>

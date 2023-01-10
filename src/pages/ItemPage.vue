@@ -2,7 +2,7 @@
   <div class="WindowArea column">
     <div class="navigator" ref="navigatorRef">
       <div style="min-width: 20em; width: calc(100% - 20em) ">
-        <SearchSelect></SearchSelect>
+        <SearchSelect @iAmSelected="onSelectItem"></SearchSelect>
       </div>
       <div style="width: 20em">
         <q-card class="PriceCard" v-if="Item">
@@ -15,8 +15,8 @@
       </div>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
-    <q-scroll-area v-if="Item" class="col" style="width: 100%; max-width: 100vw;">
-      <ItemArea v-if="Item.Info"></ItemArea>
+    <q-scroll-area class="col" style="width: 100%; max-width: 100vw;">
+      <ItemArea v-if="SearchList.length" ref="refItemArea"></ItemArea>
     </q-scroll-area>
   </div>
 </template>
@@ -48,63 +48,22 @@ const Item = ref(null)
 provide('Item', Item)
 const needUpdate = ref(false)
 provide('needUpdate', needUpdate)
+const selectedItem = ref(null)
+provide('selectedItem', selectedItem)
+const SearchList = ref([])
+provide('SearchList', SearchList)
+const refItemArea = ref(null)
 
 const CategoriesList = inject('CategoriesList')
 
-watch(itemId, () => {
-  if (itemId.value) {
-    route.params.id = itemId.value
-    router.push({path: '/item/' + itemId.value})
-  } else {
-    Item.value = null
-  }
-}, {deep: true})
-
-
 watch(route, () => {
-  if (route.params.id) {
-    itemId.value = route.params.id * 1
-    loadItem()
+  if (route.params.id && SearchList.value.length) {
+    //Item.value = null
+    refItemArea.value.loadItem()
   }
 }, {deep: true})
 
-function loadItem() {
-  //Item.value = null
-  api.post(apiUrl + '/api/get/item.php', {
-    params: {
-      token: token.value,
-      id: itemId.value
-    }
-  })
-    .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        Item.value = null
-        return false
-      }
-      if (response.data.result) {
-        Item.value = response.data.data
-        needUpdate.value = true
-        LocalStorage.set('lastItem', Item.value.id)
-      }
-    })
-    .catch(() => {
-      Item.value = null
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
-    })
-}
+
 
 
 
@@ -119,13 +78,18 @@ function npcPrice() {
 onMounted(() => {
   if (route.params.id) {
     itemId.value = route.params.id * 1
+    //refItemArea.value.loadItem()
   }else {
     if(LocalStorage.getItem('lastItem')){
-      itemId.value = LocalStorage.getItem('lastItem')
+      route.params.id = LocalStorage.getItem('lastItem')
+      router.push({ path: '/item/' +  route.params.id })
     }
   }
 })
 
+function onSelectItem() {
+ // refItemArea.value.loadItem()
+}
 
 </script>
 

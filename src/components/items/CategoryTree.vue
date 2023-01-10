@@ -65,7 +65,7 @@ onMounted(() => {
 })
 
 function upCat() {
-  console.log(selCategId.value)
+
 }
 
 function loadCategList() {

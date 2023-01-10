@@ -1,13 +1,18 @@
 <template>
   <div class="MainName">Используется в рецептах:</div>
   <div class="upCraftArea">
-    <ItemIcon v-for="item in sortedList"
+    <template v-for="item in sortedList"
               :key="item.id"
-              :toolText="toolText(item.name, item.personal)"
-              :icon="item.icon"
-              @click="goToItem(item.id)"
-              :grade="item.grade">
-    </ItemIcon>
+    >
+      <q-btn class="no-padding" dense flat :to="'/item/' + item.id">
+        <ItemIcon
+          :toolText="toolText(item.name, item.personal)"
+          :icon="item.icon"
+          :grade="item.grade">
+        </ItemIcon>
+      </q-btn>
+    </template>
+
   </div>
 </template>
 

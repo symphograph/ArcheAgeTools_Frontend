@@ -13,12 +13,18 @@
           <MatRow :Craft="Craft"></MatRow>
         </div>
         <div class="wrapElement">
-          <q-btn class="DefBtn" label="Предпочитать" v-if="!Craft.countData.isUBest"></q-btn>
-          <q-btn v-else class="DefBtn" label="Сбросить"></q-btn>
+          <q-btn class="DefBtn"
+                 label="Предпочитать"
+                 v-if="!Craft.countData.isUBest"
+                 @click="setAsUBest"
+          >
+
+          </q-btn>
+          <q-btn v-else class="DefBtn" label="Сбросить" @click="delUBest"></q-btn>
         </div>
       </div>
     </q-card-section>
-    <q-card-section>
+    <q-card-section v-if="Craft.matPool">
       <q-expansion-item class="CraftCard" label="Все материалы" popup default-opened>
         <q-card class="CraftCard">
           <MatPool :matPool="Craft.matPool"></MatPool>
@@ -35,7 +41,12 @@ import {inject, provide, ref} from "vue";
 import CraftInfo from "components/craft/CraftInfo.vue";
 import MatRow from "components/craft/MatRow.vue";
 import MatPool from "components/craft/MatPool.vue";
+import {api} from "boot/axios";
+import {useQuasar} from "quasar";
 
+const q = useQuasar()
+const apiUrl = String(process.env.API)
+const token = inject('token')
 
 const itemId = inject('itemId')
 const Item = inject('Item')
@@ -46,6 +57,108 @@ const progress = inject('progress')
 //const resultAmount = ref(props.Craft.resultAmount)
 provide('resultAmount', props.Craft.resultAmount)
 
+const emit = defineEmits(['setUBest', 'delUBest'])
+
+
+function setAsUBest() {
+  api.post(apiUrl + 'api/set/craft/ubest.php', {
+    params: {
+      token: token.value,
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+
+      if (response.data.result) {
+        q.notify({
+          color: 'positive',
+          position: 'center',
+          message: response.data.result,
+          timeout: 100,
+          closeBtn: 'Закрыть'
+        })
+        emit('setUBest')
+        return true
+      }
+
+      let msg = 'Ой! Не получается.:('
+      if (response.data.error) {
+        msg = response.data.error
+      }
+
+      q.notify({
+        color: 'negative',
+        position: 'center',
+        message: msg,
+        icon: 'report_problem',
+        timeout: 300,
+        closeBtn: 'Закрыть'
+      })
+      return false
+
+    })
+    .catch(() => {
+      q.notify({
+        color: 'negative',
+        position: 'center',
+        html: true,
+        message: 'Что-то со связью.<br>Не сохранилось.',
+        timeout: 500,
+        icon: 'report_problem',
+        closeBtn: 'Закрыть'
+      })
+    })
+}
+
+function delUBest() {
+  api.post(apiUrl + 'api/set/craft/delubest.php', {
+    params: {
+      token: token.value,
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+
+      if (response.data.result) {
+        q.notify({
+          color: 'positive',
+          position: 'center',
+          message: response.data.result,
+          timeout: 100,
+          closeBtn: 'Закрыть'
+        })
+        emit('setUBest')
+        return true
+      }
+
+      let msg = 'Ой! Не получается.:('
+      if (response.data.error) {
+        msg = response.data.error
+      }
+
+      q.notify({
+        color: 'negative',
+        position: 'center',
+        message: msg,
+        icon: 'report_problem',
+        timeout: 300,
+        closeBtn: 'Закрыть'
+      })
+      return false
+
+    })
+    .catch(() => {
+      q.notify({
+        color: 'negative',
+        position: 'center',
+        html: true,
+        message: 'Что-то со связью.<br>Не сохранилось.',
+        timeout: 500,
+        icon: 'report_problem',
+        closeBtn: 'Закрыть'
+      })
+    })
+}
 </script>
 
 <style scoped>

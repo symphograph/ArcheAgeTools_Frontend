@@ -1,12 +1,14 @@
 <template>
   <div class="MatPool">
     <template v-for="mat in matPool" :key="mat.id">
-      <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
-                :icon="mat.Item.icon"
-                :amount="amount(mat.need * resultAmount)"
-                :tool-text="toolTip(mat)"
-      >
-      </ItemIcon>
+      <q-btn class="no-padding" dense flat :to="'/item/' + mat.id">
+        <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
+                  :icon="mat.Item.icon"
+                  :amount="amount(mat.need * resultAmount)"
+                  :tool-text="toolTip(mat)"
+        >
+        </ItemIcon>
+      </q-btn>
     </template>
   </div>
 </template>

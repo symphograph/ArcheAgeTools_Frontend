@@ -7,11 +7,13 @@
               :size="'70px'"
               @click="goToItem(Item.id)"></ItemIcon>
     <template v-for="mat in Craft.Mats" :key="mat.id">
-      <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
-                :icon="mat.Item.icon"
-                :amount="mat.need"
-                :tool-text="toolTip(mat)"
-                @click="goToItem(mat.id)"></ItemIcon>
+      <q-btn class="no-padding" dense flat :to="'/item/' + mat.id">
+        <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
+                  :icon="mat.Item.icon"
+                  :amount="mat.need"
+                  :tool-text="toolTip(mat)"
+        ></ItemIcon>
+      </q-btn>
     </template>
   </div>
 </template>

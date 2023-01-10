@@ -1,9 +1,11 @@
 <template>
 
     <q-select :options="options"
-              v-model="selected"
+              v-if="SearchList.length"
+              v-model="selectedItem"
               option-label="name"
               option-value="id"
+              map-options
               filled
               use-input
               autocomplete="off"
@@ -15,14 +17,14 @@
               @filter="filterFn"
               @update:model-value="itemSelected"
               :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 97%)' }"
-              map-options>
+    >
 
-      <template v-slot:prepend v-if="selected">
+      <template v-slot:prepend v-if="selectedItem">
         <div style="width: 40px">
-          <ItemIcon :icon="selected.icon" :grade="selected.grade"></ItemIcon>
+          <ItemIcon :icon="selectedItem.icon" :grade="selectedItem.grade"></ItemIcon>
         </div>
       </template>
-      <template v-if="selected" v-slot:append>
+      <template v-if="selectedItem" v-slot:append>
         <q-icon name="cancel" @click.stop.prevent="clear" class="cursor-pointer" />
       </template>
       <template v-slot:option="scope">
@@ -55,33 +57,35 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 
-const ItemList = ref([])
-const selected = ref(null)
-const options = ref([...ItemList.value])
-const itemId = inject('itemId')
+const SearchList = inject('SearchList')
+const selectedItem = inject('selectedItem')
+
+const options = ref([...SearchList.value])
+//const itemId = inject('itemId')
 const Item = inject('Item')
 const selCategId= inject('selCategId')
 const selCategNode = inject('selCategNode',null)
 const searchInput = ref(null)
+const emit = defineEmits(['iAmSelected'])
 
 function label() {
-  if(Item.value) {
 
-    //return Item.value.Info.Category.name
+  if(Item.value && selCategId.value) {
+
+    return Item.value.Info.Category.name
   }
-  return selCategNode.value ? selCategNode.value.name : 'Все'
+  return 'Все'
+  //return selCategNode.value ? selCategNode.value.name : 'Все'
 }
 
 function itemSelected () {
-  console.log(selected.value)
-  itemId.value = selected.value.id
-  //router.push({ path: '/item/' + itemId.value })
-  //route.params.id = itemId.value
-  selCategId.value = selected.value.categId
+  route.params.id = selectedItem.value.id
+  router.push({ path: '/item/' +  route.params.id })
+  selCategId.value = selectedItem.value.categId
+  emit('iAmSelected')
 }
 
 watch(selCategId, () => {
-  //itemId.value = 0
   //selected.value = null
   if(selCategId.value){
     //searchInput.value.showPopup()
@@ -90,25 +94,23 @@ watch(selCategId, () => {
 }, {deep: true})
 
 watch(Item, () => {
-  if(itemId.value) {
-    let sel = {...Item.value}
-    sel.Info = null
-    selected.value = sel
-    selCategId.value = selected.value.categId
+  if(SearchList.value.length && route.params.id && Item.value) {
+    selectedItem.value = SearchList.value.find(el => el.id === Item.value.id)
+    selCategId.value = selectedItem.value.categId
   }
 }, {deep: true})
 
 function filterFn (val, update, abort) {
   if (val === '' && !selCategId.value) {
     update(() => {
-      options.value = [...ItemList.value]
+      options.value = [...SearchList.value]
     })
     return
   }
 
   update(() => {
     const needle = val.toLowerCase()
-    let List = [...ItemList.value]
+    let List = [...SearchList.value]
     if(selCategId.value){
       List = List.filter(v => v.categId === selCategId.value)
     }
@@ -137,7 +139,7 @@ function loadList() {
         return false
       }
       if (response.data.result) {
-        ItemList.value = response.data.data
+        SearchList.value = response.data.data
       }
     })
     .catch(() => {
@@ -152,8 +154,8 @@ function loadList() {
 }
 
 function clear() {
-  selected.value = null
-  itemId.value = 0
+  selectedItem.value = null
+  //itemId.value = 0
   selCategId.value = 0
 }
 
