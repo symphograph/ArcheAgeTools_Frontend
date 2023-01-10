@@ -1,16 +1,18 @@
 <template>
-  <div class="MatPool">
-    <template v-for="mat in matPool" :key="mat.id">
-      <q-btn class="no-padding" dense flat :to="'/item/' + mat.id">
-        <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
-                  :icon="mat.Item.icon"
-                  :amount="amount(mat.need * resultAmount)"
-                  :tool-text="toolTip(mat)"
-        >
-        </ItemIcon>
-      </q-btn>
-    </template>
-  </div>
+  <q-expansion-item label="Все материалы" popup>
+    <div class="MatPool">
+      <template v-for="mat in matPool" :key="mat.id">
+        <q-btn class="no-padding" dense flat :to="'/item/' + mat.id">
+          <ItemIcon :grade="mat.grade ? mat.grade : mat.Item.grade"
+                    :icon="mat.Item.icon"
+                    :amount="amount(mat.need * resultAmount)"
+                    :tool-text="toolTip(mat)"
+          >
+          </ItemIcon>
+        </q-btn>
+      </template>
+    </div>
+  </q-expansion-item>
 </template>
 
 <script setup>
@@ -43,6 +45,7 @@ function amount(need){
 
 <style scoped>
 .MatPool {
+  padding: 1em;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;

@@ -8,7 +8,7 @@
 
 
     <template v-if="CraftList && CraftList.length">
-      <q-expansion-item label="Другие рецепты">
+      <q-expansion-item label="Другие рецепты" popup>
         <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft" @setUBest="onSetUBest"></CraftCard>
       </q-expansion-item>
     </template>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref, inject, watch} from "vue"
+import {onMounted, ref, inject, watch, computed, provide} from "vue"
 import {api} from 'boot/axios'
 import {useQuasar} from 'quasar'
 import CraftCard from "components/craft/CraftCard.vue"
@@ -40,6 +40,10 @@ const CraftList = ref(null)
 const Lost = ref([])
 
 const progress = inject('progress')
+const isSingleCraft = computed(()=> {
+  return !(CraftList.value && CraftList.value.length);
+})
+provide('isSingleCraft', isSingleCraft)
 
 defineExpose({
   loadCrafts

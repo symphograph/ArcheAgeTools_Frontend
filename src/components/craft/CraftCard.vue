@@ -12,24 +12,22 @@
         <div class="wrapElement">
           <MatRow :Craft="Craft"></MatRow>
         </div>
-        <div class="wrapElement">
+        <div class="wrapElement" v-if="!isSingleCraft">
           <q-btn class="DefBtn"
                  label="Предпочитать"
                  v-if="!Craft.countData.isUBest"
                  @click="setAsUBest"
           >
-
+            <q-tooltip class="bg-tooltip">
+              Всегда выбирать этот рецепт при расчетах
+            </q-tooltip>
           </q-btn>
           <q-btn v-else class="DefBtn" label="Сбросить" @click="delUBest"></q-btn>
         </div>
       </div>
     </q-card-section>
     <q-card-section v-if="Craft.matPool">
-      <q-expansion-item class="CraftCard" label="Все материалы" popup default-opened>
-        <q-card class="CraftCard">
           <MatPool :matPool="Craft.matPool"></MatPool>
-        </q-card>
-      </q-expansion-item>
     </q-card-section>
   </q-card>
 </template>
@@ -54,6 +52,7 @@ const props = defineProps({
   Craft: ref(null)
 })
 const progress = inject('progress')
+const isSingleCraft = inject('isSingleCraft')
 //const resultAmount = ref(props.Craft.resultAmount)
 provide('resultAmount', props.Craft.resultAmount)
 

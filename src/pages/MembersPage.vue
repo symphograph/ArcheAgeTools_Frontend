@@ -12,7 +12,7 @@
           </q-item-section>
           <q-item-section side>
             <q-toggle v-model="member.isFollow"
-                      v-if="member.id !== curAccount.id"
+                      v-if="member.accountId !== curAccount.id"
                       @update:model-value="update(
                         {
                         id: member.accountId,
