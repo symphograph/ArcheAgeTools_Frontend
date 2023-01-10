@@ -74,7 +74,6 @@ function loadItem() {
     })
     .finally(() => {
       progress.value = false
-      console.log('finally')
       refCraftList.value.loadCrafts()
     })
 }

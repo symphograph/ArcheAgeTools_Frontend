@@ -56,7 +56,7 @@ watch(Item, () => {
 }, {deep: true})
 
 onMounted(() => {
-  console.log('Mounted')
+
 })
 
 function onSetUBest (){

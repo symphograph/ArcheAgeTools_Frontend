@@ -28,7 +28,7 @@
     <q-scroll-area v-if="Prices" class="col" style="width: 100%">
       <div class="PricesArea">
         <template v-for="price in sortedList" :key="price.itemId">
-          <PriceItemInput v-if="route.params.accId*1 === curAccount.id" :price="price" @delPrice="delPrice(price.itemId)"></PriceItemInput>
+          <PriceItemInput v-if="!route.params.accId || route.params.accId*1 === curAccount.id" :price="price" @delPrice="delPrice(price.itemId)"></PriceItemInput>
           <PriceItem v-else :price="price"></PriceItem>
         </template>
       </div>

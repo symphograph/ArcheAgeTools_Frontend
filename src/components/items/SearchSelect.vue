@@ -45,7 +45,7 @@
 
 <script setup>
 import {api} from 'boot/axios'
-import {useQuasar} from 'quasar'
+import {LocalStorage, useQuasar} from 'quasar'
 import {onMounted, ref, provide, inject, watch} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {useRoute, useRouter} from 'vue-router'
@@ -122,6 +122,7 @@ function filterFn (val, update, abort) {
 }
 
 function loadList() {
+
   api.post(apiUrl + 'api/get/search.php', {
     params: {
       token: token.value
@@ -139,6 +140,7 @@ function loadList() {
         return false
       }
       if (response.data.result) {
+        indexDB(response.data.data)
         SearchList.value = response.data.data
       }
     })
@@ -151,6 +153,25 @@ function loadList() {
         closeBtn: 'Закрыть'
       })
     })
+}
+
+function indexDB(list) {
+  let openRequest = indexedDB.open('test', 1)
+  openRequest.onupgradeneeded = function() {
+    console.log('иницилиазия бд')
+    // срабатывает, если на клиенте нет базы данных
+    // ...выполнить инициализацию...
+  };
+
+  openRequest.onerror = function() {
+    console.error("Error", openRequest.error);
+  };
+
+  openRequest.onsuccess = function() {
+    let db = openRequest.result;
+    console.log('вижу бд')
+    // продолжить работу с базой данных, используя объект db
+  };
 }
 
 function clear() {

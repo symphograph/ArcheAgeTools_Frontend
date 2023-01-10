@@ -262,6 +262,7 @@ body {
 
 .bg-tooltip {
   color: black;
+  max-width: 270px;
   background: rgba(255, 255, 230, 0.9);
   box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
   border: 1px solid #333;

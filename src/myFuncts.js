@@ -1,4 +1,5 @@
 import moment from 'moment'
+import {api} from "boot/axios";
 
 export function rateInfo (val) {
   let rates = [1, 0.5, 'гпх', 'гпх', 0.25]

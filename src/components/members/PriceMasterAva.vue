@@ -9,7 +9,7 @@
       <q-item-label caption>
         {{priceMember.publicNick}}
       </q-item-label>
-      <q-item-label>
+      <q-item-label v-if="route.params.accId*1 === curAccount.id">
         <q-toggle
           label="Доверять"
           v-model="priceMember.isFollow"
