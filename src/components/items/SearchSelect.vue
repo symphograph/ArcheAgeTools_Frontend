@@ -155,22 +155,78 @@ function loadList() {
     })
 }
 
+function getListFromIdxDB()
+{
+  let openRequest = indexedDB.open('prepData', 1)
+  openRequest.onupgradeneeded = function() {
+    //console.log('иницилиазия бд')
+    // срабатывает, если на клиенте нет базы данных
+    // ...выполнить инициализацию...
+    let db = openRequest.result;
+    if (!db.objectStoreNames.contains('cachedData')) {
+      db.createObjectStore('cachedData', {keyPath: 'id'})
+    }
+  }
+
+  openRequest.onerror = function() {
+    console.error("Error", openRequest.error);
+  }
+
+  openRequest.onsuccess = function() {
+    let db = openRequest.result;
+    // продолжить работу с базой данных, используя объект db
+    let transaction = db.transaction('cachedData', 'readonly')
+    let cachedData = transaction.objectStore("cachedData")
+    let list = cachedData.get('searchList')
+    list.onsuccess = (event) => {
+      let result = event.target.result
+      if(result){
+        SearchList.value = result.content
+      } else {
+        loadList()
+      }
+    }
+
+    list.onerror = (event) => {
+      console.log('SearchList не сохранен')
+    }
+  }
+}
+
 function indexDB(list) {
-  let openRequest = indexedDB.open('test', 1)
+  let openRequest = indexedDB.open('prepData', 1)
   openRequest.onupgradeneeded = function() {
     console.log('иницилиазия бд')
     // срабатывает, если на клиенте нет базы данных
     // ...выполнить инициализацию...
+    let db = openRequest.result;
+    if (!db.objectStoreNames.contains('cachedData')) {
+      db.createObjectStore('cachedData', {keyPath: 'id'});
+    }
   };
 
   openRequest.onerror = function() {
     console.error("Error", openRequest.error);
-  };
+  }
 
   openRequest.onsuccess = function() {
     let db = openRequest.result;
-    console.log('вижу бд')
     // продолжить работу с базой данных, используя объект db
+    console.log('вижу бд')
+    let transaction = db.transaction('cachedData', 'readwrite');
+    let cachedData = transaction.objectStore("cachedData")
+    let searchList = {
+      id: 'searchList',
+      content: list
+    };
+    let request = cachedData.add(searchList);
+    request.onsuccess = function() { // (4)
+      console.log("Список добавлен в хранилище", request.result);
+    };
+
+    request.onerror = function() {
+      console.log("Ошибка", request.error);
+    };
   };
 }
 
@@ -180,7 +236,10 @@ function clear() {
   selCategId.value = 0
 }
 
-onMounted(() => loadList())
+onMounted(() => {
+  getListFromIdxDB()
+  //loadList()
+})
 
 </script>
 
