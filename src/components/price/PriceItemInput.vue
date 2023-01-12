@@ -2,7 +2,7 @@
   <q-item dense class="PriceCell">
     <q-item-section>
       <q-item-label :lines="1">
-        <div class="PriceLabel">{{ price.name }}</div>
+        <div class="PriceLabel" @click="copy(price.name)">{{ price.name }}</div>
       </q-item-label>
       <q-input
         mask="## ## ##"
@@ -55,7 +55,7 @@ import ItemIcon from "components/ItemIcon.vue";
 import {inject, ref} from "vue";
 import {fDate} from "src/myFuncts.js"
 import {api} from "boot/axios";
-import {useQuasar} from "quasar";
+import {copyToClipboard, useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
 import {useRouter} from "vue-router";
 
@@ -222,6 +222,22 @@ function savePrice() {
         timeout: 300,
         icon: 'report_problem'
       })
+    })
+}
+
+function copy (val) {
+  copyToClipboard(val)
+    .then(() => {
+      q.notify({
+        color: 'positive',
+        position: 'center',
+        message: 'Скопировано',
+        icon: 'content_copy',
+        timeout: 1
+      })
+    })
+    .catch(() => {
+      // fail
     })
 }
 </script>
