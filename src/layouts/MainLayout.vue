@@ -341,4 +341,14 @@ body {
   height: 0.9em;
   width: 0.9em;
 }
+
+.itemIconsArea {
+  max-height: 226px;
+  overflow-y: scroll;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  padding-bottom: 20px;
+}
 </style>

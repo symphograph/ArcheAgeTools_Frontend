@@ -58,7 +58,6 @@ function goToItem (id) {
 <style scoped>
 .upCraftArea {
   max-height: 226px;
-  /*max-width: 720px;*/
   overflow-y: scroll;
   display: flex;
   flex-wrap: wrap;

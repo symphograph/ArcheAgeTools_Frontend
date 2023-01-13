@@ -13,7 +13,10 @@
       </q-expansion-item>
     </template>
     <template v-if="Lost && Lost.length">
-      <LostList :Lost="Lost"></LostList>
+
+      <LostList :Lost="Lost" msg="<b>Расчет не получился.</b><br>
+    В дочерних рецептах есть неизвестные цены.<br>
+    Без них я не могу посчитать и сравнить."></LostList>
     </template>
   </template>
 

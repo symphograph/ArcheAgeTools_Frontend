@@ -3,6 +3,7 @@
         <CraftResults v-if="Item && Item.Info.CraftResults !== undefined"
                       :CraftResults="Item.Info.CraftResults">
         </CraftResults>
+        <CurrencyArea v-if="Item.currencyId && Item.currencyId !== 500"></CurrencyArea>
         <CraftList ref="refCraftList"></CraftList>
         <div v-if="!Item.craftable">Некрафтабельно</div>
       </div>
@@ -17,6 +18,7 @@ import CraftList from "components/craft/CraftList.vue";
 import {api} from "boot/axios";
 import {LocalStorage, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
+import CurrencyArea from "components/items/CurrencyArea.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

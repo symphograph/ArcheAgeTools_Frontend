@@ -1,9 +1,7 @@
 <template>
 <q-card class="CraftCard">
   <q-card-section>
-    <b>Расчет не получился.</b><br>
-    В дочерних рецептах есть неизвестные цены.<br>
-    Без них я не могу посчитать и сравнить.
+    <div v-html="msg"></div>
   </q-card-section>
   <q-card-section>
     <div class="PricesArea">
@@ -18,6 +16,7 @@ import {ref} from "vue";
 import LostPriceItem from "components/price/LostPriceItem.vue";
 
 const Props = defineProps({
+  msg: ref(null),
   Lost: ref(null)
 })
 </script>
