@@ -3,15 +3,21 @@
     <div class="navigator" ref="navigatorRef">
       <div style="min-width: 20em; width: calc(100% - 20em) ">
         <SearchSelect @iAmSelected="onSelectItem"></SearchSelect>
+        <q-item-label style="padding: 0 1em" caption>
+          {{ (Item && Item.personal) ? 'Персональный' : 'Передаваемый' }}
+        </q-item-label>
+
       </div>
       <div style="width: 20em">
         <q-card class="PriceCard" v-if="Item">
-          <PriceInput></PriceInput>
+          <PriceInput :Price="Item.Pricing.Price" @updated="refItemArea.loadItem()"></PriceInput>
           <div v-if="Item.isTradeNPC ">Продается у NPC:
             <PriceImager :price="Item.Pricing.priceFromNPC" :currencyId="Item.Pricing.currencyId"></PriceImager>
           </div>
+          <div v-else-if="Item.Pricing.goldable">
+            <span v-html="priceImager(Item.Pricing.Price.price)"></span>
+          </div>
         </q-card>
-
       </div>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
@@ -30,6 +36,7 @@ import ItemArea from "components/items/ItemArea.vue"
 import {useRoute, useRouter} from 'vue-router'
 import PriceInput from "components/price/PriceInput.vue"
 import PriceImager from "components/price/PriceImager.vue"
+import {priceImager} from "src/myFuncts";
 
 const route = useRoute()
 const router = useRouter()

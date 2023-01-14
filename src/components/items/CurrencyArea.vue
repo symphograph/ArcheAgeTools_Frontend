@@ -15,7 +15,7 @@
       <template v-if="Currency.MonetisationItems.length">
         <div class="PricesArea">
           <template v-for="item in Currency.MonetisationItems" :key="item.id">
-            <PriceCurrencyItem :CurItem="item"></PriceCurrencyItem>
+            <PriceCurrencyItem :CurItem="item" @updated="loadList" @delPrice="loadList"></PriceCurrencyItem>
           </template>
         </div>
       </template>
@@ -25,9 +25,9 @@
           Значение можно уточнить.<br>
         </div>
         <div v-else>
-          Не удалось расчитать среднее значение.<br>
+          Не удалось расчитать среднюю цену <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt=""><br>
         </div>
-        <q-expansion-item label="Добавить цены">
+        <q-expansion-item label="Добавить цены" icon="add">
           <LostList :Lost="Currency.lost"
                     :msg="'Чем больше цен известно калькулятору, тем точнее результат'"
           ></LostList>
@@ -71,6 +71,7 @@ provide('TradableItems', TradableItems)
 
 watch(Item, () => {
   if (Item.value) {
+    console.log('updated')
     loadList()
   }
 }, {deep: true})

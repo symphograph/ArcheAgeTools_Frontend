@@ -7,7 +7,8 @@
       <q-input
         mask="## ## ##"
         class="PriceInput"
-        :label="fDate(CurItem.Item.Price.datetime)"
+        :label="fDate(CurItem.Item.Price.datetime) + ' - ' + CurItem.Item.Price.author"
+        :label-color="priceColor(CurItem.Item.Price.method)"
         dense
         filled
         borderless
@@ -35,7 +36,7 @@
                  flat
                  @click="savePrice"></q-btn>
         </template>
-        <template v-slot:after>
+        <template v-slot:after v-if="CurItem.Item.Price.accountId === curAccount.id">
           <q-tooltip>Удалить</q-tooltip>
           <DelBtn @onOk="delPrice"></DelBtn>
         </template>
@@ -52,7 +53,7 @@
 
 import ItemIcon from "components/ItemIcon.vue";
 import {inject, ref} from "vue";
-import {fDate, priceImager} from "src/myFuncts.js"
+import {fDate, priceColor, priceImager} from "src/myFuncts.js"
 import {api} from "boot/axios";
 import {copyToClipboard, useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
@@ -67,12 +68,13 @@ const Props = defineProps({
   CurItem: ref(null)
 })
 
-const emit = defineEmits(['delPrice'])
+const emit = defineEmits(['delPrice', 'updated'])
 
 const nPrice = ref(Props.CurItem.Item.Price.price)
 const priceRef = ref(null)
 const focused = ref(false)
 const buyable = ref(Props.CurItem.Item.Price.buyOnly)
+const curAccount = inject('curAccount')
 
 function goTo(id) {
   router.push({path: '/item/' + id})
@@ -146,6 +148,7 @@ function savePrice() {
           timeout: 300,
           closeBtn: 'Закрыть'
         })
+        emit('updated')
         return true
       }
 

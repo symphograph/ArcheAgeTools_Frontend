@@ -86,7 +86,11 @@
           <q-item-section side>
           </q-item-section>
         </q-item>
-        <q-item tag="label" v-if="isBest && Item.isMat" dense v-ripple>
+        <q-item tag="label"
+                v-if="isBest && Item.isMat && !Item.personal"
+                dense
+                v-ripple
+        >
           <q-tooltip class="bg-tooltip">
             Использовать в расчетах цену покупки вместо стоимости крафта
           </q-tooltip>
