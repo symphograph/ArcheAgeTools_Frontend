@@ -70,7 +70,14 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/PriceList.vue') }
     ]
-  }
+  },
+  {
+    path: '/category',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/CategoryPage.vue') }
+    ]
+  },
 ]
 
 export default routes

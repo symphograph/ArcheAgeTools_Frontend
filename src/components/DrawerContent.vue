@@ -23,7 +23,7 @@
 import EssentialLink from 'components/EssentialLink.vue'
 import {computed, inject, onMounted} from "vue";
 import {useRoute} from "vue-router";
-import CategoryTree from "components/items/CategoryTree.vue";
+import CategoryTree from "components/category/CategoryTree.vue";
 import AccountSelector from "components/account/AccountSelector.vue";
 import LoginList from "components/account/LoginList.vue";
 import {useQuasar} from "quasar";
@@ -46,6 +46,12 @@ const linksList = [
     link: '/item/'
   },
   {
+    title: 'Категории',
+    caption: 'Предметы и категории',
+    ava: '/img/crafcul.png',
+    link: '/category'
+  },
+  {
     title: 'Мои цены',
     caption: 'Цены предметов',
     ava: '/img/crafcul.png',
@@ -66,7 +72,7 @@ const linksList = [
 ]
 
 const isItemPage = computed(()=>{
-  return !!route.path.match(/^\/item\//);
+  return !!(route.path.match(/^\/item\//)) || !!(route.path.match(/^\/category/));
 })
 
 onMounted(() => {

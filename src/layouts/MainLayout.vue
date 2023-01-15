@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import {ref, provide, onMounted, watch, onBeforeMount} from 'vue'
+import {ref, provide, onMounted, watch, onBeforeMount, computed} from 'vue'
 import {api} from "boot/axios"
 import {LocalStorage, useQuasar} from "quasar"
 import AccountSelector from "components/account/AccountSelector.vue"
@@ -118,6 +118,8 @@ const CategoriesList = ref(null)
 provide('CategoriesList', CategoriesList)
 const expandedCategNode = ref([])
 provide('expandedCategNode', expandedCategNode)
+const categMode = ref(false)
+provide('categMode',categMode)
 
 
 function toggleLeftDrawer() {
@@ -350,5 +352,10 @@ body {
   justify-content: flex-start;
   align-content: flex-start;
   padding-bottom: 20px;
+}
+
+.myScrollArea {
+  width: 100%;
+  max-width: 100vw;
 }
 </style>

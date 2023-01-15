@@ -22,7 +22,7 @@
           v-model:selected="selCategId"
           no-transition
           selected-color="orange"
-          @update:selected="upCat"
+          @update:selected="setCategMode"
           node-key="id"
           dense
         />
@@ -35,14 +35,18 @@
 import {inject, onMounted, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
+import {useRoute, useRouter} from "vue-router";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
+const route = useRoute()
+const router = useRouter()
 
 const CategoriesList = inject('CategoriesList')
 const expandedCategNode = inject('expandedCategNode')
 const selCategId = inject('selCategId')
 const selCategNode = inject('selCategNode')
 const tree = ref(null)
+const categMode = inject('categMode')
 
 
 watch(selCategId, () => {
@@ -64,8 +68,11 @@ onMounted(() => {
   loadCategList()
 })
 
-function upCat() {
-
+function setCategMode() {
+  //categMode.value = !!selCategId.value
+  if (route.path !== '/category'){
+    router.push({ path: '/category' })
+  }
 }
 
 function loadCategList() {

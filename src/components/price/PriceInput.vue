@@ -66,7 +66,7 @@ const priceErr = computed(()=> {
 
 function label() {
   if(!!!nPrice.value.author){
-    return 'Не найдено'
+    return 'Цена не найдена'
   }
   return fDate(nPrice.value.datetime) + ' - ' +  nPrice.value.author
 }

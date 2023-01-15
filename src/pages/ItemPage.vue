@@ -6,7 +6,6 @@
         <q-item-label style="padding: 0 1em" caption>
           {{ (Item && Item.personal) ? 'Персональный' : 'Передаваемый' }}
         </q-item-label>
-
       </div>
       <div style="width: 20em">
         <q-card class="PriceCard" v-if="Item">
@@ -21,8 +20,9 @@
       </div>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
-    <q-scroll-area class="col" style="width: 100%; max-width: 100vw;">
-      <ItemArea v-if="SearchList.length" ref="refItemArea"></ItemArea>
+    <q-scroll-area class="col myScrollArea">
+      <ItemArea v-if="SearchList.length" ref="refItemArea"
+      ></ItemArea>
     </q-scroll-area>
   </div>
 </template>
@@ -44,6 +44,7 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const price = ref(122345678)
+const categMode = inject('categMode')
 const navigatorRef = ref(null)
 const progress = ref(false)
 provide('progress',progress)
@@ -95,15 +96,12 @@ onMounted(() => {
 })
 
 function onSelectItem() {
- // refItemArea.value.loadItem()
+ categMode.value = false
 }
 
 </script>
 
 <style scoped>
-.myScroll {
-  overflow-x: hidden;
-}
 .navigator {
   flex-wrap: wrap;
 }
