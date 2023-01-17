@@ -78,6 +78,13 @@ const routes = [
       { path: '', component: () => import('pages/CategoryPage.vue') }
     ]
   },
+  {
+    path: '/packs',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PackPage.vue') }
+    ]
+  },
 ]
 
 export default routes
