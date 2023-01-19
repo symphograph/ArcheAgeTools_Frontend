@@ -1,5 +1,6 @@
 <template>
   <div class="navBtnArea">
+    <q-tooltip v-if="toolText" class="bg-tooltip"><div v-html="toolText"></div></q-tooltip>
     <q-btn round push>
       <q-avatar :class="active ? 'navBtn navBtnActive' : 'navBtn'">
         <img :src="imgBtn" :alt="label">
@@ -15,7 +16,8 @@ import {ref} from "vue";
 const props = defineProps({
   active: ref(false),
   imgBtn: ref(null),
-  label: ref('')
+  label: ref(''),
+  toolText: ref('')
 })
 </script>
 

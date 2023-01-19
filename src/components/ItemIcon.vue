@@ -16,7 +16,7 @@ const props = defineProps({
   locIcon: ref(''),
   grade: ref(1),
   amount: ref(null),
-  toolText: ref('ggg'),
+  toolText: ref(''),
   size: ref(null)
 })
 

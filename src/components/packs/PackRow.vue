@@ -1,64 +1,110 @@
 <template>
-  <q-item>
-    <q-item-section avatar class="ptCol1">
-      <ItemIcon
-        :amount="'12%'"
-        :icon="pRoute.Pack.icon"
-        :grade="pRoute.Pack.grade"
-        :size="'60px'"
-      ></ItemIcon>
-    </q-item-section>
-    <q-item-section avatar class="ptCol2">
-      <q-item-label lines="2" class="packName">
-        {{ pRoute.Pack.name }}
-      </q-item-label>
-      <q-item-label caption>
+  <tr>
+    <td class="ptCol1">
+      <q-item dense>
+        <q-item-section avatar>
+          <q-avatar size="1.5em" style="position: absolute; top: -0.3em; left: 0.5em; z-index: 99">
+            <img :src="'/img/packtypes/' + pRoute.Pack.typeId + '.png'" alt="">
+          </q-avatar>
+          <ItemIcon
+            :amount="pRoute.Freshness.FreshLvl.percent + '%'"
+            :icon="pRoute.Pack.icon"
+            :grade="pRoute.Pack.grade"
+            :size="'60px'"
+          ></ItemIcon>
+        </q-item-section>
+        <q-item-section top>
+          <q-item-label lines="2" class="packName">
+            {{ pRoute.Pack.name }}
+          </q-item-label>
+          <q-item-label caption class="mobile-hide">
+            {{ pRoute.Freshness.name }}
+          </q-item-label>
+          <q-item-label caption class="mobile-only">
+            {{ pRoute.ZoneFrom.name }}
+          </q-item-label>
+          <q-item-label caption class="mobile-only">
+            {{ pRoute.ZoneTo.name }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </td>
+    <td class="mobile-hide" style="text-align: center">
+      <q-item-label caption style="text-align: center">
         {{ pRoute.ZoneFrom.name }}
       </q-item-label>
+    </td>
+    <td class="mobile-hide" style="text-align: center">
       <q-item-label caption>
         {{ pRoute.ZoneTo.name }}
       </q-item-label>
-    </q-item-section>
-    <q-item-section thumbnail class="ptCol3">
-      <q-item-label caption>
-        {{ pRoute.ZoneFrom.name }}
+    </td>
+    <td style="text-align: center">
+      <q-item-label caption lines="1" style="align-content: center">
+        <q-tooltip class="bg-tooltip">
+          <SalaryCard :siol="siol"
+                      :ratePercent="ratePercent"
+                      :freshPercent="pRoute.Freshness.FreshLvl.percent"
+                      :dbPrice="pRoute.dbPrice"
+                      :currencyId="pRoute.currencyId"
+          ></SalaryCard>
+        </q-tooltip>
+        <PriceImager :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImager>
       </q-item-label>
-    </q-item-section>
-    <q-item-section class="ptCol4">
-      <q-item-label caption>
-        {{ pRoute.ZoneTo.name }}
+    </td>
+    <td v-if="addProfit" style="text-align: right">
+      <q-item-label>
+        <PriceImager :price="profit(pRoute.dbPrice)" :currency-id="pRoute.currencyId"></PriceImager>
       </q-item-label>
-    </q-item-section>
-    <q-item-section class="ptCol5">
-      <q-item-label caption>
-        <PriceImager :price="pRoute.packPrice" :currency-id="pRoute.currencyId"></PriceImager>
-      </q-item-label>
-    </q-item-section>
-    <q-item-section side class="ptCol6">
-      <PriceImager :price="pRoute.packPrice" :currency-id="pRoute.currencyId"></PriceImager>
-    </q-item-section>
-    <q-item-section class="ptCol7" side>
-      <q-item-label caption>
-        <PriceImager :price="pRoute.packPrice" :currency-id="pRoute.currencyId"></PriceImager>
-      </q-item-label>
-    </q-item-section>
-  </q-item>
+    </td>
+  </tr>
 </template>
 
 <script setup>
 
-import {ref} from "vue";
+import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
 import PriceImager from "components/price/PriceImager.vue";
+import {profit} from "src/myFuncts.js";
+import SalaryCard from "components/packs/SalaryCard.vue";
 
 const props = defineProps({
   pRoute: ref(null)
 })
+const addProfit = inject('addProfit')
+const siol = inject('siol')
+const ratePercent = inject('ratePercent')
+
+const flatSalary = computed(() => {
+  return Math.round(props.pRoute.dbPrice / 130 * 100)
+})
+
+const siolPercent = computed(()=> {
+  return siol.value && (props.pRoute.currencyId === 500) ? 5 : 0
+})
+
+const factoryPrice = computed(()=>{
+  let result = flatSalary.value * (ratePercent.value / 100)
+  return  result * (1 + siolPercent.value / 100)
+})
+
+const finalSalary = computed(()=> {
+  let salary = factoryPrice.value * (1 + (props.pRoute.Freshness.FreshLvl.percent / 100))
+  salary *= 1.02 // Стандартная надбавка 2%
+
+  if(props.pRoute.currencyId !== 500){
+    salary /= 100
+  }
+  return Math.round(salary)
+})
 </script>
 
-<style scoped>
+<style>
 .packName{
   width: 12em;
   font-size: 13px;
+}
+.bg-tooltip {
+  width: 250px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <span v-html="priceImager(price, currencyId)"></span>
+  <span class="no-wrap" v-html="priceImager(price, currencyId)"></span>
 </template>
 
 <script setup>

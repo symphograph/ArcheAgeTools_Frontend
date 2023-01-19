@@ -1,9 +1,18 @@
 <template>
   <div class="menuArea">
     <div class="menuRow" style="justify-content: space-evenly">
+      <div class="sideBtnCard">
+        <template v-for="sd in Sides" :key="sd.value">
+          <NavButton :label="sd.label"
+                     :active="side === sd.value"
+                     :imgBtn="'/img/side/' + sd.value + '.png'"
+                     @click="side = sd.value"
+          ></NavButton>
+        </template>
+      </div>
       <h1>Паки 8.0</h1>
       <div style="display: flex;">
-        <q-input v-model="percent"
+        <q-input v-model="ratePercent"
                  class="Input"
                  dense
                  style="width: 9em; height: 3em; margin: 1em"
@@ -21,23 +30,31 @@
         ></NavButton>
       </div>
       <TypeSelect></TypeSelect>
+      <NavButton label="+Профит"
+                 :active="addProfit"
+                 :imgBtn="'/img/profit.png'"
+                 toolText="Расчитывать прибыль.<br>
+                 Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
+                 @click="addProfit = !addProfit"
+      ></NavButton>
     </div>
     <div class="menuRow">
+
       <div class="menuSection">
-        <div class="sideBtnCard">
-          <template v-for="sd in Sides" :key="sd.value">
-            <NavButton :label="sd.label"
-                       :active="side === sd.value"
-                       :imgBtn="'/img/side/' + sd.value + '.png'"
-                       @click="side = sd.value"
-            ></NavButton>
-          </template>
-        </div>
+
         <div>
           <q-tooltip v-if="!side">Материк не выбран</q-tooltip>
           <q-tooltip v-else-if="disabled">Категории не выбраны</q-tooltip>
           <ZoneFromSelect v-if="Object.keys(zones).length"></ZoneFromSelect>
           <ZoneToSelect v-if="Object.keys(zones).length"></ZoneToSelect>
+        </div>
+        <div>
+          <div>
+            <q-radio v-model="condition" label="Зрелые" :val="1"></q-radio>
+          </div>
+          <div>
+            <q-radio v-model="condition" label="Протухшие" :val="2"></q-radio>
+          </div>
         </div>
       </div>
     </div>
@@ -45,7 +62,6 @@
 </template>
 
 <script setup>
-import SideSelect from "components/packs/SideSelect.vue";
 import {computed, inject, onMounted, provide, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
@@ -62,6 +78,7 @@ const inputClass = ref('Input')
 const emit = defineEmits(['sideSelected'])
 
 const packList = inject('packList')
+const Lost = inject('Lost')
 
 const side = inject('side')
 const zones = ref({})
@@ -69,7 +86,10 @@ const allZonesTo = ref([])
 const zoneFromId = inject('zoneFromId')
 const zoneToId = inject('zoneToId')
 const disabled = inject('disabled')
+const ratePercent = inject('ratePercent')
 const siol = inject('siol')
+const addProfit = inject('addProfit')
+const condition = inject('condition')
 const progress = inject('progress')
 
 const Sides = [
@@ -87,8 +107,6 @@ const Sides = [
   }
 ]
 provide('Sides', Sides)
-
-const percent = inject('percent')
 
 const zonesFrom = computed(()=>{
   if (!Object.keys(zones.value).length || !side.value){
@@ -142,7 +160,10 @@ function loadList() {
   api.post(apiUrl + 'api/get/packs.php', {
     params: {
       token: token.value,
-      side: side.value
+      side: side.value,
+      addProfit: addProfit.value,
+      siol: siol.value,
+      condition: condition.value
     }
   })
     .then((response) => {
@@ -156,9 +177,11 @@ function loadList() {
           closeBtn: 'Закрыть'
         })
         packList.value = []
+        Lost.value = []
       }
       if (response.data.result) {
-        packList.value = response.data.data
+        packList.value = response.data.data.Packs
+        Lost.value = response.data.data.Lost
       }
     })
     .catch(() => {
@@ -171,6 +194,7 @@ function loadList() {
         closeBtn: 'Закрыть'
       })
       packList.value = []
+      Lost.value = []
     })
 }
 function loadZones() {

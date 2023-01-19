@@ -44,18 +44,11 @@ import {inject, ref} from "vue";
 const selectedTypes = inject('selectedTypes')
 const inputClass = ref('Input')
 
-const packTypes = [
-  {id: 1, name: 'Обычные', checked: true},
-  {id: 6, name: 'Для местных', checked: false},
-  {id: 8, name: 'За ДЗ', checked: true},
-  {id: 2, name: 'Компост', checked: false},
-  {id: 3, name: 'С навеса', checked: false},
-  {id: 4, name: 'Растворы', checked: false},
-  {id: 5, name: 'Вексельные', checked: false},
-  {id: 7, name: 'Трофейные', checked: false}
-]
+const packTypes = inject('packTypes')
 </script>
 
 <style scoped>
-
+.Input {
+  margin: 0.5em;
+}
 </style>

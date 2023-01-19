@@ -151,3 +151,8 @@ export function priceMethod(Price){
       return 'Неизветно:'
   }
 }
+
+export function profit(Proceeds, craftCost = 50000){
+  return Proceeds - craftCost
+}
+
