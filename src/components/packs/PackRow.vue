@@ -1,13 +1,13 @@
 <template>
   <tr>
-    <td class="ptCol1">
-      <q-item dense>
+    <td class="ptCol1" colspan="2">
+      <q-item dense :to="/item/ + pRoute.itemId">
         <q-item-section avatar>
           <q-avatar size="1.5em" style="position: absolute; top: -0.3em; left: 0.5em; z-index: 99">
             <img :src="'/img/packtypes/' + pRoute.Pack.typeId + '.png'" alt="">
           </q-avatar>
           <ItemIcon
-            :amount="pRoute.Freshness.FreshLvl.percent + '%'"
+            :amount="pRoute.Freshness.FreshLvls[condition].percent + '%'"
             :icon="pRoute.Pack.icon"
             :grade="pRoute.Pack.grade"
             :size="'60px'"
@@ -40,11 +40,11 @@
       </q-item-label>
     </td>
     <td style="text-align: center">
-      <q-item-label caption lines="1" style="align-content: center">
+      <q-item-label lines="1" style="align-content: center">
         <q-tooltip class="bg-tooltip">
           <SalaryCard :siol="siol"
                       :ratePercent="ratePercent"
-                      :freshPercent="pRoute.Freshness.FreshLvl.percent"
+                      :freshPercent="pRoute.Freshness.FreshLvls[condition].percent"
                       :dbPrice="pRoute.dbPrice"
                       :currencyId="pRoute.currencyId"
           ></SalaryCard>
@@ -54,7 +54,7 @@
     </td>
     <td v-if="addProfit" style="text-align: right">
       <q-item-label>
-        <PriceImager :price="profit(pRoute.dbPrice)" :currency-id="pRoute.currencyId"></PriceImager>
+        <PriceImager :price="profit" :currency-id="500"></PriceImager>
       </q-item-label>
     </td>
   </tr>
@@ -65,7 +65,7 @@
 import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
 import PriceImager from "components/price/PriceImager.vue";
-import {profit} from "src/myFuncts.js";
+//import {profit} from "src/myFuncts.js";
 import SalaryCard from "components/packs/SalaryCard.vue";
 
 const props = defineProps({
@@ -74,6 +74,8 @@ const props = defineProps({
 const addProfit = inject('addProfit')
 const siol = inject('siol')
 const ratePercent = inject('ratePercent')
+const condition = inject('condition')
+const currencyPrices = inject('currencyPrices')
 
 const flatSalary = computed(() => {
   return Math.round(props.pRoute.dbPrice / 130 * 100)
@@ -89,13 +91,25 @@ const factoryPrice = computed(()=>{
 })
 
 const finalSalary = computed(()=> {
-  let salary = factoryPrice.value * (1 + (props.pRoute.Freshness.FreshLvl.percent / 100))
+  let salary = factoryPrice.value * (1 + (props.pRoute.Freshness.FreshLvls[condition.value].percent / 100))
   salary *= 1.02 // Стандартная надбавка 2%
 
   if(props.pRoute.currencyId !== 500){
     salary /= 100
   }
   return Math.round(salary)
+})
+
+const goldSalary = computed(() => {
+  if(props.pRoute.currencyId === 500){
+    return finalSalary.value
+  }
+  let gold = finalSalary.value * currencyPrices.value[props.pRoute.currencyId].price * 0.9
+  return Math.round(gold)
+})
+
+const profit = computed(() => {
+  return goldSalary.value - props.pRoute.Pack.craftPrice
 })
 </script>
 

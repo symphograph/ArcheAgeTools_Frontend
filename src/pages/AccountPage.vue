@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import {inject, onMounted, ref} from "vue"
+import {computed, inject, onMounted, provide, ref} from "vue"
 import {api} from "boot/axios"
 import {useQuasar} from "quasar"
 import AccSets from "components/account/AccSets.vue"
@@ -35,7 +35,10 @@ const token = inject('token')
 const refBasedPrices = ref(null)
 const curAccount = inject('curAccount')
 const tab = ref('basedPrices')
-
+const disable = computed(() => {
+  return !!!curAccount.value.AccSets.serverGroup
+})
+provide('disable', disable)
 
 onMounted(() => {
   loadAccount()

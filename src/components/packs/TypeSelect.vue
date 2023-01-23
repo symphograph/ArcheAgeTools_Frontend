@@ -50,5 +50,6 @@ const packTypes = inject('packTypes')
 <style scoped>
 .Input {
   margin: 0.5em;
+  min-width: 25em;
 }
 </style>

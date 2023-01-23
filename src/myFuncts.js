@@ -1,5 +1,6 @@
 import moment from 'moment'
-import {api} from "boot/axios";
+import {copyToClipboard} from "quasar";
+
 
 export function rateInfo (val) {
   let rates = [1, 0.5, 'гпх', 'гпх', 0.25]
@@ -119,6 +120,9 @@ export function priceColor(method){
     case 'byFromNPC':
       return 'gray'
 
+    case 'byToNPC':
+      return 'gray'
+
     case 'byFriends':
       return 'green'
 
@@ -156,3 +160,48 @@ export function profit(Proceeds, craftCost = 50000){
   return Proceeds - craftCost
 }
 
+export function flatSalary(dbPrice) {
+  return Math.round(dbPrice / 130 * 100)
+}
+
+export function factoryPrice(flatSalary, siol, ratePercent, currencyId){
+  let siolPercent = siol && (currencyId === 500) ? 5 : 0
+  let result = flatSalary * (ratePercent / 100)
+  return  result * (1 + siolPercent / 100)
+}
+
+export function finalSalary(dbPrice, siol, ratePercent, freshPercent, currencyId){
+  let factPrice = factoryPrice(flatSalary(dbPrice), siol, ratePercent)
+  let salary = factPrice * (1 + (freshPercent / 100))
+  salary = salary * 1.02 // Стандартная надбавка 2%
+
+  if(currencyId !== 500){
+    salary /= 100
+  }
+  return Math.round(salary)
+}
+
+export function goldSalary(finalSalary, currPrices, currencyId){
+  if(currencyId === 500){
+    return finalSalary
+  }
+  let gold = finalSalary * currPrices[currencyId].price * 0.9
+  return Math.round(gold)
+}
+
+export function copy (val, q) {
+  //console.log(val)
+  copyToClipboard(val)
+    .then(() => {
+      q.notify({
+        color: 'positive',
+        position: 'center',
+        message: 'Скопировано',
+        icon: 'content_copy',
+        timeout: 1
+      })
+    })
+    .catch(() => {
+      // fail
+    })
+}

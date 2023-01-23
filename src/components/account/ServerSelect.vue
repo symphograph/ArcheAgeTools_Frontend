@@ -54,8 +54,10 @@ function save() {
           timeout: 100,
           closeBtn: 'Закрыть'
         })
-        emit('saved')
         inputClass.value = 'Input'
+        //location.reload();
+        emit('saved')
+
         return true
       }
 

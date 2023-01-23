@@ -35,7 +35,9 @@ defineExpose({
 })
 
 onMounted(()=> {
-  loadItem()
+  if(route.params.id){
+    loadItem()
+  }
 })
 
 function loadItem() {
@@ -62,6 +64,7 @@ function loadItem() {
       if (response.data.result) {
         Item.value = response.data.data
         LocalStorage.set('lastItem', Item.value.id)
+
       }
     })
     .catch(() => {
@@ -76,7 +79,9 @@ function loadItem() {
     })
     .finally(() => {
       progress.value = false
-      refCraftList.value.loadCrafts()
+      if(Item.value.craftable){
+        refCraftList.value.loadCrafts()
+      }
     })
 }
 </script>

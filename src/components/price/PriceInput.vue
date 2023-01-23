@@ -2,17 +2,17 @@
   <q-input
     v-model="nPrice.price"
     filled
-    :label="label()"
+    :label="label"
     :label-color="priceColor(nPrice.method)"
     mask="## ## ##"
     ref="priceRef"
-    :disable="!!!Item.Pricing.isGoldable"
+    :disable="!!!Item.Pricing.isGoldable || disable"
     reverse-fill-mask
     :rules="[val => !priceErr.length || priceErr]"
   >
     <template v-slot:append>
       <q-btn label="Ok"
-             v-if="priceErr === ''"
+             v-if="priceErr === '' && !disable"
              class="DefBtn"
              dense
              no-caps
@@ -31,6 +31,7 @@ import {fDate, priceColor} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
+const curAccount = inject('curAccount')
 
 const props = defineProps({
   Price: ref(null)
@@ -45,31 +46,59 @@ watch(props, () => {
 })
 const emit = defineEmits(['delPrice', 'updated'])
 
+const disable = computed(() =>{
+  switch (true) {
+    case nPrice.value.price === null:
+      return true
+    case nPrice.value.price === undefined:
+      return true
+    case nPrice.value.method === 'empty':
+      return true
+    case !!!Item.value.Pricing.isGoldable:
+      return true
+    default:
+      return false
+  }
+})
+
 const priceErr = computed(()=> {
-  if(nPrice.value.price > 0){
-    return ''
+  if(!curAccount.value.AccSets.serverGroup){
+    return 'Сервер не выбран'
   }
 
-  switch (nPrice.value.price) {
-    case 0:
+  switch (true) {
+    case nPrice.value.price === 0:
       return ''
-    case null:
+    case nPrice.value.price > 0:
+      return ''
+    case nPrice.value.price === '':
       return 'Не вижу'
-    case '':
+    case nPrice.value.price === undefined:
       return 'Не вижу'
-    case undefined:
+    case nPrice.value.price === null:
       return 'Не вижу'
     default:
       return  ''
   }
 })
 
-function label() {
-  if(!!!nPrice.value.author){
-    return 'Цена не найдена'
+const label = computed(() => {
+
+  switch (true) {
+    case !Item.value.Pricing.isGoldable:
+      return 'Нельзя продать'
+    case nPrice.value.method === 'byToNPC':
+      return 'НПС купит за'
+    case !!!nPrice.value.author:
+      return 'Неизвестный'
+    case !!!curAccount.value.AccSets.serverGroup:
+      return 'Сервер не выбран'
+    case !disable.value:
+      return fDate(nPrice.value.datetime) + ' - ' +  nPrice.value.author
+    default:
+      return 'Цена не найдена'
   }
-  return fDate(nPrice.value.datetime) + ' - ' +  nPrice.value.author
-}
+})
 
 function savePrice() {
   priceRef.value.blur()

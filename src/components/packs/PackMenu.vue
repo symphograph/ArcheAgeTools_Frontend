@@ -29,14 +29,17 @@
                    @click="siol = !siol"
         ></NavButton>
       </div>
-      <TypeSelect></TypeSelect>
-      <NavButton label="+Профит"
-                 :active="addProfit"
-                 :imgBtn="'/img/profit.png'"
-                 toolText="Расчитывать прибыль.<br>
-                 Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
-                 @click="addProfit = !addProfit"
-      ></NavButton>
+      <div style="display: flex">
+        <TypeSelect></TypeSelect>
+        <NavButton label="+Профит"
+                   :active="addProfit"
+                   :imgBtn="'/img/profit.png'"
+                   :isDisabled="!!!curAccount.AccSets.serverGroup"
+                   toolText="Расчитывать прибыль.<br>
+                    Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
+                   @onClick="addProfitActive"
+        ></NavButton>
+      </div>
     </div>
     <div class="menuRow">
 
@@ -50,10 +53,10 @@
         </div>
         <div>
           <div>
-            <q-radio v-model="condition" label="Зрелые" :val="1"></q-radio>
+            <q-radio v-model="condition" label="Зрелые" :val="0"></q-radio>
           </div>
           <div>
-            <q-radio v-model="condition" label="Протухшие" :val="2"></q-radio>
+            <q-radio v-model="condition" label="Протухшие" :val="1"></q-radio>
           </div>
         </div>
       </div>
@@ -69,11 +72,15 @@ import ZoneFromSelect from "components/packs/ZoneFromSelect.vue";
 import ZoneToSelect from "components/packs/ZoneToSelect.vue";
 import TypeSelect from "components/packs/TypeSelect.vue";
 import NavButton from "components/NavButton.vue";
+import {useRouter} from "vue-router";
+import DialogWindow from "components/DialogWindow.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
+const router = useRouter()
 const inputClass = ref('Input')
+const curAccount = inject('curAccount')
 
 const emit = defineEmits(['sideSelected'])
 
@@ -81,16 +88,18 @@ const packList = inject('packList')
 const Lost = inject('Lost')
 
 const side = inject('side')
-const zones = ref({})
-const allZonesTo = ref([])
 const zoneFromId = inject('zoneFromId')
 const zoneToId = inject('zoneToId')
 const disabled = inject('disabled')
 const ratePercent = inject('ratePercent')
 const siol = inject('siol')
 const addProfit = inject('addProfit')
+const sort = inject('sort')
 const condition = inject('condition')
 const progress = inject('progress')
+
+const zones = ref({})
+const allZonesTo = ref([])
 
 const Sides = [
   {
@@ -131,6 +140,8 @@ const zonesTo = computed(() => {
 })
 provide('zonesTo', zonesTo)
 
+const currencyPrices = inject('currencyPrices')
+
 watch(zoneFromId, ()=>{
   if(zoneFromId.value && zonesTo.value){
     if(zoneFromId.value === zoneToId.value){
@@ -146,8 +157,17 @@ watch(zoneFromId, ()=>{
   zoneToId.value = 0
 })
 
+watch(addProfit, () => {
+  Lost.value = []
+  if(addProfit.value){
+    loadList()
+  }
+})
+
 watch(side, ()=>{
   if(side.value){
+    zoneFromId.value = 0
+    zoneToId.value = 0
     loadList()
   }
 })
@@ -155,7 +175,57 @@ onMounted(()=> {
   loadZones()
 })
 
+function addProfitActive(){
+  if(!!!curAccount.value.AccSets.serverGroup){
+    addProfit.value = false
+    goToSettings()
+    return false
+  }
+  if(!side.value){
+    q.notify({
+      color: 'negative',
+      position: 'center',
+      message: 'Материк не выбран',
+      icon: 'report_problem',
+      timeout: 100,
+      closeBtn: 'Закрыть'
+    })
+    return false
+  }
+  addProfit.value = !addProfit.value
+  if (addProfit.value){
+    sort.value = 'byProfit'
+  }
+
+}
+
+function goToSettings () {
+  q.dialog({
+    component: DialogWindow,
+    componentProps: {
+      text: 'Сервер не указан.<br>Перейти в настройки?',
+      okBtnText: 'В настройки',
+      cancelBtnText: 'Не сейчас'
+      // ...more..props...
+    },
+    cancel: true,
+    persistent: true
+  }).onOk(() => {
+    // console.log('>>>> OK')
+  }).onOk(() => {
+    router.push('/account')
+    // console.log('>>>> second OK catcher')
+  }).onCancel(() => {
+    //emit('Cancel')
+    // console.log('>>>> Cancel')
+  }).onDismiss(() => {
+    //emit('Dismiss')
+    // console.log('I am triggered on both OK and Cancel')
+  })
+}
+
 function loadList() {
+
   progress.value = true
   api.post(apiUrl + 'api/get/packs.php', {
     params: {
@@ -182,6 +252,7 @@ function loadList() {
       if (response.data.result) {
         packList.value = response.data.data.Packs
         Lost.value = response.data.data.Lost
+        currencyPrices.value = response.data.data.currencyPrices
       }
     })
     .catch(() => {

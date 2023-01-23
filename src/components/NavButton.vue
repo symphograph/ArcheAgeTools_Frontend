@@ -1,7 +1,7 @@
 <template>
   <div class="navBtnArea">
     <q-tooltip v-if="toolText" class="bg-tooltip"><div v-html="toolText"></div></q-tooltip>
-    <q-btn round push>
+    <q-btn round push :disable="isDisabled" @click="emit('onClick')">
       <q-avatar :class="active ? 'navBtn navBtnActive' : 'navBtn'">
         <img :src="imgBtn" :alt="label">
       </q-avatar>
@@ -17,8 +17,11 @@ const props = defineProps({
   active: ref(false),
   imgBtn: ref(null),
   label: ref(''),
-  toolText: ref('')
+  toolText: ref(''),
+  isDisabled: ref(false)
 })
+
+const emit = defineEmits(['onClick'])
 </script>
 
 <style scoped>

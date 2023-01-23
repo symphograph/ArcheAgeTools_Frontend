@@ -53,7 +53,7 @@
 
 import ItemIcon from "components/ItemIcon.vue";
 import {inject, ref} from "vue";
-import {fDate} from "src/myFuncts.js"
+import {copy, fDate} from "src/myFuncts.js"
 import {api} from "boot/axios";
 import {copyToClipboard, useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
@@ -225,21 +225,7 @@ function savePrice() {
     })
 }
 
-function copy (val) {
-  copyToClipboard(val)
-    .then(() => {
-      q.notify({
-        color: 'positive',
-        position: 'center',
-        message: 'Скопировано',
-        icon: 'content_copy',
-        timeout: 1
-      })
-    })
-    .catch(() => {
-      // fail
-    })
-}
+
 </script>
 
 <style scoped>

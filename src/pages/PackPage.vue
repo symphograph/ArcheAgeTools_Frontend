@@ -38,7 +38,7 @@ provide('siol', siol)
 const ratePercent = ref(130)
 provide('ratePercent', ratePercent)
 
-const condition = ref(1)
+const condition = ref(0)
 provide('condition', condition)
 
 const addProfit = ref(false)
@@ -46,11 +46,26 @@ provide('addProfit', addProfit)
 
 const zoneFromId = ref(0)
 provide('zoneFromId', zoneFromId)
+
 const zoneToId = ref(0)
 provide('zoneToId', zoneToId)
 
-const selectedTypes = ref([{id: 1, name: 'Обычные', checked: true}])
+const sort = ref('byName')
+provide('sort', sort)
+
+const selectedTypes = ref([
+  {id: 1, name: 'Обычные', checked: true},
+  {id: 6, name: 'Для местных', checked: false},
+  {id: 8, name: 'За ДЗ', checked: true},
+  {id: 2, name: 'Компост', checked: false},
+  {id: 3, name: 'С навеса', checked: false},
+  {id: 4, name: 'Растворы', checked: false},
+  {id: 5, name: 'Вексельные', checked: false},
+  {id: 7, name: 'Трофейные', checked: false},
+  {id: 9, name: 'Лавочные', checked: false}
+])
 provide('selectedTypes', selectedTypes)
+
 
 const disabled = computed(()=> {
   return !!!side.value || !selectedTypes.value.length
@@ -73,6 +88,8 @@ const packTypes = [
 ]
 provide('packTypes', packTypes)
 
+const currencyPrices = ref({})
+provide('currencyPrices', currencyPrices)
 
 const metaData = {
   title: 'Паки',
@@ -93,8 +110,8 @@ html {
 }
 
 .ptCol1 {
-  min-width: 18em;
-  max-width: 18em;
+  /*min-width: 18em;*/
+  /*max-width: 18em;*/
 }
 .ptCol2 {
   width: 12em;

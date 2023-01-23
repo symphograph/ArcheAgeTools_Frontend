@@ -4,18 +4,20 @@
       <q-item-label :lines="1">
         <div class="PriceLabel">{{price.name}}</div>
       </q-item-label>
+      <q-tooltip v-if="disable">Сервер не выбран</q-tooltip>
       <q-input
         mask="## ## ##"
         class="PriceInput"
         dense
         filled
         borderless
+        :disable="disable"
         :label-color="priceColor(price.method)"
         stack-label
-        :label="price.author"
+        :label="price.accountId === 1 ? 'Не указано' : price.author"
         reverse-fill-mask
         ref="priceRef"
-        v-model="nPrice"
+        v-model="nPrice.price"
         @focus="focused = true"
         @blur="focused = false"
       >
@@ -66,9 +68,11 @@ const Props = defineProps({
 
 const emit = defineEmits(['delPrice'])
 
-const nPrice = ref(Props.price.price)
+const nPrice = ref(Props.price)
 const priceRef = ref(null)
 const focused = ref(false)
+
+const disable = inject('disable')
 
 function goTo(id){
   router.push({ path: '/item/' + id })
@@ -128,7 +132,7 @@ function savePrice() {
   api.post(apiUrl + 'api/set/price/price.php', {
     params: {
       token: token.value,
-      price: nPrice.value,
+      price: nPrice.value.price,
       itemId: Props.price.itemId
     }
   })
@@ -142,6 +146,9 @@ function savePrice() {
           timeout: 300,
           closeBtn: 'Закрыть'
         })
+        nPrice.value.accountId = curAccount.value.id
+        nPrice.value.author = curAccount.value.AccSets.publicNick
+        nPrice.value.method = 'bySolo'
         return true
       }
 

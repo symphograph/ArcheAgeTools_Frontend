@@ -37,12 +37,18 @@ import {useRoute, useRouter} from 'vue-router'
 import PriceInput from "components/price/PriceInput.vue"
 import PriceImager from "components/price/PriceImager.vue"
 import {priceImager} from "src/myFuncts";
+import DialogWindow from "components/DialogWindow.vue";
+
 
 const route = useRoute()
 const router = useRouter()
 const q = useQuasar()
+const $q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
+
+const curAccount = inject('curAccount')
+const Servers = inject('Servers')
 const price = ref(122345678)
 const categMode = inject('categMode')
 const navigatorRef = ref(null)
@@ -84,6 +90,9 @@ function npcPrice() {
 
 
 onMounted(() => {
+  if(!curAccount.value.AccSets.serverGroup){
+    goToSettings()
+  }
   if (route.params.id) {
     itemId.value = route.params.id * 1
     //refItemArea.value.loadItem()
@@ -99,6 +108,30 @@ function onSelectItem() {
  categMode.value = false
 }
 
+function goToSettings () {
+  q.dialog({
+    component: DialogWindow,
+    componentProps: {
+      text: 'Сервер не указан.<br>Перейти в настройки?',
+      okBtnText: 'В настройки',
+      cancelBtnText: 'Не сейчас'
+      // ...more..props...
+    },
+    cancel: true,
+    persistent: true
+  }).onOk(() => {
+    // console.log('>>>> OK')
+  }).onOk(() => {
+    router.push('/account')
+    // console.log('>>>> second OK catcher')
+  }).onCancel(() => {
+    //emit('Cancel')
+    // console.log('>>>> Cancel')
+  }).onDismiss(() => {
+    //emit('Dismiss')
+    // console.log('I am triggered on both OK and Cancel')
+  })
+}
 </script>
 
 <style scoped>

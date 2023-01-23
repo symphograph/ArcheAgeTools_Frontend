@@ -31,7 +31,7 @@ const Props = defineProps({
 
 .PricesArea {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
 }
 </style>

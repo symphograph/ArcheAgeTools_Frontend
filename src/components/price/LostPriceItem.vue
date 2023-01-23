@@ -1,7 +1,7 @@
 <template>
   <q-item dense class="PriceCell">
     <q-item-section>
-      <q-item-label :lines="1">
+      <q-item-label :lines="1" @click="copy(price.name, q)">
         <div class="PriceLabel">{{price.name}}</div>
       </q-item-label>
       <q-input
@@ -42,7 +42,7 @@ import {useQuasar} from "quasar";
 import {inject, ref} from "vue";
 import {useRouter} from "vue-router";
 import {api} from "boot/axios";
-import {fDate} from "src/myFuncts.js"
+import {copy, fDate} from "src/myFuncts.js"
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

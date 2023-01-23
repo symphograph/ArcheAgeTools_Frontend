@@ -14,13 +14,27 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-item dense v-if="currencyId !== 500">
+        <q-item-section>
+          <q-item-label lines="1">После продажи</q-item-label>
+        </q-item-section>
+        <q-item-section side>
+          <q-item-label caption>
+            <PriceImager
+              :price="goldSalary(finalSalary(dbPrice, siol, ratePercent, freshPercent, currencyId),currencyPrices, currencyId)"
+              :currencyId="500"
+            ></PriceImager>
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-separator></q-separator>
       <q-item dense>
         <q-item-section>
           <q-item-label lines="1">Основная плата</q-item-label>
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager :price="flatSalary(dbPrice)"></PriceImager>
+            <PriceImager :price="currencyId === 500 ? flatSalary(dbPrice) : Math.round(flatSalary(dbPrice)/100)" :currencyId="currencyId"></PriceImager>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -76,8 +90,9 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {inject, ref} from "vue";
 import PriceImager from "components/price/PriceImager.vue";
+import {factoryPrice, flatSalary, finalSalary, goldSalary} from "src/myFuncts.js";
 
 const props = defineProps({
   testP: ref('fdsafdfsafdf'),
@@ -88,27 +103,10 @@ const props = defineProps({
   currencyId: ref(0)
 })
 
-function flatSalary(dbPrice)
-{
-  return Math.round(dbPrice / 130 * 100)
-}
+const currencyPrices = inject('currencyPrices')
 
-function factoryPrice(flatSalary, siol, ratePercent, currencyId){
-  let siolPercent = siol && (currencyId === 500) ? 5 : 0
-  let result = flatSalary * (ratePercent / 100)
-  return  result * (1 + siolPercent / 100)
-}
 
-function finalSalary(dbPrice, siol, ratePercent, freshPercent, currencyId){
-  let factPrice = factoryPrice(flatSalary(dbPrice), siol, ratePercent)
-  let salary = factPrice * (1 + (freshPercent / 100))
-  salary = salary * 1.02 // Стандартная надбавка 2%
 
-  if(currencyId !== 500){
-    salary /= 100
-  }
-  return Math.round(salary)
-}
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <q-card class="q-dialog-plugin DialogCard">
-      <q-card-section class="DialogText"><div v-html="text"></div></q-card-section>
+      <q-card-section class="DialogText">{{text}}</q-card-section>
       <!--
         ...content
         ... use q-card-section for it?
@@ -9,15 +9,7 @@
 
       <!-- buttons example -->
       <q-card-actions align="right">
-        <q-btn :label="cancelBtnText"
-               class="DefBtn"
-               no-caps
-               @click="onDialogCancel"
-        ></q-btn>
-        <q-btn :label="okBtnText"
-               class="DefBtn"
-               no-caps
-               @click="onOKClick"></q-btn>
+        <ServerSelect @saved="onDialogOK()"></ServerSelect>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -25,15 +17,20 @@
 
 <script setup>
 import { useDialogPluginComponent } from 'quasar'
-import {ref} from "vue";
+import {provide, ref} from "vue";
+import ServerSelect from "components/account/ServerSelect.vue";
+
 
 const props = defineProps({
   text: ref(''),
-  okBtnText: ref('OK'),
-  cancelBtnText: ref('Отмена')
+  token: ref(''),
+  curAccount: ref({}),
+  Servers: ref([])
   // ...your custom props
 })
-
+provide('token', props.token)
+provide('curAccount', props.curAccount)
+provide('Servers', props.Servers)
 defineEmits([
   // REQUIRED; need to specify some events that your
   // component will emit through useDialogPluginComponent()

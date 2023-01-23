@@ -1,5 +1,5 @@
 <template>
-  <span class="no-wrap" v-html="priceImager(price, currencyId)"></span>
+  <span :class="'no-wrap' + ((price > 0) ? '' : ' red')" v-html="priceImager(price, currencyId)"></span>
 </template>
 
 <script setup>
@@ -11,6 +11,8 @@ const Props = defineProps({
 })
 </script>
 
-<style>
-
+<style scoped>
+.red {
+  color: red;
+}
 </style>
