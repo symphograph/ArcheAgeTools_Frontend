@@ -41,6 +41,8 @@ provide('ratePercent', ratePercent)
 const condition = ref(0)
 provide('condition', condition)
 
+
+
 const addProfit = ref(false)
 provide('addProfit', addProfit)
 

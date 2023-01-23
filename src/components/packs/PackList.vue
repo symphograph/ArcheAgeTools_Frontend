@@ -80,12 +80,19 @@ const filteredList = computed(() => {
   return list
 })
 
+function freshLvlKey(pRoute) {
+  if(condition.value){
+    return pRoute.Freshness.bestLvl
+  }
+  return pRoute.Freshness.worstLvl
+}
+
 function getGoldSalary(pRoute){
   let finSalary =   finalSalary(
     pRoute.dbPrice,
     siol.value,
     ratePercent.value,
-    pRoute.Freshness.FreshLvls[condition.value].percent,
+    pRoute.Freshness.FreshLvls[freshLvlKey(pRoute)].percent,
     pRoute.currencyId
   )
   return goldSalary(finSalary, currencyPrices.value, pRoute.currencyId)

@@ -8,7 +8,7 @@
         <q-item-section side>
           <q-item-label caption>
             <PriceImager
-              :price="finalSalary(dbPrice, siol, ratePercent, freshPercent, currencyId)"
+              :price="finalSalary"
               :currencyId="currencyId"
             ></PriceImager>
           </q-item-label>
@@ -21,7 +21,7 @@
         <q-item-section side>
           <q-item-label caption>
             <PriceImager
-              :price="goldSalary(finalSalary(dbPrice, siol, ratePercent, freshPercent, currencyId),currencyPrices, currencyId)"
+              :price="goldSalary"
               :currencyId="500"
             ></PriceImager>
           </q-item-label>
@@ -34,7 +34,7 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager :price="currencyId === 500 ? flatSalary(dbPrice) : Math.round(flatSalary(dbPrice)/100)" :currencyId="currencyId"></PriceImager>
+            <PriceImager :price="currencyId === 500 ? flatSalary : Math.round(flatSalary/100)" :currencyId="currencyId"></PriceImager>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -78,7 +78,7 @@
         <q-item-section side>
           <q-item-label caption>
             <PriceImager
-              :price="Math.round(factoryPrice(flatSalary(dbPrice), siol, ratePercent))"
+              :price="Math.round(factoryPrice)"
             >
             </PriceImager>
           </q-item-label>
@@ -92,7 +92,6 @@
 <script setup>
 import {inject, ref} from "vue";
 import PriceImager from "components/price/PriceImager.vue";
-import {factoryPrice, flatSalary, finalSalary, goldSalary} from "src/myFuncts.js";
 
 const props = defineProps({
   testP: ref('fdsafdfsafdf'),
@@ -100,7 +99,11 @@ const props = defineProps({
   ratePercent: ref(130),
   freshPercent: ref(0),
   dbPrice: ref(0),
-  currencyId: ref(0)
+  currencyId: ref(0),
+  goldSalary: ref(0),
+  factoryPrice: ref(0),
+  flatSalary: ref(0),
+  finalSalary: ref(0)
 })
 
 const currencyPrices = inject('currencyPrices')

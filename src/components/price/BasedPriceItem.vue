@@ -11,7 +11,7 @@
         dense
         filled
         borderless
-        :disable="disable"
+        :disable="!!disable"
         :label-color="priceColor(price.method)"
         stack-label
         :label="price.accountId === 1 ? 'Не указано' : price.author"
@@ -25,8 +25,6 @@
           <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
             <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>
           </q-btn>
-
-
         </template>
         <template v-slot:append>
           <q-btn label="Ok"

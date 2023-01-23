@@ -7,7 +7,7 @@
             <img :src="'/img/packtypes/' + pRoute.Pack.typeId + '.png'" alt="">
           </q-avatar>
           <ItemIcon
-            :amount="pRoute.Freshness.FreshLvls[condition].percent + '%'"
+            :amount="freshPercent + '%'"
             :icon="pRoute.Pack.icon"
             :grade="pRoute.Pack.grade"
             :size="'60px'"
@@ -44,9 +44,13 @@
         <q-tooltip class="bg-tooltip">
           <SalaryCard :siol="siol"
                       :ratePercent="ratePercent"
-                      :freshPercent="pRoute.Freshness.FreshLvls[condition].percent"
+                      :freshPercent="freshPercent"
                       :dbPrice="pRoute.dbPrice"
                       :currencyId="pRoute.currencyId"
+                      :goldSalary="goldSalary"
+                      :factoryPrice="factoryPrice"
+                      :flatSalary="flatSalary"
+                      :finalSalary="finalSalary"
           ></SalaryCard>
         </q-tooltip>
         <PriceImager :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImager>
@@ -77,6 +81,19 @@ const ratePercent = inject('ratePercent')
 const condition = inject('condition')
 const currencyPrices = inject('currencyPrices')
 
+
+
+const freshLvlKey = computed(() => {
+  if(condition.value){
+      return props.pRoute.Freshness.bestLvl
+  }
+  return props.pRoute.Freshness.worstLvl
+})
+
+const freshPercent = computed(() => {
+  return props.pRoute.Freshness.FreshLvls[freshLvlKey.value].percent
+})
+
 const flatSalary = computed(() => {
   return Math.round(props.pRoute.dbPrice / 130 * 100)
 })
@@ -91,7 +108,7 @@ const factoryPrice = computed(()=>{
 })
 
 const finalSalary = computed(()=> {
-  let salary = factoryPrice.value * (1 + (props.pRoute.Freshness.FreshLvls[condition.value].percent / 100))
+  let salary = factoryPrice.value * (1 + (freshPercent.value / 100))
   salary *= 1.02 // Стандартная надбавка 2%
 
   if(props.pRoute.currencyId !== 500){
