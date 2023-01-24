@@ -42,8 +42,8 @@
     <td style="text-align: center">
       <q-item-label lines="1" style="align-content: center">
         <q-tooltip class="bg-tooltip">
-          <SalaryCard :siol="siol"
-                      :ratePercent="ratePercent"
+          <SalaryCard :siol="ptSettings.siol"
+                      :ratePercent="ptSettings.ratePercent"
                       :freshPercent="freshPercent"
                       :dbPrice="pRoute.dbPrice"
                       :currencyId="pRoute.currencyId"
@@ -56,9 +56,13 @@
         <PriceImager :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImager>
       </q-item-label>
     </td>
-    <td v-if="addProfit" style="text-align: right">
+    <td v-if="ptSettings.addProfit" style="text-align: right">
       <q-item-label>
         <PriceImager :price="profit" :currency-id="500"></PriceImager>
+      </q-item-label>
+      <q-item-label caption>
+        <PriceImager :price="profitPerLabor" :currency-id="500"></PriceImager>/
+        <img style="width: 1em"  src="/img/valuta/2.png">
       </q-item-label>
     </td>
   </tr>
@@ -75,16 +79,19 @@ import SalaryCard from "components/packs/SalaryCard.vue";
 const props = defineProps({
   pRoute: ref(null)
 })
-const addProfit = inject('addProfit')
-const siol = inject('siol')
-const ratePercent = inject('ratePercent')
-const condition = inject('condition')
+
+const ptSettings = inject('ptSettings')
+
+// const addProfit = inject('addProfit')
+// const siol = inject('siol')
+// const ratePercent = inject('ratePercent')
+// const condition = inject('condition')
 const currencyPrices = inject('currencyPrices')
 
 
 
 const freshLvlKey = computed(() => {
-  if(condition.value){
+  if(ptSettings.value.condition){
       return props.pRoute.Freshness.bestLvl
   }
   return props.pRoute.Freshness.worstLvl
@@ -99,11 +106,11 @@ const flatSalary = computed(() => {
 })
 
 const siolPercent = computed(()=> {
-  return siol.value && (props.pRoute.currencyId === 500) ? 5 : 0
+  return ptSettings.value.siol && (props.pRoute.currencyId === 500) ? 5 : 0
 })
 
 const factoryPrice = computed(()=>{
-  let result = flatSalary.value * (ratePercent.value / 100)
+  let result = flatSalary.value * (ptSettings.value.ratePercent / 100)
   return  result * (1 + siolPercent.value / 100)
 })
 
@@ -127,6 +134,10 @@ const goldSalary = computed(() => {
 
 const profit = computed(() => {
   return goldSalary.value - props.pRoute.Pack.craftPrice
+})
+
+const profitPerLabor = computed(() => {
+  return Math.round(profit.value / props.pRoute.Pack.laborNeed)
 })
 </script>
 

@@ -86,11 +86,23 @@ export function isPermis(needPows, userPows) {
   return needPows.some(l => userPows.includes(l))
 }
 
+export function toNums(val) {
+  val += ''
+  val = val.replace(/[^\d]/g, '')
+  return +val
+}
+
 export function priceImager(value, vid = 500) {
+  let minus = ''
+  if (value < 0) {
+    minus = '-'
+  }
+  value = toNums(value)
 
   if (vid !== 500) {
     return value + '<img class="imgValut" src="/img/valuta/' + vid + '.png" ' + ' alt="v"/>';
   }
+
   let str = '' + value;
 
   let row = '';
@@ -105,6 +117,7 @@ export function priceImager(value, vid = 500) {
     }
     row += str.charAt(i);
   }
+  row = minus + row
   row += '<img class="imgValut" src="/img/valuta/bronze.png" alt="b"/>';
   return row;
 }

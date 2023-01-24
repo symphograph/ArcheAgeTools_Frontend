@@ -61,14 +61,14 @@ const routes = [
     path: '/prices/:accId',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PriceList.vue') }
+      { path: '', component: () => import('pages/PricesPage.vue') }
     ]
   },
   {
-    path: '/prices',
+    path: '/myprices',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PriceList.vue') }
+      { path: '', component: () => import('pages/PricesMyPage.vue') }
     ]
   },
   {

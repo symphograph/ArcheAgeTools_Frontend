@@ -13,9 +13,9 @@
 <script setup>
 
 
-import {computed, inject, onMounted, provide, ref, watch} from "vue";
+import {computed, inject, onBeforeMount, onMounted, provide, ref, watch} from "vue";
 import {api} from "boot/axios";
-import {useMeta, useQuasar} from "quasar";
+import {LocalStorage, useMeta, useQuasar} from "quasar";
 import PackMenu from "components/packs/PackMenu.vue";
 import PackList from "components/packs/PackList.vue";
 
@@ -29,31 +29,18 @@ provide('packList', packList)
 const Lost = ref([])
 provide('Lost', Lost)
 
-const side = ref(null)
-provide('side', side)
+const ptSettings = ref({
+  siol: false,
+  side: null,
+  ratePercent:130,
+  condition: 0,
+  addProfit: false,
+  zoneFromId: 0,
+  zoneToId: 0,
+  sort: 'byName'
+})
+provide('ptSettings', ptSettings)
 
-const siol = ref(false)
-provide('siol', siol)
-
-const ratePercent = ref(130)
-provide('ratePercent', ratePercent)
-
-const condition = ref(0)
-provide('condition', condition)
-
-
-
-const addProfit = ref(false)
-provide('addProfit', addProfit)
-
-const zoneFromId = ref(0)
-provide('zoneFromId', zoneFromId)
-
-const zoneToId = ref(0)
-provide('zoneToId', zoneToId)
-
-const sort = ref('byName')
-provide('sort', sort)
 
 const selectedTypes = ref([
   {id: 1, name: 'Обычные', checked: true},
@@ -69,8 +56,21 @@ const selectedTypes = ref([
 provide('selectedTypes', selectedTypes)
 
 
+watch(selectedTypes, () => {
+  //console.log('watch', selectedTypes)
+  LocalStorage.set('selectedTypes', JSON.stringify(selectedTypes.value))
+})
+
+watch(ptSettings, () => {
+  LocalStorage.set('ptSettings', JSON.stringify(ptSettings.value))
+
+}, {deep: true})
+
+
+
+
 const disabled = computed(()=> {
-  return !!!side.value || !selectedTypes.value.length
+  return !!!ptSettings.value.side || !selectedTypes.value.length
 })
 provide('disabled', disabled)
 
@@ -92,6 +92,16 @@ provide('packTypes', packTypes)
 
 const currencyPrices = ref({})
 provide('currencyPrices', currencyPrices)
+
+
+onMounted(()=>{
+  if(LocalStorage.getItem('selectedTypes')){
+    selectedTypes.value = JSON.parse(LocalStorage.getItem('selectedTypes'))
+  }
+  if(LocalStorage.getItem('ptSettings')){
+    ptSettings.value = JSON.parse(LocalStorage.getItem('ptSettings'))
+  }
+})
 
 const metaData = {
   title: 'Паки',

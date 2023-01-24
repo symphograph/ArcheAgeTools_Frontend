@@ -3,22 +3,35 @@
     <thead style="position: sticky; top: 0">
       <tr>
         <th style="max-width: 2em; text-align: left">
-          <q-radio label="Тип" val="byType" v-model="sort"></q-radio>
+          <q-radio label="Тип" val="byType" v-model="ptSettings.sort"></q-radio>
         </th>
         <th style="text-align: left">
-          <q-radio label="Имя пака" val="byName" v-model="sort"></q-radio>
+          <q-radio label="Имя пака" val="byName" v-model="ptSettings.sort"></q-radio>
         </th>
         <th style="max-width: 150px" class="mobile-hide">
-          <q-radio label="Откуда" val="byFrom" v-model="sort"></q-radio>
+          <q-radio label="Откуда" val="byFrom" v-model="ptSettings.sort"></q-radio>
         </th>
         <th class="mobile-hide">
-          <q-radio label="Куда" val="byTo" v-model="sort"></q-radio>
+          <q-radio label="Куда" val="byTo" v-model="ptSettings.sort"></q-radio>
         </th>
         <th style="min-width: 100px">
-          <q-radio label="Выручка" val="byFinalSalary" v-model="sort"></q-radio>
+          <q-radio label="Выручка" val="byFinalSalary" v-model="ptSettings.sort"></q-radio>
         </th>
-        <th v-if="addProfit" style="min-width: 100px">
-          <q-radio label="Прибыль" val="byProfit" v-model="sort"></q-radio>
+        <th v-if="ptSettings.addProfit" style="min-width: 100px; font-size: 12px; align-content: end">
+          <div style="display: flex; justify-content: end">
+            <NavButton label=""
+                       :active="ptSettings.sort === 'byProfit'"
+                       imgBtn="/img/profit.png"
+                       toolText="По прибыли"
+                       @click="ptSettings.sort = 'byProfit'"
+            ></NavButton>
+            <NavButton label=""
+                       :active="ptSettings.sort === 'byProfitPerLabor'"
+                       imgBtn="/img/valuta/2.png"
+                       toolText="По прибыли на 1 ОР"
+                       @click="ptSettings.sort = 'byProfitPerLabor'"
+            ></NavButton>
+          </div>
         </th>
       </tr>
     </thead>
@@ -40,18 +53,22 @@ import {finalSalary, goldSalary, layoutFix, profit} from "src/myFuncts";
 import ItemIcon from "components/ItemIcon.vue";
 import PriceImager from "components/price/PriceImager.vue";
 import LostList from "components/price/LostList.vue";
+import NavButton from "components/NavButton.vue";
 
 const packList = inject('packList')
 const Lost = inject('Lost')
 
-const sort = inject('sort')
-const siol = inject('siol')
-const ratePercent = inject('ratePercent')
-const condition = inject('condition')
-const addProfit = inject('addProfit')
+const ptSettings = inject('ptSettings')
+
+// const sort = inject('sort')
+// const siol = inject('siol')
+// const ratePercent = inject('ratePercent')
+// const condition = inject('condition')
+// const addProfit = inject('addProfit')
+// const zoneFromId = inject('zoneFromId')
+// const zoneToId = inject('zoneToId')
+
 const selectedTypes = inject('selectedTypes')
-const zoneFromId = inject('zoneFromId')
-const zoneToId = inject('zoneToId')
 
 const selTypeIds = computed(() => {
   return selectedTypes.value.map((el)=> {
@@ -71,17 +88,17 @@ const filteredList = computed(() => {
   }
   let list = [...packList.value]
   list = list.filter(pRoute => selTypeIds.value.includes(pRoute.Pack.typeId))
-  if(zoneFromId.value){
-    list = list.filter(pRoute => pRoute.zoneFromId === zoneFromId.value)
+  if(ptSettings.value.zoneFromId){
+    list = list.filter(pRoute => pRoute.zoneFromId === ptSettings.value.zoneFromId)
   }
-  if(zoneToId.value){
-    list = list.filter(pRoute => pRoute.zoneToId === zoneToId.value)
+  if(ptSettings.value.zoneToId){
+    list = list.filter(pRoute => pRoute.zoneToId === ptSettings.value.zoneToId)
   }
   return list
 })
 
 function freshLvlKey(pRoute) {
-  if(condition.value){
+  if(ptSettings.value.condition){
     return pRoute.Freshness.bestLvl
   }
   return pRoute.Freshness.worstLvl
@@ -90,12 +107,17 @@ function freshLvlKey(pRoute) {
 function getGoldSalary(pRoute){
   let finSalary =   finalSalary(
     pRoute.dbPrice,
-    siol.value,
-    ratePercent.value,
+    ptSettings.value.siol,
+    ptSettings.value.ratePercent,
     pRoute.Freshness.FreshLvls[freshLvlKey(pRoute)].percent,
     pRoute.currencyId
   )
   return goldSalary(finSalary, currencyPrices.value, pRoute.currencyId)
+}
+
+function profitPerLabor(pRoute) {
+  let profit2 = profit(getGoldSalary(pRoute), pRoute.Pack.craftPrice)
+  return Math.round(profit2 / pRoute.Pack.laborNeed)
 }
 // Sorting____________________________________________________________________________
 const byTypeOnly = (a, b) => a.Pack.typeId - b.Pack.typeId
@@ -104,6 +126,7 @@ const byFromOnly = (a, b) => a.ZoneFrom.name.localeCompare(b.ZoneFrom.name, 'ru'
 const byToOnly = (a, b) => a.ZoneTo.name.localeCompare(b.ZoneTo.name, 'ru')
 const byFinalSalary = (a, b) => getGoldSalary(b) - getGoldSalary(a)
 const byProfit = (a, b) => profit(getGoldSalary(b), b.Pack.craftPrice) - profit(getGoldSalary(a), a.Pack.craftPrice)
+const byProfitPerLabor = (a, b) => profitPerLabor(b) - profitPerLabor(a)
 
 const byType = (a, b) => byTypeOnly(a, b) || byName(a, b)
 const byName = (a, b) => byNameOnly(a, b) || byFinalSalary(a, b)
@@ -115,7 +138,7 @@ const sortedList = computed(() => {
   if (!filteredList.value.length) {
     return []
   }
-  switch (sort.value) {
+  switch (ptSettings.value.sort) {
     case 'byType':
       return [...filteredList.value].sort(byType)
     case 'byName':
@@ -128,6 +151,8 @@ const sortedList = computed(() => {
       return [...filteredList.value].sort(byFinalSalary)
     case 'byProfit':
       return [...filteredList.value].sort(byProfit)
+    case 'byProfitPerLabor':
+      return [...filteredList.value].sort(byProfitPerLabor)
     default:
       return filteredList.value
   }

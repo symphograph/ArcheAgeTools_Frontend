@@ -3,7 +3,7 @@
         <CraftResults v-if="Item && Item.Info.CraftResults !== undefined"
                       :CraftResults="Item.Info.CraftResults">
         </CraftResults>
-        <CurrencyArea v-if="Item.currencyId && Item.currencyId !== 500"></CurrencyArea>
+        <CurrencyArea v-if="(Item.currencyId && Item.currencyId !== 500) || Item.categId === 173"></CurrencyArea>
         <CraftList ref="refCraftList"></CraftList>
         <div v-if="!Item.craftable">Некрафтабельно</div>
       </div>

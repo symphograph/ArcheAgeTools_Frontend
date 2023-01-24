@@ -1,6 +1,6 @@
 <template>
   <q-select label="Откуда"
-            v-model="zoneFromId"
+            v-model="ptSettings.zoneFromId"
             :options="zonesFrom"
             :disable="disabled"
             dense
@@ -22,10 +22,13 @@
 import {computed, inject, ref} from "vue";
 
 const inputClass = ref('Input')
-const zoneFromId = inject('zoneFromId')
+const ptSettings = inject('ptSettings')
+
 const zonesFrom = inject('zonesFrom')
-const side = inject('side')
-const selectedTypes = inject('selectedTypes')
+
+
+
+
 
 const disabled = inject('disabled')
 </script>

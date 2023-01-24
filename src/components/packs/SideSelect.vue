@@ -1,6 +1,6 @@
 <template>
   <q-select label="Материк"
-            v-model="side"
+            v-model="ptSettings.side"
             :options="Sides"
             borderless
             map-options
@@ -11,9 +11,9 @@
             @blur="inputClass = 'Input'"
             @update:modelValue="emit('selected')"
   >
-    <template v-slot:prepend v-if="side">
+    <template v-slot:prepend v-if="ptSettings.side">
       <q-avatar>
-        <img :src="'/img/side/' + side + '.png'" alt="">
+        <img :src="'/img/side/' + ptSettings.side + '.png'" alt="">
       </q-avatar>
     </template>
     <template v-slot:option="scope">
@@ -41,7 +41,8 @@ const Sides = inject('Sides')
 
 
 const inputClass = ref('Input')
-const side = inject('side')
+const ptSettings = inject('ptSettings')
+//const side = inject('side')
 const emit = defineEmits(['selected'])
 </script>
 

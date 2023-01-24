@@ -48,11 +48,7 @@ const emit = defineEmits(['delPrice', 'updated'])
 
 const disable = computed(() =>{
   switch (true) {
-    case nPrice.value.price === null:
-      return true
-    case nPrice.value.price === undefined:
-      return true
-    case nPrice.value.method === 'empty':
+    case !!!curAccount.value.AccSets.serverGroup:
       return true
     case !!!Item.value.Pricing.isGoldable:
       return true
@@ -89,6 +85,8 @@ const label = computed(() => {
       return 'Нельзя продать'
     case nPrice.value.method === 'byToNPC':
       return 'НПС купит за'
+    case nPrice.value.method === 'empty':
+      return 'Цена не найдена'
     case !!!nPrice.value.author:
       return 'Неизвестный'
     case !!!curAccount.value.AccSets.serverGroup:

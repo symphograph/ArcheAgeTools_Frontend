@@ -67,11 +67,18 @@ const TradableItems = computed(() => {
   }
   return Currency.value.TradableItems
 })
+
+const currencyId = computed(() => {
+  if(Item.value.categId === 173){
+    return Item.value.id
+  }
+  return Item.value.currencyId
+})
 provide('TradableItems', TradableItems)
 
 watch(Item, () => {
   if (Item.value) {
-    console.log('updated')
+    //console.log('updated')
     loadList()
   }
 }, {deep: true})
@@ -95,7 +102,7 @@ function loadList() {
   api.post(apiUrl + 'api/get/currency.php', {
     params: {
       token: token.value,
-      id: Item.value.currencyId
+      id: currencyId.value
     }
   })
     .then((response) => {

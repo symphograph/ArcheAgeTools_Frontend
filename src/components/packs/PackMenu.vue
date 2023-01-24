@@ -4,15 +4,15 @@
       <div class="sideBtnCard">
         <template v-for="sd in Sides" :key="sd.value">
           <NavButton :label="sd.label"
-                     :active="side === sd.value"
+                     :active="ptSettings.side === sd.value"
                      :imgBtn="'/img/side/' + sd.value + '.png'"
-                     @click="side = sd.value"
+                     @click="ptSettings.side = sd.value"
           ></NavButton>
         </template>
       </div>
       <h1>Паки 8.0</h1>
       <div style="display: flex;">
-        <q-input v-model="ratePercent"
+        <q-input v-model="ptSettings.ratePercent"
                  class="Input"
                  dense
                  style="width: 9em; height: 3em; margin: 1em"
@@ -24,15 +24,15 @@
                  min="50"
         ></q-input>
         <NavButton label="Сиоль"
-                   :active="siol"
+                   :active="ptSettings.siol"
                    imgBtn="/img/siol.png"
-                   @click="siol = !siol"
+                   @click="ptSettings.siol = !ptSettings.siol"
         ></NavButton>
       </div>
       <div style="display: flex">
         <TypeSelect></TypeSelect>
         <NavButton label="+Профит"
-                   :active="addProfit"
+                   :active="ptSettings.addProfit"
                    :imgBtn="'/img/profit.png'"
                    :isDisabled="!!!curAccount.AccSets.serverGroup"
                    toolText="Расчитывать прибыль.<br>
@@ -46,17 +46,17 @@
       <div class="menuSection">
 
         <div>
-          <q-tooltip v-if="!side">Материк не выбран</q-tooltip>
+          <q-tooltip v-if="!ptSettings.side">Материк не выбран</q-tooltip>
           <q-tooltip v-else-if="disabled">Категории не выбраны</q-tooltip>
           <ZoneFromSelect v-if="Object.keys(zones).length"></ZoneFromSelect>
           <ZoneToSelect v-if="Object.keys(zones).length"></ZoneToSelect>
         </div>
         <div>
           <div>
-            <q-radio v-model="condition" label="Зрелые" :val="0"></q-radio>
+            <q-radio v-model="ptSettings.condition" label="Зрелые" :val="0"></q-radio>
           </div>
           <div>
-            <q-radio v-model="condition" label="Протухшие" :val="1"></q-radio>
+            <q-radio v-model="ptSettings.condition" label="Протухшие" :val="1"></q-radio>
           </div>
         </div>
       </div>
@@ -87,17 +87,19 @@ const emit = defineEmits(['sideSelected'])
 const packList = inject('packList')
 const Lost = inject('Lost')
 
-const side = inject('side')
-const zoneFromId = inject('zoneFromId')
-const zoneToId = inject('zoneToId')
-const disabled = inject('disabled')
-const ratePercent = inject('ratePercent')
-const siol = inject('siol')
-const addProfit = inject('addProfit')
-const sort = inject('sort')
-const condition = inject('condition')
-const progress = inject('progress')
+const ptSettings = inject('ptSettings')
 
+// const side = inject('side')
+// const zoneFromId = inject('zoneFromId')
+// const zoneToId = inject('zoneToId')
+// const ratePercent = inject('ratePercent')
+// const siol = inject('siol')
+// const addProfit = inject('addProfit')
+// const sort = inject('sort')
+// const condition = inject('condition')
+
+const progress = inject('progress')
+const disabled = inject('disabled')
 const zones = ref({})
 const allZonesTo = ref([])
 
@@ -118,21 +120,21 @@ const Sides = [
 provide('Sides', Sides)
 
 const zonesFrom = computed(()=>{
-  if (!Object.keys(zones.value).length || !side.value){
+  if (!Object.keys(zones.value).length || !ptSettings.value.side){
     return [{id: 0, name: 'Все'}]
   }
-  let zfrom = [...zones.value[side.value]]
-  zfrom.unshift({id:0, name: "Все", ZonesTo: allZonesTo.value[side.value]})
+  let zfrom = [...zones.value[ptSettings.value.side]]
+  zfrom.unshift({id:0, name: "Все", ZonesTo: allZonesTo.value[ptSettings.value.side]})
   return zfrom
 })
 provide('zonesFrom', zonesFrom)
 
 const zonesTo = computed(() => {
-  if (!zonesFrom.value.length  || !side.value){
+  if (!zonesFrom.value.length  || !ptSettings.value.side){
     return [{id: 0, name: 'Все'}]
   }
   let obj = [...zonesFrom.value]
-  obj = obj.find(el => el.id === zoneFromId.value)
+  obj = obj.find(el => el.id === ptSettings.value.zoneFromId)
   if (!obj || !obj.ZonesTo){
     return []
   }
@@ -142,32 +144,32 @@ provide('zonesTo', zonesTo)
 
 const currencyPrices = inject('currencyPrices')
 
-watch(zoneFromId, ()=>{
-  if(zoneFromId.value && zonesTo.value){
-    if(zoneFromId.value === zoneToId.value){
-      zoneToId.value = zonesTo.value[0].id
+watch(() => ptSettings.value.zoneFromId, ()=>{
+  if(ptSettings.value.zoneFromId && zonesTo.value){
+    if(ptSettings.value.zoneFromId === ptSettings.value.zoneToId){
+      ptSettings.value.zoneToId= zonesTo.value[0].id
     }
     if(zonesTo.value.length === 2){
-      zoneToId.value = zonesTo.value[1].id
+      ptSettings.value.zoneToId = zonesTo.value[1].id
     }
 
     return true
   }
 
-  zoneToId.value = 0
+  ptSettings.value.zoneToId = 0
 })
 
-watch(addProfit, () => {
+watch(()=>ptSettings.value.addProfit, () => {
   Lost.value = []
-  if(addProfit.value){
+  if(ptSettings.value.addProfit && !progress.value){
     loadList()
   }
 })
 
-watch(side, ()=>{
-  if(side.value){
-    zoneFromId.value = 0
-    zoneToId.value = 0
+watch(()=>ptSettings.value.side, ()=>{
+  if(ptSettings.value.side){
+    ptSettings.value.zoneFromId = 0
+    ptSettings.value.zoneToId = 0
     loadList()
   }
 })
@@ -177,11 +179,11 @@ onMounted(()=> {
 
 function addProfitActive(){
   if(!!!curAccount.value.AccSets.serverGroup){
-    addProfit.value = false
+    ptSettings.value.addProfit = false
     goToSettings()
     return false
   }
-  if(!side.value){
+  if(!ptSettings.value.side){
     q.notify({
       color: 'negative',
       position: 'center',
@@ -192,9 +194,9 @@ function addProfitActive(){
     })
     return false
   }
-  addProfit.value = !addProfit.value
-  if (addProfit.value){
-    sort.value = 'byProfit'
+  ptSettings.value.addProfit = !ptSettings.value.addProfit
+  if (ptSettings.value.addProfit){
+    ptSettings.value.sort = 'byProfit'
   }
 
 }
@@ -230,10 +232,10 @@ function loadList() {
   api.post(apiUrl + 'api/get/packs.php', {
     params: {
       token: token.value,
-      side: side.value,
-      addProfit: addProfit.value,
-      siol: siol.value,
-      condition: condition.value
+      side: ptSettings.value.side,
+      addProfit: ptSettings.value.addProfit,
+      siol: ptSettings.value.siol,
+      condition: ptSettings.value.condition
     }
   })
     .then((response) => {

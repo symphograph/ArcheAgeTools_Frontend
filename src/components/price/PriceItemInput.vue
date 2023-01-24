@@ -2,7 +2,7 @@
   <q-item dense class="PriceCell">
     <q-item-section>
       <q-item-label :lines="1">
-        <div class="PriceLabel" @click="copy(price.name)">{{ price.name }}</div>
+        <div class="PriceLabel" @click="copy(price.name, q)">{{ price.name }}</div>
       </q-item-label>
       <q-input
         mask="## ## ##"

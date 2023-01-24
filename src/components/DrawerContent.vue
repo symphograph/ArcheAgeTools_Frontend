@@ -55,7 +55,7 @@ const linksList = [
     title: 'Мои цены',
     caption: 'Цены предметов',
     ava: '/img/crafcul.png',
-    link: '/prices/'
+    link: '/myprices/'
   },
   {
     title: 'Сообщество',
