@@ -12,13 +12,13 @@
 <script setup>
 
 import {inject, onMounted, ref} from "vue";
-import ItemIcon from "components/ItemIcon.vue";
 import CraftResults from "components/items/CraftResults.vue"
 import CraftList from "components/craft/CraftList.vue";
 import {api} from "boot/axios";
 import {LocalStorage, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 import CurrencyArea from "components/items/CurrencyArea.vue";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -41,41 +41,21 @@ onMounted(()=> {
 })
 
 function loadItem() {
-  //Item.value = null
   api.post(apiUrl + '/api/get/item.php', {
     params: {
-      token: token.value,
       id: route.params.id
     }
   })
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        Item.value = null
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      if (response.data.result) {
-        Item.value = response.data.data
-        LocalStorage.set('lastItem', Item.value.id)
-
-      }
+      Item.value = response?.data?.data ?? null
+      LocalStorage.set('lastItem', Item.value.id)
     })
-    .catch(() => {
+    .catch((error) => {
       Item.value = null
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает_ььь',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+      q.notify(notifyError(error))
     })
     .finally(() => {
       progress.value = false

@@ -74,6 +74,7 @@ import TypeSelect from "components/packs/TypeSelect.vue";
 import NavButton from "components/NavButton.vue";
 import {useRouter} from "vue-router";
 import DialogWindow from "components/DialogWindow.vue";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -231,7 +232,6 @@ function loadList() {
   progress.value = true
   api.post(apiUrl + 'api/get/packs.php', {
     params: {
-      token: token.value,
       side: ptSettings.value.side,
       addProfit: ptSettings.value.addProfit,
       siol: ptSettings.value.siol,
@@ -239,68 +239,34 @@ function loadList() {
     }
   })
     .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
       progress.value = false
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        packList.value = []
-        Lost.value = []
-      }
-      if (response.data.result) {
-        packList.value = response.data.data.Packs
-        Lost.value = response.data.data.Lost
-        currencyPrices.value = response.data.data.currencyPrices
-      }
+      packList.value = response?.data?.data?.Packs ?? []
+      Lost.value = response?.data?.data?.Lost ?? []
+      currencyPrices.value = response?.data?.data?.currencyPrices ?? []
+
     })
-    .catch(() => {
+    .catch((error) => {
       progress.value = false
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+      q.notify(notifyError(error, 'Ой! Packs Не работает :('))
       packList.value = []
       Lost.value = []
     })
 }
 function loadZones() {
 
-  api.post(apiUrl + 'api/get/zones.php', {
-    params: {
-      token: token.value
-    }
-  })
+  api.post(apiUrl + 'api/get/zones.php')
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        zones.value = {}
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-      if (response.data.result) {
-        allZonesTo.value = response.data.data.allZonesTo
-        zones.value = response.data.data.zonesFrom
-      }
+      allZonesTo.value = response?.data?.data?.allZonesTo ?? []
+      zones.value = response?.data?.data?.zonesFrom ?? []
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error, 'Ой! Zones Не работает :('))
       zones.value = {}
     })
 }

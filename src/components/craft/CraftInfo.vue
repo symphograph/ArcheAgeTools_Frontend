@@ -20,7 +20,7 @@
           </q-btn>
         </q-item-section>
       </q-item>
-      <q-item dense class="listItem" >
+      <q-item dense class="listItem">
         <q-item-section>
           <q-item-label>
             Коэф SPM:
@@ -28,11 +28,11 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label>
-            {{ round(Craft.countData.spmu)}}
+            {{ round(Craft.countData.spmu) }}
           </q-item-label>
         </q-item-section>
       </q-item>
-      <q-item dense class="listItem" >
+      <q-item dense class="listItem">
         <q-item-section>
           <q-item-label>
             Себестоимость:
@@ -44,7 +44,7 @@
           </q-item-label>
         </q-item-section>
       </q-item>
-      <q-item dense class="listItem" v-if="profit !== false" >
+      <q-item dense class="listItem" v-if="profit !== false">
         <q-item-section>
           <q-item-label>
             Прибыль:
@@ -111,7 +111,7 @@
     </div>
     <div class="InfoCol">
       <q-list dense>
-        <q-item dense class="listItem" >
+        <q-item dense class="listItem">
           <q-item-section>
             <q-item-label>
               ОР на рецепт:
@@ -119,7 +119,7 @@
           </q-item-section>
           <q-item-section side>
             <q-item-label>
-              {{ round(Craft.countData.LaborData.forThisCraftBonused)}}
+              {{ round(Craft.countData.LaborData.forThisCraftBonused) }}
               <img class="smallIcon" src="/img/valuta/2.png" alt=""/>
             </q-item-label>
           </q-item-section>
@@ -132,7 +132,7 @@
           </q-item-section>
           <q-item-section side>
             <q-item-label>
-              {{ round(Craft.countData.LaborData.forOneUnitOfThisCraft)  }}
+              {{ round(Craft.countData.LaborData.forOneUnitOfThisCraft) }}
               <img class="smallIcon" src="/img/valuta/2.png" alt=""/>
             </q-item-label>
           </q-item-section>
@@ -159,7 +159,7 @@
 
 import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue"
-import {priceImager} from "src/myFuncts.js"
+import {notifyError, notifyOK, priceImager} from "src/myFuncts.js"
 import {copyToClipboard, useQuasar} from "quasar";
 import {api} from "boot/axios";
 
@@ -174,21 +174,21 @@ const props = defineProps({
 const isUBest = ref(props.Craft.countData.isUBest);
 const isBest = ref(props.Craft.countData.isBest);
 const Item = inject('Item')
-const profit = computed(()=> {
-  if(!Item.value.Pricing.isGoldable){
+const profit = computed(() => {
+  if (!Item.value.Pricing.isGoldable) {
     return 0
   }
-  if(!Item.value.Pricing.Price.price){
+  if (!Item.value.Pricing.Price.price) {
     return false
   }
   let price = Item.value.Pricing.Price.price + ''
-  price = price.replace(/[^0-9]/g,"") * 0.9
+  price = price.replace(/[^0-9]/g, "") * 0.9
   price = Math.round(price)
   return price - props.Craft.countData.craftCost
 
 })
 
-function copy (val) {
+function copy(val) {
   copyToClipboard(val)
     .then(() => {
       q.notify({
@@ -204,67 +204,35 @@ function copy (val) {
     })
 }
 
-function profNeed(need)
-{
-  if (!need){
+function profNeed(need) {
+  if (!need) {
     return ''
   }
-  if(need < 1000){
+  if (need < 1000) {
     return need
   }
-  return Math.round(need/1000)  + 'k'
+  return Math.round(need / 1000) + 'k'
 }
 
-function round(val)
-{
+function round(val) {
   return Math.round(val * 100) / 100
 }
 
 function setBuyable() {
   api.post(apiUrl + 'api/set/price/buyable.php', {
     params: {
-      token: token.value,
       buyable: Item.value.isBuyOnly,
       itemId: Item.value.id
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 300,
-          closeBtn: 'Закрыть'
-        })
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+      q.notify(notifyError(error))
     })
 }
 </script>
@@ -274,6 +242,7 @@ function setBuyable() {
   width: 100%;
   max-width: 270px;
 }
+
 .listItem {
   min-height: 20px;
 }

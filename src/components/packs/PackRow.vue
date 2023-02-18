@@ -141,7 +141,7 @@ const profitPerLabor = computed(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .packName{
   width: 12em;
   font-size: 13px;

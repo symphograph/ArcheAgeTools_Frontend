@@ -49,7 +49,7 @@
 import {useQuasar} from "quasar"
 import {inject, ref} from "vue"
 import {useRouter} from "vue-router"
-import {priceColor} from "src/myFuncts.js"
+import {notifyError, notifyOK, priceColor} from "src/myFuncts.js"
 import {api} from "boot/axios";
 import DelBtn from "components/price/DelBtn.vue"
 import ItemIcon from "components/ItemIcon.vue"
@@ -79,48 +79,17 @@ function goTo(id){
 function delPrice(){
   api.post(apiUrl + 'api/set/price/del.php', {
     params: {
-      token: token.value,
       itemId: Props.price.itemId
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 100,
-          closeBtn: 'Закрыть'
-        })
-        emit('delPrice')
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+      q.notify(notifyError(error))
     })
 }
 
@@ -129,51 +98,21 @@ function savePrice() {
   priceRef.value.blur()
   api.post(apiUrl + 'api/set/price/price.php', {
     params: {
-      token: token.value,
       price: nPrice.value.price,
       itemId: Props.price.itemId
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 300,
-          closeBtn: 'Закрыть'
-        })
-        nPrice.value.accountId = curAccount.value.id
-        nPrice.value.author = curAccount.value.AccSets.publicNick
-        nPrice.value.method = 'bySolo'
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      nPrice.value.accountId = curAccount?.value?.id ?? 0
+      nPrice.value.author = curAccount?.value?.AccSets?.publicNick ?? 'Error'
+      nPrice.value.method = 'bySolo'
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+      q.notify(notifyError(error))
     })
 }
 </script>

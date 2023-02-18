@@ -218,3 +218,26 @@ export function copy (val, q) {
       // fail
     })
 }
+
+export function notifyOK (message = 'Готово') {
+  return {
+    color: 'positive',
+    position: 'center',
+    message: message,
+    timeout: 100,
+    closeBtn: 'Закрыть'
+  }
+}
+
+export function notifyError (error, defaultMsg = 'Ой! Не работает :(') {
+  return {
+    color: 'negative',
+    position: 'center',
+    message:
+      !!error?.response?.data?.error
+        ? error.response.data.error
+        : defaultMsg,
+    closeBtn: 'x',
+    icon: 'report_problem'
+  }
+}

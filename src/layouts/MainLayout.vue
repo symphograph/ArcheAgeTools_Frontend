@@ -65,6 +65,7 @@ import {useRoute} from "vue-router"
 import LoginList from "components/account/LoginList.vue"
 import DrawerContent from "components/DrawerContent.vue"
 import ItemIcon from "components/ItemIcon.vue"
+import {notifyError} from "src/myFuncts";
 
 
 const q = useQuasar()
@@ -83,10 +84,10 @@ provide('selCategId', selCategId)
 const selCategNode = ref(null)
 provide('selCategNode', selCategNode)
 
-const Servers = ref(null)
+const Servers = ref([])
 provide('Servers', Servers)
 
-const ProfLvls = ref(null)
+const ProfLvls = ref([])
 provide('ProfLvls', ProfLvls)
 
 
@@ -108,6 +109,12 @@ const authTypes = ref([
     label: 'MailRu',
     url: 'auth/mailru.php',
     img: '/img/auth/mailru.svg'
+  },
+  {
+    id: 4,
+    label: 'Discord',
+    url: 'auth/discord.php?action=login',
+    img: '/img/auth/discord.svg'
   }
 ])
 provide('authTypes', authTypes)
@@ -119,7 +126,7 @@ provide('CategoriesList', CategoriesList)
 const expandedCategNode = ref([])
 provide('expandedCategNode', expandedCategNode)
 const categMode = ref(false)
-provide('categMode',categMode)
+provide('categMode', categMode)
 
 
 function toggleLeftDrawer() {
@@ -149,38 +156,16 @@ function goToLogin() {
 }
 
 function loadOptions() {
-  api.post(apiUrl + 'api/get/options.php', {
-    params: {
-      token: token.value
-    }
-  })
+  api.post(apiUrl + 'api/get/options.php')
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-
-        })
-        Servers.value = null
-        ProfLvls.value = null
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-      if (response.data.result) {
-        Servers.value = response.data.data.Servers
-        ProfLvls.value = response.data.data.ProfLvls
-      }
+      Servers.value = response?.data?.data?.Servers ?? []
+      ProfLvls.value = response?.data?.data?.ProfLvls ?? []
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 
@@ -188,42 +173,29 @@ function apiSess() {
   if (!token.value) {
     goToLogin()
   }
+  //api.defaults.headers.common['Authorization'] = token.value
+
+
   api.post(apiUrl + 'api/auth/session.php', {
     params: {
-      token: token.value,
       path: route.path,
     }
   })
     .then((response) => {
-      if (response.data.result) {
-        //lvl.value = response.data.data.User.lvl
-        AccountList.value = response.data.data.Accounts
-        curAccount.value = response.data.data.curAccount
-        loadOptions()
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
 
-      if (response.data.error) {
-        if (['badToken', 'emptyToken', 'Refresh for new Sess'].includes(response.data.error)) {
-          goToLogin()
-        }
-        return false
-      }
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Ой! Не работает.:(',
-        closeBtn: 'Закрыть',
-        icon: 'report_problem'
-      })
+      AccountList.value = response?.data?.data?.Accounts ?? []
+      curAccount.value = response?.data?.data?.curAccount ?? null
+      loadOptions()
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Ой! Не работает.:(',
-        icon: 'report_problem'
-      })
+      if(error?.response?.status === 401){
+        goToLogin()
+        return
+      }
+      q.notify(notifyError(error, 'Ой! Account Не работает :('))
     })
 }
 
@@ -237,6 +209,10 @@ onBeforeMount(() => {
 
 onMounted(() => {
   LocalStorage.set('lastPath', route.path)
+  api.defaults.headers.common['Authorization'] = token.value
+  if(!process.env.isDebug){
+    api.defaults.headers.common['Accept'] = "application/json"
+  }
   apiSess()
 })
 </script>

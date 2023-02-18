@@ -1,17 +1,5 @@
 <template>
-  <q-list separator v-if="CategoriesList">
-    <q-expansion-item :content-inset-level="0.2" default-opened>
-      <template v-slot:header>
-        <q-item-section avatar>
-          <q-avatar>
-            <q-img src="/img/crafcul.png" :ratio="30/30"></q-img>
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>Предметы</q-item-label>
-          <q-item-label caption>Каталог итемов</q-item-label>
-        </q-item-section>
-      </template>
+  <q-item separator v-if="CategoriesList">
       <q-item-section>
         <q-tree
           ref="tree"
@@ -27,8 +15,7 @@
           dense
         />
       </q-item-section>
-    </q-expansion-item>
-  </q-list>
+  </q-item>
 </template>
 
 <script setup>
@@ -36,6 +23,7 @@ import {inject, onMounted, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {useRoute, useRouter} from "vue-router";
+import {notifyError} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const route = useRoute()
@@ -79,34 +67,18 @@ function loadCategList() {
 
   api.post(apiUrl + 'api/get/categories.php', {
     params: {
-      token: '12345'
     }
   })
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        CategoriesList.value = null
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
       if (response.data.result) {
-        CategoriesList.value = response.data.data
+        CategoriesList.value = response?.data?.data ?? []
       }
     })
-    .catch(() => {
-      CategoriesList.value = null
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error,'Категории не загрузились'))
     })
 }
 </script>

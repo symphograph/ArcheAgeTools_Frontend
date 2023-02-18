@@ -7,7 +7,7 @@
     <div v-else>Рецепты не найдены</div>
 
 
-    <template v-if="CraftList && CraftList.length">
+    <template v-if="CraftList.length">
       <q-expansion-item label="Другие рецепты" popup>
         <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft" @setUBest="onSetUBest"></CraftCard>
       </q-expansion-item>
@@ -31,6 +31,7 @@ import CraftCard from "components/craft/CraftCard.vue"
 import LostList from "components/price/LostList.vue"
 import MatPool from "components/craft/MatPool.vue";
 import {useRoute} from "vue-router";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -39,7 +40,7 @@ const route = useRoute()
 const Item = inject('Item')
 const itemId = inject('itemId')
 const MainCraft = ref(null)
-const CraftList = ref(null)
+const CraftList = ref([])
 const Lost = ref([])
 
 const progress = inject('progress')
@@ -79,46 +80,31 @@ function loadCrafts() {
   //CraftList.value = null
   api.post(apiUrl + 'api/get/crafts.php', {
     params: {
-      token: token.value,
       itemId: route.params.id
     }
   })
     .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+
       progress.value = false
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        CraftList.value = null
+
+      if(!!response?.data?.data?.Lost?.length){
+        Lost.value = response?.data?.data?.Lost ?? []
+        CraftList.value = []
         MainCraft.value = null
-        return false
+        return
       }
-      if (response.data.result) {
-        if(response.data.data.Lost && response.data.data.Lost.length){
-          Lost.value = response.data.data.Lost
-          CraftList.value = null
-          MainCraft.value = null
-          return
-        }
-        CraftList.value = response.data.data.otherCrafts
-        MainCraft.value = response.data.data.mainCraft
-      }
+
+      CraftList.value = response?.data?.data?.otherCrafts ?? []
+      MainCraft.value = response?.data?.data?.mainCraft ?? null
     })
-    .catch(() => {
-      CraftList.value = null
+    .catch((error) => {
+      CraftList.value = []
       MainCraft.value = null
       progress.value = false
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+      q.notify(notifyError(error, 'Ой! CraftList Не работает :('))
     })
 }
 </script>

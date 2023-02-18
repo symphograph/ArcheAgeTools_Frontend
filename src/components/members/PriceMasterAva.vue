@@ -25,6 +25,7 @@ import {api} from "boot/axios";
 import {inject} from "vue";
 import {useQuasar} from "quasar";
 import {useRoute} from "vue-router";
+import {notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -37,50 +38,30 @@ const priceMember = inject('priceMember')
 function setFollow(){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
-      token: token.value,
       master: priceMember.value.accountId,
       serverId: curAccount.value.AccSets.serverId,
       isFollow: priceMember.value.isFollow
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 100,
-          closeBtn: 'Закрыть'
-        })
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response.data.result))
     })
-    .catch(() => {
+    .catch((error) => {
+      CraftList.value = []
+      MainCraft.value = null
+      progress.value = false
       q.notify({
         color: 'negative',
         position: 'center',
-        html: true,
-        message: 'Что-то со связью.<br>Не сохранилось.',
-        timeout: 500,
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
+        message:
+          !!error?.response?.data?.error
+            ? error.response.data.error
+            : 'Ой! CraftList Не работает :(',
+        closeBtn: 'x',
+        icon: 'report_problem'
       })
     })
 }

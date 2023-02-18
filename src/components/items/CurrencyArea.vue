@@ -51,6 +51,7 @@ import PriceImager from "components/price/PriceImager.vue";
 import CurrencyTradable from "components/items/CurrencyTradable.vue";
 import PriceCurrencyItem from "components/price/PriceCurrencyItem.vue";
 import LostList from "components/price/LostList.vue";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -101,37 +102,21 @@ function loadList() {
 
   api.post(apiUrl + 'api/get/currency.php', {
     params: {
-      token: token.value,
       id: currencyId.value
     }
   })
     .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
       progress.value = false
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        Currency.value = null
-        return false
-      }
-      if (response.data.result) {
-        Currency.value = response.data.data
-      }
+      Currency.value = response?.data?.data ?? null
+
     })
-    .catch(() => {
+    .catch((error) => {
       Currency.value = null
       progress.value = false
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+      q.notify(notifyError(error,'Ой! Currency Не работает :('))
     })
 }
 </script>

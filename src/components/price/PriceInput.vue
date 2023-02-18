@@ -26,7 +26,7 @@
 import {computed, inject, onBeforeMount, onMounted, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
-import {fDate, priceColor} from "src/myFuncts";
+import {fDate, notifyError, notifyOK, priceColor} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -102,49 +102,19 @@ function savePrice() {
   priceRef.value.blur()
   api.post(apiUrl + 'api/set/price/price.php', {
     params: {
-      token: token.value,
       price: nPrice.value.price,
       itemId: Item.value.id
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 300,
-          closeBtn: 'Закрыть'
-        })
-        emit('updated')
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('updated')
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+      q.notify(notifyError(error))
     })
 }
 

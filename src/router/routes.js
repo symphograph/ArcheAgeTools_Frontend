@@ -85,6 +85,13 @@ const routes = [
       { path: '', component: () => import('pages/PackPage.vue') }
     ]
   },
+  {
+    path: '/logs',
+    component: () => import('layouts/DebugLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/LogsPage.vue') }
+    ]
+  },
 ]
 
 export default routes

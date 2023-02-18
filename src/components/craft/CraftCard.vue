@@ -27,7 +27,8 @@
       </div>
     </q-card-section>
     <q-card-section v-if="Craft.matPool">
-          <MatPool :matPool="Craft.matPool"></MatPool>
+      <MatPool :matPool="Craft.matPool"></MatPool>
+      <TrashPool :trashPool="Craft.trashPool"></TrashPool>
     </q-card-section>
   </q-card>
 </template>
@@ -41,6 +42,8 @@ import MatRow from "components/craft/MatRow.vue";
 import MatPool from "components/craft/MatPool.vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
+import TrashPool from "components/craft/TrashPool.vue";
+import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -62,123 +65,61 @@ const emit = defineEmits(['setUBest', 'delUBest'])
 function setAsUBest() {
   api.post(apiUrl + 'api/set/craft/ubest.php', {
     params: {
-      token: token.value,
       craftId: props.Craft.id
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 100,
-          closeBtn: 'Закрыть'
-        })
-        emit('setUBest')
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('setUBest')
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        html: true,
-        message: 'Что-то со связью.<br>Не сохранилось.',
-        timeout: 500,
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 
 function delUBest() {
   api.post(apiUrl + 'api/set/craft/delubest.php', {
     params: {
-      token: token.value,
       craftId: props.Craft.id
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 100,
-          closeBtn: 'Закрыть'
-        })
-        emit('setUBest')
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('setUBest')
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        html: true,
-        message: 'Что-то со связью.<br>Не сохранилось.',
-        timeout: 500,
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 </script>
 
 <style scoped>
-.wrapContainer{
+.wrapContainer {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 }
+
 .wrapElement {
   padding: 1em;
 }
+
 .listItem {
   min-height: 1px;
 }
+
 .CraftCard {
   background-color: rgba(211, 238, 144, 0.06);
   box-shadow: 0 0 1em 0 rgb(0 0 0 / 9%);
   margin: 1em 0;
   padding: 1em;
 }
-
 
 
 .CraftInfo {
@@ -192,14 +133,18 @@ function delUBest() {
   justify-content: space-between;
   min-width: 250px;
 }
+
 .TextBottom {
-  height: 100%;display: flex; align-items: flex-end;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
 }
 
 .DefBtn {
   font-size: 12px;
 }
-@media screen and (min-width: 600px){
+
+@media screen and (min-width: 600px) {
 
 }
 

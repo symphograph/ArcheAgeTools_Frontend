@@ -17,7 +17,10 @@ import {computed, inject, onMounted, provide, ref, watch} from "vue";
 import CategoryNavigator from "components/category/CategoryNavigator.vue"
 import ItemRow from "components/category/ItemRow.vue"
 import {api} from "boot/axios";
-import {layoutFix} from "src/myFuncts";
+import {layoutFix, notifyError} from "src/myFuncts";
+import {useQuasar} from "quasar";
+
+const q = useQuasar()
 const selCategId = inject('selCategId')
 const searchText = ref('')
 provide('searchText', searchText)
@@ -105,7 +108,7 @@ watch(selCategId,() => {
   //console.log(itemList.value)
 })
 
-const SearchList = ref(null)
+const SearchList = ref([])
 
 const itemList = computed(() => {
   if(!SearchList.value || !SearchList.value.length){
@@ -192,35 +195,16 @@ function indexDB(list) {
 
 function loadList() {
 
-  api.post(apiUrl + 'api/get/search.php', {
-    params: {
-      token: token.value
-    }
-  })
+  api.post(apiUrl + 'api/get/search.php')
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-      if (response.data.result) {
-        indexDB(response.data.data)
-        SearchList.value = response.data.data
-      }
+      indexDB(response?.data?.data ?? [])
+      SearchList.value = response?.data?.data ?? []
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error, 'Ой! Search Не работает :('))
     })
 }
 </script>

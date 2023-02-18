@@ -21,6 +21,7 @@ import {inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
+import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -42,48 +43,18 @@ function save(){
   profRef.value.blur()
   api.post(apiUrl + 'api/set/prof.php', {
     params: {
-      token: token.value,
       profId: Props.prof.id,
       lvl: curAccount.value.AccSets.Profs.find(el => el.id === Props.prof.id).lvl
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 300,
-          closeBtn: 'Закрыть'
-        })
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK())
     })
-    .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+        .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 </script>

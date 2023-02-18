@@ -15,8 +15,8 @@
       :key="link.title"
       v-bind="link"
      :title="link.title"></EssentialLink>
+    <CategoryTree v-if="isItemPage && Servers.length"></CategoryTree>
   </q-list>
-  <CategoryTree v-if="isItemPage"></CategoryTree>
 </template>
 
 <script setup>
@@ -70,6 +70,7 @@ const linksList = [
     link: '/account'
   }
 ]
+const Servers = inject('Servers')
 
 const isItemPage = computed(()=>{
   return !!(route.path.match(/^\/item\//)) || !!(route.path.match(/^\/category/));

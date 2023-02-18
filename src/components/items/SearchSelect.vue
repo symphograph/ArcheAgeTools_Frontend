@@ -49,6 +49,7 @@ import {LocalStorage, useQuasar} from 'quasar'
 import {onMounted, ref, provide, inject, watch} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {useRoute, useRouter} from 'vue-router'
+import {notifyError} from "src/myFuncts";
 
 const route = useRoute()
 const router = useRouter()
@@ -125,33 +126,18 @@ function loadList() {
 
   api.post(apiUrl + 'api/get/search.php', {
     params: {
-      token: token.value
+      // token: token.value
     }
   })
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-      if (response.data.result) {
-        indexDB(response.data.data)
-        SearchList.value = response.data.data
-      }
+      indexDB(response?.data?.data ?? [])
+      SearchList.value = response?.data?.data ?? []
     })
-    .catch(() => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 

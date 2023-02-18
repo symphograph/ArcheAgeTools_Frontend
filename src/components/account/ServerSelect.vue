@@ -28,6 +28,7 @@
 import {useQuasar} from "quasar";
 import {inject, ref} from "vue";
 import {api} from "boot/axios";
+import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -40,51 +41,19 @@ const emit = defineEmits(['saved'])
 function save() {
   api.post(apiUrl + 'api/set/server.php', {
     params: {
-      token: token.value,
       server: curAccount.value.AccSets.serverId,
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 100,
-          closeBtn: 'Закрыть'
-        })
-        inputClass.value = 'Input'
-        //location.reload();
-        emit('saved')
-
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK(response.data.result))
+      inputClass.value = 'Input'
+      emit('saved')
     })
-    .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+        .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 </script>

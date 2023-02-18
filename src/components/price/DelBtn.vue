@@ -20,6 +20,8 @@ function confirm () {
     component: DialogWindow,
     componentProps: {
       text: 'Удалить запись о цене этого предмета?',
+      okBtnText: 'Удалить',
+      cancelBtnText: 'Отмена'
       // ...more..props...
     },
     title: 'Удалить',

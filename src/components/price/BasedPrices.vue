@@ -11,6 +11,7 @@ import {inject, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import BasedPriceItem from "components/price/BasedPriceItem.vue";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -28,36 +29,16 @@ defineExpose({
 })
 
 function loadPrices() {
-  api.post(apiUrl + '/api/get/price/based.php', {
-    params: {
-      token: token.value
-    }
-  })
+  api.post(apiUrl + '/api/get/price/based.php')
     .then((response) => {
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        Prices.value = null
-        return false
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-      if (response.data.result) {
-        Prices.value = response.data.data.Prices
-      }
+      Prices.value = response?.data?.data?.Prices ?? []
     })
-    .catch(() => {
-      Prices.value = null
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+    .catch((error) => {
+      Prices.value = []
+      q.notify(notifyError(error))
     })
 }
 </script>

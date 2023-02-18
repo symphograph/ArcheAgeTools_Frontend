@@ -34,6 +34,7 @@ import {inject, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useQuasar} from "quasar";
 import FilterInput from "components/price/FilterInput.vue";
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -72,39 +73,22 @@ function loadPrices() {
   progress.value = true
   api.post(apiUrl + '/api/get/prices.php', {
     params: {
-      token: token.value,
       serverId: curAccount.value.AccSets.serverId,
       accId: route.params.accId
     }
   })
     .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
       progress.value = false
-      if (response.data.error) {
-        q.notify({
-          color: 'negative',
-          position: 'center',
-          message: response.data.error,
-          icon: 'report_problem',
-          closeBtn: 'Закрыть'
-        })
-        Prices.value = null
-        return false
-      }
-      if (response.data.result) {
-        Prices.value = response.data.data.Prices
-        priceMember.value = response.data.data.priceMember
-      }
+      Prices.value = response?.data?.data?.Prices ?? []
+      priceMember.value = response?.data?.data?.priceMember ?? null
     })
-    .catch(() => {
+    .catch((error) => {
       progress.value = false
-      Prices.value = null
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        icon: 'report_problem',
-        closeBtn: 'Закрыть'
-      })
+      Prices.value = []
+      q.notify(notifyError(error))
     })
 }
 </script>

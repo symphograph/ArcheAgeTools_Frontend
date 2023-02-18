@@ -28,6 +28,7 @@ import {useQuasar} from "quasar"
 import AccSets from "components/account/AccSets.vue"
 import ProfList from "components/account/ProfList.vue"
 import BasedPrices from "components/price/BasedPrices.vue"
+import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -45,35 +46,15 @@ onMounted(() => {
 })
 
 function loadAccount() {
-  api.post(apiUrl + 'api/get/account.php', {
-    params: {
-      token: token.value
-    }
-  })
+  api.post(apiUrl + 'api/get/account.php')
     .then((response) => {
-      if (response.data.result) {
-        curAccount.value = response.data.data.curAccount
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      if (response.data.error) {
-        // return false
-      }
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Ой! Не работает.:(',
-        closeBtn: 'Закрыть',
-        icon: 'report_problem'
-      })
+      curAccount.value = response?.data?.data?.curAccount ?? null
     })
     .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Ой! Не работает.:(',
-        icon: 'report_problem'
-      })
+      q.notify(notifyError(error, 'Ой! Account Не работает :('))
     })
 }
 </script>

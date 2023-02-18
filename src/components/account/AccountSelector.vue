@@ -64,6 +64,16 @@
           <q-item-label>Mail.ru</q-item-label>
         </q-item-section>
       </q-item>
+      <q-item clickable :href="apiUrl + 'auth/discord.php?action=login'" @click="goTo(apiUrl + 'auth/discord.php?action=login')">
+        <q-item-section avatar>
+          <q-avatar icon="img:/img/auth/discord.svg">
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label class="text-grey" caption>Войти через</q-item-label>
+          <q-item-label>Discord</q-item-label>
+        </q-item-section>
+      </q-item>
     </template>
   </q-select>
 </template>

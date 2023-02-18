@@ -25,6 +25,7 @@
 import {useQuasar} from "quasar";
 import {inject, ref} from "vue";
 import {api} from "boot/axios";
+import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -77,24 +78,22 @@ function NickLangValid(){
 function servValidNick() {
   api.post(apiUrl + 'api/set/nick.php', {
     params: {
-      token: token.value,
       nick: curAccount.value.AccSets.publicNick,
       save: false
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        nickErr.value = ''
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      if (response.data.error) {
-        nickErr.value = response.data.error
-      }
+      nickErr.value = ''
       nickRef.value.validate()
     })
     .catch((error) => {
-      nickErr.value = 'Сервер не ответил'
+      nickErr.value =
+        !!error?.response?.data?.error
+          ? error.response.data.error
+          : 'Сервер не ответил'
       nickRef.value.validate()
     })
 }
@@ -103,48 +102,18 @@ function saveNick() {
   nickRef.value.blur()
   api.post(apiUrl + 'api/set/nick.php', {
     params: {
-      token: token.value,
       nick: curAccount.value.AccSets.publicNick,
       save: true
     }
   })
     .then((response) => {
-
-      if (response.data.result) {
-        q.notify({
-          color: 'positive',
-          position: 'center',
-          message: response.data.result,
-          timeout: 300,
-          closeBtn: 'Закрыть'
-        })
-        return true
+      if(!!!response?.data?.result){
+        throw new Error();
       }
-
-      let msg = 'Ой! Не получается.:('
-      if (response.data.error) {
-        msg = response.data.error
-      }
-
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: msg,
-        icon: 'report_problem',
-        timeout: 300,
-        closeBtn: 'Закрыть'
-      })
-      return false
-
+      q.notify(notifyOK())
     })
-    .catch((error) => {
-      q.notify({
-        color: 'negative',
-        position: 'center',
-        message: 'Сервер не отвечает',
-        timeout: 300,
-        icon: 'report_problem'
-      })
+        .catch((error) => {
+      q.notify(notifyError(error))
     })
 }
 </script>

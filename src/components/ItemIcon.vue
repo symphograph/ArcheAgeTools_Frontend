@@ -29,7 +29,7 @@ function getSize() {
 
 function bgUrl() {
   if(props.icon) {
-    return "url(" + apiUrl + "img/icons/80/" + props.icon + ".png)"
+    return "url(" + apiUrl + "img/icons/90/" + props.icon + ")"
   }
   if(props.locIcon) {
     return "url(" + props.locIcon + ")"
@@ -38,7 +38,7 @@ function bgUrl() {
 }
 
 function bgGUrl() {
-  return "url(" + apiUrl + "img/grade/icon_grade" + props.grade + ".png)"
+  return "url(/img/grade/" + props.grade + ".png)"
 }
 
 </script>
