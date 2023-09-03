@@ -4,44 +4,85 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      {
+        path: '/',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [{path: '', component: () => import('pages/IndexPage.vue')}]
+      },
+      {
+        path: '/item/',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/ItemPage.vue') }
+        ]
+      },
+      {
+        path: '/item/:id',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/ItemPage.vue') }
+        ]
+      },
+      {
+        path: '/account',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/AccountPage.vue') }
+        ]
+      },
+      {
+        path: '/members',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/MembersPage.vue') }
+        ]
+      },
+      {
+        path: '/prices/:accId',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/PricesPage.vue') }
+        ]
+      },
+      {
+        path: '/myprices',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/PricesMyPage.vue') }
+        ]
+      },
+      {
+        path: '/category',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/CategoryPage.vue') }
+        ]
+      },
+      {
+        path: '/packs',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/PackPage.vue') }
+        ]
+      },
     ]
   },
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
-    path: '/:catchAll(.*)*',
-    component: () => import('layouts/MainLayout.vue'),
+    path: '/auth/callback',
+    component: () => import('layouts/RootLayout.vue'),
+    children: [{path: '', component: () => import('pages/service/AuthCallback.vue')}]
+  },
+  {
+    path: '/logs',
+    component: () => import('layouts/DebugLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ErrorNotFound.vue') }
+      { path: '', component: () => import('pages/LogsPage.vue') }
     ]
   },
   {
     path: '/auth',
     component: () => import('layouts/AuthLayout.vue'),
     children: [{ path: '', component: () => import('pages/AuthPage.vue') }]
-  },
-  {
-    path: '/item/',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/ItemPage.vue') }
-    ]
-  },
-  {
-    path: '/item/:id',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/ItemPage.vue') }
-    ]
-  },
-  {
-    path: '/account',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/AccountPage.vue') }
-    ]
   },
   {
     path: '/height',
@@ -51,45 +92,10 @@ const routes = [
     ]
   },
   {
-    path: '/members',
+    path: '/:catchAll(.*)*',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MembersPage.vue') }
-    ]
-  },
-  {
-    path: '/prices/:accId',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PricesPage.vue') }
-    ]
-  },
-  {
-    path: '/myprices',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PricesMyPage.vue') }
-    ]
-  },
-  {
-    path: '/category',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/CategoryPage.vue') }
-    ]
-  },
-  {
-    path: '/packs',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/PackPage.vue') }
-    ]
-  },
-  {
-    path: '/logs',
-    component: () => import('layouts/DebugLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/LogsPage.vue') }
+      { path: '', component: () => import('pages/ErrorNotFound.vue') }
     ]
   },
 ]

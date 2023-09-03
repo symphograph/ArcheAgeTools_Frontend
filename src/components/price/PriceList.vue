@@ -66,7 +66,7 @@ const filteredList = computed(() => {
 })
 
 const sortByName = (a, b) => (a.name > b.name) ? 1 : -1
-const sortByDate = (a, b) => (a.datetime < b.datetime) ? 1 : -1
+const sortByDate = (a, b) => (a.updatedAt < b.updatedAt) ? 1 : -1
 
 const sortedList = computed(() => {
   if (!filteredList.value.length) {

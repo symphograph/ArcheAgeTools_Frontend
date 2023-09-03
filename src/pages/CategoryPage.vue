@@ -1,21 +1,16 @@
 <template>
   <div class="WindowArea column">
     <CategoryNavigator :filters="filters"></CategoryNavigator>
-    <q-scroll-area class="col myScrollArea">
-      <q-list dense separator>
-        <template v-for="item in filteredList" :key="item.id">
-          <ItemRow :item="item"></ItemRow>
-        </template>
-      </q-list>
-    </q-scroll-area>
+      <ItemList v-if="filteredList.length && !listProgress"></ItemList>
   </div>
 
 </template>
 
 <script setup>
-import {computed, inject, onMounted, provide, ref, watch} from "vue";
+import {computed, inject, nextTick, onMounted, provide, ref, watch} from "vue";
 import CategoryNavigator from "components/category/CategoryNavigator.vue"
 import ItemRow from "components/category/ItemRow.vue"
+import ItemList from "components/items/ItemList.vue"
 import {api} from "boot/axios";
 import {layoutFix, notifyError} from "src/myFuncts";
 import {useQuasar} from "quasar";
@@ -25,6 +20,8 @@ const selCategId = inject('selCategId')
 const searchText = ref('')
 provide('searchText', searchText)
 
+const listProgress = ref(false)
+
 const filters = ref({
   craftable: true,
   uncraftable: true,
@@ -32,7 +29,7 @@ const filters = ref({
   public: true
 })
 
-
+const filterProgress = ref(false)
 const onlyPersonal = computed(() => {
   if (!filters.value.personal)
     return []
@@ -98,15 +95,19 @@ const filteredList = computed(() => {
   }
   return result
 })
-
+provide('filteredList', filteredList)
 onMounted(() => {
   getListFromIdxDB()
   //loadList()
 })
 
 watch(selCategId,() => {
-  //console.log(itemList.value)
+    resetList()
 })
+
+watch(filters.value,() => {
+    resetList()
+}, {deep: true})
 
 const SearchList = ref([])
 
@@ -117,6 +118,13 @@ const itemList = computed(() => {
   let list = [...SearchList.value]
   return  list.filter(item => item.categId === selCategId.value)
 })
+
+function resetList() {
+    listProgress.value = true
+    nextTick(() =>{
+        listProgress.value = false
+    })
+}
 
 function getListFromIdxDB()
 {

@@ -2,7 +2,7 @@
   <q-item dense class="PriceCell">
     <q-item-section avatar>
       <q-item-label caption :lines="1">
-        {{fDate(price.datetime)}}
+        {{fDate(price.updatedAt)}}
       </q-item-label>
       <q-btn class="no-padding" dense flat :to="'/item/' + price.itemId" @click="goTo(price.itemId)">
         <ItemIcon :icon="price.icon" :grade="price.grade" :tool-text="price.name"></ItemIcon>

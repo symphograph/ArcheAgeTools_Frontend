@@ -38,6 +38,7 @@ const categMode = inject('categMode')
 
 
 watch(selCategId, () => {
+  if(!tree.value) return
   let node = tree.value.getNodeByKey(selCategId.value)
   let id = 0
 
@@ -57,7 +58,6 @@ onMounted(() => {
 })
 
 function setCategMode() {
-  //categMode.value = !!selCategId.value
   if (route.path !== '/category'){
     router.push({ path: '/category' })
   }

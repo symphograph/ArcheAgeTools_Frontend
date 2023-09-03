@@ -1,220 +1,126 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          GraphTools
-        </q-toolbar-title>
-
-        <q-tabs v-if="q.platform.is.desktop" inline-label class="bg-primary text-white shadow-2" align="center">
-          <AccountSelector v-if="AccountList && AccountList.length"></AccountSelector>
-          <LoginList v-else></LoginList>
-        </q-tabs>
-        <template v-else>
-          <ItemIcon v-if="curAccount"
-                    :locIcon="curAccount.authTypeId > 1 ? apiUrl + curAccount.Avatar.src : apiUrl + curAccount.Avatar.src"
-                    :grade="curAccount.AccSets.grade"
-                    @click="toggleLeftDrawer"
-          ></ItemIcon>
-        </template>
-
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      behavior="default"
-      bordered
-    >
-      <DrawerContent></DrawerContent>
-    </q-drawer>
-
-    <q-page-container v-if="curAccount">
-      <q-page class="row no-wrap">
-        <div class="col">
-          <div class="column full-height">
-            <router-view/>
-          </div>
-        </div>
-      </q-page>
-    </q-page-container>
-    <q-footer>
-      <div class="footer">© <a href="https://vk.com/roman_chubich" target="_blank">Граф</a> * <a
-        href="https://github.com/symphograph/dllib" target="_blank">Github</a> * Шаеда
-      </div>
-    </q-footer>
-  </q-layout>
+  <AuthComponent ref="refAuth"></AuthComponent>
+  <router-view @reLogin="refAuth.reLogin" v-if="isTokenRefreshed"/>
 </template>
 
+
 <script setup>
-import {ref, provide, onMounted, watch, onBeforeMount, computed} from 'vue'
-import {api} from "boot/axios"
-import {LocalStorage, useQuasar} from "quasar"
-import AccountSelector from "components/account/AccountSelector.vue"
-import {useRoute} from "vue-router"
-import LoginList from "components/account/LoginList.vue"
-import DrawerContent from "components/DrawerContent.vue"
-import ItemIcon from "components/ItemIcon.vue"
-import {notifyError} from "src/myFuncts";
+import {ref, provide, computed, onMounted, onBeforeMount, watch, inject} from 'vue'
+import {useQuasar, Dialog, LocalStorage, useMeta} from 'quasar'
+import {useRoute, useRouter} from 'vue-router'
+import AuthComponent from "components/main/AuthComponent.vue";
+import {api} from "boot/axios";
 
 
+const router = useRouter()
+
+const pageSettings = ref()
+provide('pageSettings', pageSettings)
+
+const isOptionsLoaded = ref(false)
+provide('isOptionsLoaded', isOptionsLoaded)
+
+const refAuth = ref()
 const q = useQuasar()
+
 const apiUrl = String(process.env.API)
 const route = useRoute()
-const token = ref('')
-provide('token', token)
 
-const AccountList = ref([])
-provide('AccountList', AccountList)
-const curAccount = ref(null)
-provide('curAccount', curAccount)
+const AccessToken = ref('')
+provide('AccessToken', AccessToken)
 
-const selCategId = ref(0)
-provide('selCategId', selCategId)
-const selCategNode = ref(null)
-provide('selCategNode', selCategNode)
+const SessionToken = ref('')
+provide('SessionToken', SessionToken)
 
-const Servers = ref([])
-provide('Servers', Servers)
+const isTokenRefreshed = ref(false)
+provide('isTokenRefreshed', isTokenRefreshed)
 
-const ProfLvls = ref([])
-provide('ProfLvls', ProfLvls)
+const admin = ref(false)
+provide('admin', admin)
 
 
-const authTypes = ref([
-  {
-    id: 0,
-  },
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-    label: 'Телеграм',
-    url: 'auth/telelogin.php',
-    img: '/img/auth/telegram_logo.png'
-  },
-  {
-    id: 3,
-    label: 'MailRu',
-    url: 'auth/mailru.php',
-    img: '/img/auth/mailru.svg'
-  },
-  {
-    id: 4,
-    label: 'Discord',
-    url: 'auth/discord.php?action=login',
-    img: '/img/auth/discord.svg'
-  }
-])
-provide('authTypes', authTypes)
+
+const progress = ref(false)
+provide('progress', progress)
 
 const leftDrawerOpen = ref(false)
-
-const CategoriesList = ref(null)
-provide('CategoriesList', CategoriesList)
-const expandedCategNode = ref([])
-provide('expandedCategNode', expandedCategNode)
-const categMode = ref(false)
-provide('categMode', categMode)
+provide('leftDrawerOpen', leftDrawerOpen)
 
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+const Halls = ref([])
+provide('Halls', Halls)
+
+
+
+const editMode = ref(false)
+provide('editMode', editMode)
+
+function reLogin(toAccountId) {
+  refAuth.value.reLogin(toAccountId)
+}
+provide('reLogin', reLogin)
+//const lastPath = '/'
+
+watch(route,(newPath) => {
+  LocalStorage.set('lastPath',newPath.path)
+})
+
+function cook () {
+  LocalStorage.set('CookieConfirm', '1')
 }
 
-
-function getTokenFromCook() {
-  let allCookies = q.cookies.getAll()
-  if (allCookies.token) {
-    token.value = allCookies.token
-    q.cookies.set('token', token.value, {
-      expires: '1d',
-      path: '/',
-      domain: null,
-      sameSite: 'Strict',
-      secure: true,
-      httpOnly: false
-    })
+function showCookieConfirm () {
+  if (LocalStorage.getItem('CookieConfirm')) {
     return
   }
-  token.value = ''
-}
 
-function goToLogin() {
-  window.location.href = apiUrl + '/auth/auto.php?debug=' + String(process.env.isDebug)
-}
-
-function loadOptions() {
-  api.post(apiUrl + 'api/get/options.php')
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
+  q.notify({
+    message: 'Мы тоже используем Cookies. Потому что без них ничего не работает.',
+    color: 'primary',
+    timeout: 0,
+    multiLine: true,
+    onDismiss: cook,
+    icon: 'ion-information-circle-outline',
+    //avatar: 'usso.logo.svg',
+    actions: [
+      {
+        label: 'Понятно',
+        color: 'yellow',
+        handler: () => { /* ... */ }
       }
-      Servers.value = response?.data?.data?.Servers ?? []
-      ProfLvls.value = response?.data?.data?.ProfLvls ?? []
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function apiSess() {
-  if (!token.value) {
-    goToLogin()
-  }
-  //api.defaults.headers.common['Authorization'] = token.value
-
-
-  api.post(apiUrl + 'api/auth/session.php', {
-    params: {
-      path: route.path,
-    }
+    ]
   })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-
-      AccountList.value = response?.data?.data?.Accounts ?? []
-      curAccount.value = response?.data?.data?.curAccount ?? null
-      loadOptions()
-    })
-    .catch((error) => {
-      if(error?.response?.status === 401){
-        goToLogin()
-        return
-      }
-      q.notify(notifyError(error, 'Ой! Account Не работает :('))
-    })
 }
 
-const lastPath = '/'
-watch(route, (newPath) => {
-  LocalStorage.set('lastPath', newPath.path)
-})
+
+//----------------------------------------------------------------------
+
 onBeforeMount(() => {
-  getTokenFromCook()
+  if(!process.env.isDebug){
+    //router.push({ path: '/maintenance' })
+    //window.location.href = '/maintenance'
+  }
 })
 
 onMounted(() => {
-  LocalStorage.set('lastPath', route.path)
-  api.defaults.headers.common['Authorization'] = token.value
-  if(!process.env.isDebug){
+  LocalStorage.set('lastPath',route.path)
+  if (!process.env.isDebug) {
     api.defaults.headers.common['Accept'] = "application/json"
   }
-  apiSess()
+  console.log('mainLayout Mounted')
+  showCookieConfirm()
 })
+
+const metaData = {
+  meta: {
+    viewport: {
+      name: 'viewport',
+      content: 'initial-scale=1, width=device-width, user-scalable=yes'
+    },
+    equiv: { 'http-equiv': 'Content-Type', content: 'text/html; charset=UTF-8' }
+  },
+}
+useMeta(metaData)
 </script>
 
 <style>

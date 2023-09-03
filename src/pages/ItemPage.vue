@@ -14,18 +14,23 @@ import DialogWindow from "components/DialogWindow.vue";
 const route = useRoute()
 const router = useRouter()
 const q = useQuasar()
-const $q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 const Servers = inject('Servers')
 const price = ref(122345678)
 const categMode = inject('categMode')
 const navigatorRef = ref(null)
-const progress = ref(false)
-provide('progress',progress)
 
+const progress = inject('progress')
+const ItemProgress = ref(false)
+provide('ItemProgress', ItemProgress)
+const CraftProgress = ref(false)
+provide('CraftProgress', CraftProgress)
+const CurrencyProgress = ref(false)
+provide('CurrencyProgress', CurrencyProgress)
 
 const itemId = ref(0)
 provide('itemId', itemId)
@@ -38,6 +43,11 @@ provide('selectedItem', selectedItem)
 const SearchList = ref([])
 provide('SearchList', SearchList)
 const refItemArea = ref(null)
+
+function anyProgress()
+{
+  return progress.value || ItemProgress.value || CraftProgress.value || CurrencyProgress.value
+}
 
 const CategoriesList = inject('CategoriesList')
 
@@ -61,8 +71,10 @@ function npcPrice() {
 
 
 onMounted(() => {
-  if(!curAccount.value.AccSets.serverGroup){
+  if(!AccSets.value.serverGroup){
     goToSettings()
+  }else {
+    //console.log(curAccount.value)
   }
   if (route.params.id) {
     itemId.value = route.params.id * 1
@@ -80,6 +92,7 @@ function onSelectItem() {
 }
 
 function goToSettings () {
+
   q.dialog({
     component: DialogWindow,
     componentProps: {
@@ -126,9 +139,10 @@ function goToSettings () {
         </q-card>
       </div>
     </div>
-    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
     <q-scroll-area class="col myScrollArea">
-      <ItemArea v-if="SearchList.length" ref="refItemArea"
+      <ItemArea v-if="SearchList.length"
+                ref="refItemArea"
       ></ItemArea>
     </q-scroll-area>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <template v-if="!progress && Item.craftable">
+
     <template v-if="MainCraft">
       <CraftCard :Craft="MainCraft" :key="MainCraft.id" @setUBest="onSetUBest"></CraftCard>
 
@@ -19,9 +19,6 @@
     Без них я не могу посчитать и сравнить."></LostList>
     </template>
   </template>
-
-
-</template>
 
 <script setup>
 import {onMounted, ref, inject, watch, computed, provide} from "vue"
@@ -43,7 +40,7 @@ const MainCraft = ref(null)
 const CraftList = ref([])
 const Lost = ref([])
 
-const progress = inject('progress')
+const CraftProgress = inject('CraftProgress')
 const isSingleCraft = computed(()=> {
   return !(CraftList.value && CraftList.value.length);
 })
@@ -64,7 +61,8 @@ watch(Item, () => {
 }, {deep: true})
 
 onMounted(() => {
-
+  //loadCrafts()
+  console.log('craftList mounted')
 })
 
 function onSetUBest (){
@@ -72,11 +70,12 @@ function onSetUBest (){
 }
 
 function loadCrafts() {
+
   if(!Item.value.craftable){
     return
   }
   Lost.value = [];
-  progress.value = true
+  CraftProgress.value = true
   //CraftList.value = null
   api.post(apiUrl + 'api/get/crafts.php', {
     params: {
@@ -87,8 +86,6 @@ function loadCrafts() {
       if(!!!response?.data?.result){
         throw new Error();
       }
-
-      progress.value = false
 
       if(!!response?.data?.data?.Lost?.length){
         Lost.value = response?.data?.data?.Lost ?? []
@@ -103,9 +100,8 @@ function loadCrafts() {
     .catch((error) => {
       CraftList.value = []
       MainCraft.value = null
-      progress.value = false
       q.notify(notifyError(error, 'Ой! CraftList Не работает :('))
-    })
+    }).finally(() => {CraftProgress.value = false})
 }
 </script>
 

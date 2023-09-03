@@ -56,7 +56,7 @@
         <PriceImager :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImager>
       </q-item-label>
     </td>
-    <td v-if="ptSettings.addProfit" style="text-align: right">
+    <td v-if="ptSettings.addProfit && !progress" style="text-align: right">
       <q-item-label>
         <PriceImager :price="profit" :currency-id="500"></PriceImager>
       </q-item-label>
@@ -81,6 +81,7 @@ const props = defineProps({
 })
 
 const ptSettings = inject('ptSettings')
+const progress = inject('progress')
 
 // const addProfit = inject('addProfit')
 // const siol = inject('siol')

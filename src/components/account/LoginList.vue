@@ -11,29 +11,26 @@
           label-color="grey"
           >
   <template v-slot:option="scope">
-    <q-item v-bind="scope.itemProps"
-            v-if="scope.opt.id > 1"
-            clickable
-            :href="apiUrl + scope.opt.url"
-            @click="goTo(apiUrl + scope.opt.url)"
-    >
-      <q-item-section avatar>
-        <q-img :src="scope.opt.img"></q-img>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label caption class="text-grey">Войти через</q-item-label>
-        <q-item-label>{{ scope.opt.label }}</q-item-label>
-      </q-item-section>
-    </q-item>
+      <div v-bind="scope.itemProps">
+        <DynamicFormItem :btnLabel="scope.opt.label"
+                         :icon="scope.opt.img"
+                         :url="authUrl + scope.opt.url"
+        ></DynamicFormItem>
+      </div>
   </template>
 </q-select>
 </template>
 
 <script setup>
 import {inject, ref} from "vue";
+import DynamicFormItem from "components/account/DynamicFormItem.vue";
 
 const apiUrl = String(process.env.API)
+const authUrl = String(process.env.Auth)
 const authTypes = inject('authTypes')
+
+const AccessToken = inject('AccessToken')
+const SessionToken = inject('SessionToken')
 
 const selected = ref(null)
 

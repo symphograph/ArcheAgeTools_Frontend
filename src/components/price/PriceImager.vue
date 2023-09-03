@@ -15,4 +15,7 @@ const Props = defineProps({
 .red {
   color: red;
 }
+.no-wrap {
+  cursor: default;
+}
 </style>

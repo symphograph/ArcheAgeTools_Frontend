@@ -1,6 +1,6 @@
 <template>
   <template v-if="q.platform.is.mobile">
-    <AccountSelector v-if="AccountList && AccountList.length"></AccountSelector>
+    <AccountSelector v-if="AccountList && AccountList.length > 1"></AccountSelector>
     <LoginList v-else></LoginList>
   </template>
   <q-list separator>

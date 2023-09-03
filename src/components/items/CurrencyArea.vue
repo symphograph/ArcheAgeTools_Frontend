@@ -58,6 +58,7 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 const route = useRoute()
 const progress = inject('progress')
+const CurrencyProgress = inject('CurrencyProgress')
 const Item = inject('Item')
 
 
@@ -98,7 +99,7 @@ function lostMsg() {
 }
 
 function loadList() {
-  progress.value = true
+  CurrencyProgress.value = true
 
   api.post(apiUrl + 'api/get/currency.php', {
     params: {
@@ -117,7 +118,10 @@ function loadList() {
       Currency.value = null
       progress.value = false
       q.notify(notifyError(error,'Ой! Currency Не работает :('))
-    })
+    }).finally(() =>
+  {
+    CurrencyProgress.value = false
+  })
 }
 </script>
 

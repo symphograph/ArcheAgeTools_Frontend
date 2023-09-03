@@ -8,7 +8,7 @@
       </q-btn>
     </q-item-section>
     <q-item-section avatar>
-      <q-item-label caption>{{ fDate(member.LastPricedItem.Price.datetime) }}</q-item-label>
+      <q-item-label caption>{{ fDate(member.LastPricedItem.Price.updatedAt) }}</q-item-label>
       <q-item-label>{{ member.LastPricedItem.name }}</q-item-label>
       <q-item-label>
         <PriceImager :currencyId="500" :price="member.LastPricedItem.Price.price"></PriceImager>

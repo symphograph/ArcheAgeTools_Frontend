@@ -1,10 +1,10 @@
 <template>
-  <q-select v-model="curAccount.AccSets.serverId"
+  <q-select v-model="AccSets.serverId"
             :options="Servers"
             borderless
             option-value="id"
             option-label="name"
-            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
+            :popup-content-style="selectOptionsStyle"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
             @update:model-value="save()"
@@ -34,14 +34,19 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 const Servers = inject('Servers')
 const inputClass = ref('Input')
 const emit = defineEmits(['saved'])
+const progress = inject('progress')
+
+const selectOptionsStyle = inject('selectOptionsStyle')
 
 function save() {
+  progress.value = true
   api.post(apiUrl + 'api/set/server.php', {
     params: {
-      server: curAccount.value.AccSets.serverId,
+      server: AccSets.value.serverId,
     }
   })
     .then((response) => {
@@ -52,9 +57,11 @@ function save() {
       inputClass.value = 'Input'
       emit('saved')
     })
-        .catch((error) => {
+    .catch((error) => {
       q.notify(notifyError(error))
-    })
+    }).finally(() => {
+    progress.value = false
+  })
 }
 </script>
 

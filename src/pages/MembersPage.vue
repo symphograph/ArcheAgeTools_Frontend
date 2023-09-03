@@ -3,6 +3,7 @@
     <div class="navigator" ref="navigatorRef">
       <ServerSelect @saved="loadMembers()"></ServerSelect>
     </div>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
     <q-scroll-area v-if="Members.length" class="col" :style="'width: 100%;'">
       <q-list dense separator>
         <q-item v-for="member in Members" :key="member.id" dense>
@@ -48,8 +49,9 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 
 const curAccount = inject('curAccount')
-
+const AccSets = inject('AccSets')
 const Members = ref([])
+const memberListProgress = ref(false)
 
 const navigatorRef = ref(null)
 
@@ -57,7 +59,7 @@ function update(member){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
       master: member.id,
-      serverId: curAccount.value.AccSets.serverId,
+      serverId: AccSets.value.serverId,
       isFollow: member.isFollow
     }
   })
@@ -77,9 +79,10 @@ onMounted(() => {
 })
 
 function loadMembers() {
+  memberListProgress.value = true
   api.post(apiUrl + '/api/get/members.php', {
     params: {
-      serverId: curAccount.value.AccSets.serverId
+      serverId: AccSets.value.serverId
     }
   })
     .then((response) => {
@@ -92,6 +95,11 @@ function loadMembers() {
       Members.value = []
       q.notify(notifyError(error))
     })
+    .finally(()=>{memberListProgress.value = false})
+}
+
+function anyProgress(){
+  return memberListProgress.value;
 }
 
 </script>

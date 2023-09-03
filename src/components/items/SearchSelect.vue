@@ -1,5 +1,4 @@
 <template>
-
     <q-select :options="options"
               v-if="SearchList.length"
               v-model="selectedItem"
@@ -102,7 +101,7 @@ watch(Item, () => {
 }, {deep: true})
 
 function filterFn (val, update, abort) {
-  if (val === '' && !selCategId.value) {
+  if (val === '') {
     update(() => {
       options.value = [...SearchList.value]
     })
@@ -112,9 +111,11 @@ function filterFn (val, update, abort) {
   update(() => {
     const needle = val.toLowerCase()
     let List = [...SearchList.value]
+    /*
     if(selCategId.value){
       List = List.filter(v => v.categId === selCategId.value)
     }
+     */
     if(val){
       List = [...List].filter(v => v.name.toLowerCase().indexOf(needle) > -1)
     }
@@ -124,11 +125,7 @@ function filterFn (val, update, abort) {
 
 function loadList() {
 
-  api.post(apiUrl + 'api/get/search.php', {
-    params: {
-      // token: token.value
-    }
-  })
+  api.post(apiUrl + 'api/get/search.php')
     .then((response) => {
       if(!!!response?.data?.result){
         throw new Error();

@@ -1,23 +1,8 @@
 <template>
   <q-list dark separator>
-    <q-item v-for="(row, idx) in rows" :key="idx">
-      <q-item-section avatar>
-        <q-item-label caption>
-          {{ row.datetime }}
-        </q-item-label>
-        <q-item-label class="type">
-          {{ row.type }}
-        </q-item-label>
-      </q-item-section>
-      <q-item-section top>
-        <q-item-label class="msg">
-          {{ row.msg }}
-        </q-item-label>
-        <q-item-label caption>
-          {{ row.trace }}
-        </q-item-label>
-      </q-item-section>
-    </q-item>
+    <template v-for="(row, idx) in rows" :key="idx">
+      <LogRow :row="row"></LogRow>
+    </template>
   </q-list>
 </template>
 
@@ -26,6 +11,7 @@ import {api} from "boot/axios"
 import {onMounted, ref} from "vue";
 import {useMeta, useQuasar} from "quasar";
 import {notifyError} from "src/myFuncts";
+import LogRow from "components/logs/LogRow.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -65,11 +51,6 @@ function getLogs() {
 }
 </script>
 
-<style scoped>
-.msg {
-  color: orange;
-}
-.type {
-  color: mediumpurple;
-}
+<style>
+
 </style>

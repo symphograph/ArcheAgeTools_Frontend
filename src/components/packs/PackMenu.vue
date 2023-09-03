@@ -34,7 +34,7 @@
         <NavButton label="+Профит"
                    :active="ptSettings.addProfit"
                    :imgBtn="'/img/profit.png'"
-                   :isDisabled="!!!curAccount.AccSets.serverGroup"
+                   :isDisabled="!!!AccSets.serverGroup"
                    toolText="Расчитывать прибыль.<br>
                     Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
                    @onClick="addProfitActive"
@@ -44,7 +44,6 @@
     <div class="menuRow">
 
       <div class="menuSection">
-
         <div>
           <q-tooltip v-if="!ptSettings.side">Материк не выбран</q-tooltip>
           <q-tooltip v-else-if="disabled">Категории не выбраны</q-tooltip>
@@ -59,6 +58,9 @@
             <q-radio v-model="ptSettings.condition" label="Протухшие" :val="1"></q-radio>
           </div>
         </div>
+      </div>
+      <div class="menuSection">
+        <SelectSort></SelectSort>
       </div>
     </div>
   </div>
@@ -75,6 +77,7 @@ import NavButton from "components/NavButton.vue";
 import {useRouter} from "vue-router";
 import DialogWindow from "components/DialogWindow.vue";
 import {notifyError} from "src/myFuncts";
+import SelectSort from "components/packs/SelectSort.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -82,11 +85,14 @@ const token = inject('token')
 const router = useRouter()
 const inputClass = ref('Input')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 
 const emit = defineEmits(['sideSelected'])
 
 const packList = inject('packList')
 const Lost = inject('Lost')
+
+
 
 const ptSettings = inject('ptSettings')
 
@@ -103,6 +109,7 @@ const progress = inject('progress')
 const disabled = inject('disabled')
 const zones = ref({})
 const allZonesTo = ref([])
+
 
 const Sides = [
   {
@@ -179,7 +186,7 @@ onMounted(()=> {
 })
 
 function addProfitActive(){
-  if(!!!curAccount.value.AccSets.serverGroup){
+  if(!!!AccSets.value.serverGroup){
     ptSettings.value.addProfit = false
     goToSettings()
     return false

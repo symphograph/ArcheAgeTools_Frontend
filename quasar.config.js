@@ -73,7 +73,13 @@ module.exports = configure(function ( ctx ) {
         API: ctx.dev
           ? 'https://tapi.aa.dllib.ru/'
           : 'https://api.dllib.ru/',
-        isDebug: !!ctx.dev
+        isDebug: !!ctx.dev,
+        Auth: ctx.dev
+          ? 'https://tauth.sakh-orch.ru/'
+          : 'https://auth.symphograph.ru/',
+        SelfDomain: ctx.dev
+          ? '192.168.0.200:9300'
+          : 'aa.dllib.ru'
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

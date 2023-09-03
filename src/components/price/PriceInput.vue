@@ -32,6 +32,7 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 
 const props = defineProps({
   Price: ref(null)
@@ -48,7 +49,7 @@ const emit = defineEmits(['delPrice', 'updated'])
 
 const disable = computed(() =>{
   switch (true) {
-    case !!!curAccount.value.AccSets.serverGroup:
+    case !!!AccSets.value.serverGroup:
       return true
     case !!!Item.value.Pricing.isGoldable:
       return true
@@ -58,7 +59,7 @@ const disable = computed(() =>{
 })
 
 const priceErr = computed(()=> {
-  if(!curAccount.value.AccSets.serverGroup){
+  if(!AccSets.value.serverGroup){
     return 'Сервер не выбран'
   }
 
@@ -89,10 +90,10 @@ const label = computed(() => {
       return 'Цена не найдена'
     case !!!nPrice.value.author:
       return 'Неизвестный'
-    case !!!curAccount.value.AccSets.serverGroup:
+    case !!!AccSets.value.serverGroup:
       return 'Сервер не выбран'
     case !disable.value:
-      return fDate(nPrice.value.datetime) + ' - ' +  nPrice.value.author
+      return fDate(nPrice.value.updatedAt) + ' - ' +  nPrice.value.author
     default:
       return 'Цена не найдена'
   }

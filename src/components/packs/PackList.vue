@@ -3,34 +3,31 @@
     <thead style="position: sticky; top: 0">
       <tr>
         <th style="max-width: 2em; text-align: left">
-          <q-radio label="Тип" val="byType" v-model="ptSettings.sort"></q-radio>
+
         </th>
         <th style="text-align: left">
-          <q-radio label="Имя пака" val="byName" v-model="ptSettings.sort"></q-radio>
+
+
         </th>
         <th style="max-width: 150px" class="mobile-hide">
-          <q-radio label="Откуда" val="byFrom" v-model="ptSettings.sort"></q-radio>
+          Откуда
         </th>
         <th class="mobile-hide">
-          <q-radio label="Куда" val="byTo" v-model="ptSettings.sort"></q-radio>
+          Куда
+
         </th>
         <th style="min-width: 100px">
-          <q-radio label="Выручка" val="byFinalSalary" v-model="ptSettings.sort"></q-radio>
+          Выручка
         </th>
         <th v-if="ptSettings.addProfit" style="min-width: 100px; font-size: 12px; align-content: end">
           <div style="display: flex; justify-content: end">
-            <NavButton label=""
-                       :active="ptSettings.sort === 'byProfit'"
-                       imgBtn="/img/profit.png"
-                       toolText="По прибыли"
-                       @click="ptSettings.sort = 'byProfit'"
-            ></NavButton>
-            <NavButton label=""
-                       :active="ptSettings.sort === 'byProfitPerLabor'"
-                       imgBtn="/img/valuta/2.png"
-                       toolText="По прибыли на 1 ОР"
-                       @click="ptSettings.sort = 'byProfitPerLabor'"
-            ></NavButton>
+            <q-item>
+              <q-item-section>
+                <q-item-label>Прибыль</q-item-label>
+                <q-item-label caption>на 1ор</q-item-label>
+              </q-item-section>
+            </q-item>
+
           </div>
         </th>
       </tr>

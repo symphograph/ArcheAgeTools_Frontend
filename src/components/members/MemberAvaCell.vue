@@ -2,7 +2,7 @@
     <q-item-section avatar>
       <q-btn round glossy class="MemberAva" :to="'/prices/' + member.accountId">
         <q-avatar size="40px">
-          <img class="MemberAvaImg" :src="apiUrl + member.Avatar.src" alt="">
+          <img class="MemberAvaImg" :src="authUrl + 'img/avatars/' + member.avaFileName" alt="">
         </q-avatar>
       </q-btn>
     </q-item-section>
@@ -19,6 +19,7 @@
 import {ref} from "vue";
 
 const apiUrl = String(process.env.API)
+const authUrl = String(process.env.Auth)
 const props = defineProps({
   member: ref(null)
 })

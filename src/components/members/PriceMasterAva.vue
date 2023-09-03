@@ -2,7 +2,7 @@
   <q-item>
     <q-item-section avatar>
       <q-avatar size="40px">
-        <img class="MemberAvaImg" :src="apiUrl + priceMember.Avatar.src" alt="">
+        <img class="MemberAvaImg" :src="authUrl + 'img/avatars/' + priceMember.avaFileName" alt="">
       </q-avatar>
     </q-item-section>
     <q-item-section top>
@@ -29,6 +29,7 @@ import {notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
+const authUrl = String(process.env.Auth)
 const token = inject('token')
 const curAccount = inject('curAccount')
 const route = useRoute()
@@ -39,7 +40,7 @@ function setFollow(){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
       master: priceMember.value.accountId,
-      serverId: curAccount.value.AccSets.serverId,
+      serverId: AccSets.value.serverId,
       isFollow: priceMember.value.isFollow
     }
   })

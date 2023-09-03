@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import {inject, onMounted, ref} from "vue";
+import {computed, inject, onMounted, provide, ref} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import BasedPriceItem from "components/price/BasedPriceItem.vue";
@@ -17,7 +17,14 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
+const ServerGroup = inject('ServerGroup')
+const progress = inject('progress')
 
+const disable = computed(() => {
+  return !!!ServerGroup.value
+})
+provide('disable', disable)
 
 const Prices = ref(null)
 onMounted(() => {

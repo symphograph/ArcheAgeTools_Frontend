@@ -41,6 +41,17 @@ const ptSettings = ref({
 })
 provide('ptSettings', ptSettings)
 
+const sortOptions = ref([
+  {label: 'Тип', value: 'byType'},
+  {label: 'Имя пака', value: 'byName'},
+  {label: 'Откуда', value: 'byFrom'},
+  {label: 'Куда', value: 'byTo'},
+  {label: 'Выручка', value: 'byFinalSalary'},
+  {label: 'По прибыли', value: 'byProfit'},
+  {label: 'По прибыли на 1 ОР', value: 'byProfitPerLabor'}
+])
+provide('sortOptions', sortOptions)
+
 
 const selectedTypes = ref([
   {id: 1, name: 'Обычные', checked: true},
@@ -100,6 +111,8 @@ onMounted(()=>{
   }
   if(LocalStorage.getItem('ptSettings')){
     ptSettings.value = JSON.parse(LocalStorage.getItem('ptSettings'))
+  }else {
+    ptSettings.value.sort = 'byProfit'
   }
 })
 

@@ -7,7 +7,7 @@
       <q-input
         mask="## ## ##"
         class="PriceInput"
-        :label="fDate(CurItem.Item.Price.datetime) + ' - ' + CurItem.Item.Price.author"
+        :label="fDate(CurItem.Item.Price.updatedAt) + ' - ' + CurItem.Item.Price.author"
         :label-color="priceColor(CurItem.Item.Price.method)"
         dense
         filled
@@ -36,9 +36,9 @@
                  flat
                  @click="savePrice"></q-btn>
         </template>
-        <template v-slot:after v-if="CurItem.Item.Price.accountId === curAccount.id">
+        <template v-slot:after>
           <q-tooltip>Удалить</q-tooltip>
-          <DelBtn @onOk="delPrice"></DelBtn>
+          <DelBtn @onOk="delPrice" :disable="CurItem.Item.Price.accountId !== curAccount.id"></DelBtn>
         </template>
       </q-input>
       <q-item-label style="font-size: 14px; padding: 3px 0">

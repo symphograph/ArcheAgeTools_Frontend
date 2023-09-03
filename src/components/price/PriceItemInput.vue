@@ -7,7 +7,7 @@
       <q-input
         mask="## ## ##"
         class="PriceInput"
-        :label="fDate(price.datetime)"
+        :label="fDate(price.updatedAt)"
         dense
         filled
         borderless

@@ -44,6 +44,7 @@ const inputClass = ref('Input')
 
 const progress = inject('progress')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 const priceMember = inject('priceMember')
 const SortSelected = inject('SortSelected')
 const Prices = inject('Prices')
@@ -73,7 +74,7 @@ function loadPrices() {
   progress.value = true
   api.post(apiUrl + '/api/get/prices.php', {
     params: {
-      serverId: curAccount.value.AccSets.serverId,
+      serverId: AccSets.value.serverId,
       accId: route.params.accId
     }
   })

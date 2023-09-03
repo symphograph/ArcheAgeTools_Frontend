@@ -8,7 +8,7 @@
           label="Категории"
           display-value=""
           borderless
-          :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
+          :popup-content-style="selectOptionsStyle"
           :class="inputClass"
           @focus="inputClass = 'Input InputActive'"
           @blur="inputClass = 'Input'"
@@ -45,6 +45,7 @@ const selectedTypes = inject('selectedTypes')
 const inputClass = ref('Input')
 
 const packTypes = inject('packTypes')
+const selectOptionsStyle = inject('selectOptionsStyle')
 </script>
 
 <style scoped>

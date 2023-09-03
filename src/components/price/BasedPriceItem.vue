@@ -47,7 +47,7 @@
 
 <script setup>
 import {useQuasar} from "quasar"
-import {inject, ref} from "vue"
+import {inject, onMounted, ref} from "vue"
 import {useRouter} from "vue-router"
 import {notifyError, notifyOK, priceColor} from "src/myFuncts.js"
 import {api} from "boot/axios";
@@ -59,6 +59,7 @@ const apiUrl = String(process.env.API)
 const token = inject('token')
 const router = useRouter()
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 
 const Props = defineProps({
   price: ref(null)
@@ -106,15 +107,19 @@ function savePrice() {
       if(!!!response?.data?.result){
         throw new Error();
       }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      q.notify(notifyOK())
       nPrice.value.accountId = curAccount?.value?.id ?? 0
-      nPrice.value.author = curAccount?.value?.AccSets?.publicNick ?? 'Error'
+      nPrice.value.author = AccSets.value?.publicNick ?? 'Error'
       nPrice.value.method = 'bySolo'
     })
     .catch((error) => {
       q.notify(notifyError(error))
     })
 }
+
+onMounted(() => {
+
+})
 </script>
 
 <style scoped>

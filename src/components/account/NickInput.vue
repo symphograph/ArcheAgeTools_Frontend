@@ -1,5 +1,5 @@
 <template>
-  <q-input v-model="curAccount.AccSets.publicNick"
+  <q-input v-model="AccSets.publicNick"
            ref="nickRef"
            label="Публичный ник"
            borderless
@@ -31,6 +31,7 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const token = inject('token')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 const nickErr = ref('')
 const nickRef = ref(null)
 const nickClass = ref('Input')
@@ -38,12 +39,12 @@ const nickClass = ref('Input')
 
 function isNickValid()
 {
-  if(curAccount.value.AccSets.publicNick.length < 3) {
+  if(AccSets.value.publicNick.length < 3) {
     nickErr.value = 'Не короче 3'
     nickRef.value.validate()
     return false;
   }
-  if(curAccount.value.AccSets.publicNick.length > 20) {
+  if(AccSets.value.publicNick.length > 20) {
     nickErr.value = 'Не длиннее 20'
     nickRef.value.validate()
     return false
@@ -57,7 +58,7 @@ function isNickValid()
 }
 
 function NickLangValid(){
-  let nick = curAccount.value.AccSets.publicNick
+  let nick = AccSets.value.publicNick
   let re = new RegExp("^([a-zA-Zа-яА-ЯёЁ0-9]{3,20})$")
   let re1 = new RegExp("^([a-zA-Z0-9]{3,20})$")
   let re2 = new RegExp("^([а-яА-ЯёЁ0-9]{3,20})$")
@@ -78,7 +79,7 @@ function NickLangValid(){
 function servValidNick() {
   api.post(apiUrl + 'api/set/nick.php', {
     params: {
-      nick: curAccount.value.AccSets.publicNick,
+      nick: AccSets.value.publicNick,
       save: false
     }
   })
@@ -102,7 +103,7 @@ function saveNick() {
   nickRef.value.blur()
   api.post(apiUrl + 'api/set/nick.php', {
     params: {
-      nick: curAccount.value.AccSets.publicNick,
+      nick: AccSets.value.publicNick,
       save: true
     }
   })
