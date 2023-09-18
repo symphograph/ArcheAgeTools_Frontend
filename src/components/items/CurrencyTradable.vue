@@ -22,7 +22,6 @@ import ItemIcon from "components/ItemIcon.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const route = useRoute()
 const progress = inject('progress')
 const Item = inject('Item')

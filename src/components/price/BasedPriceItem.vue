@@ -56,7 +56,6 @@ import ItemIcon from "components/ItemIcon.vue"
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const router = useRouter()
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')

@@ -13,7 +13,8 @@
             :class="inputClass"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
-            :popup-content-style="{ backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }"
+            :popup-content-style="selectOptionsStyle"
+            :on-update:model-value="emit('onSelect')"
   ></q-select>
 </template>
 
@@ -27,6 +28,8 @@ const inputClass = ref('Input')
 
 const zonesTo = inject('zonesTo')
 const disabled = inject('disabled')
+const selectOptionsStyle = inject('selectOptionsStyle')
+const emit = defineEmits(['onSelect'])
 </script>
 
 <style scoped>

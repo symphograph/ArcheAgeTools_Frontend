@@ -23,12 +23,11 @@ import ServerSelect from "components/account/ServerSelect.vue";
 
 const props = defineProps({
   text: ref(''),
-  token: ref(''),
   curAccount: ref({}),
   Servers: ref([])
   // ...your custom props
 })
-provide('token', props.token)
+
 provide('curAccount', props.curAccount)
 provide('Servers', props.Servers)
 defineEmits([

@@ -1,71 +1,3 @@
-<template>
-  <div class="menuArea">
-    <div class="menuRow" style="justify-content: space-evenly">
-      <div class="sideBtnCard">
-        <template v-for="sd in Sides" :key="sd.value">
-          <NavButton :label="sd.label"
-                     :active="ptSettings.side === sd.value"
-                     :imgBtn="'/img/side/' + sd.value + '.png'"
-                     @click="ptSettings.side = sd.value"
-          ></NavButton>
-        </template>
-      </div>
-      <h1>Паки 8.0</h1>
-      <div style="display: flex;">
-        <q-input v-model="ptSettings.ratePercent"
-                 class="Input"
-                 dense
-                 style="width: 9em; height: 3em; margin: 1em"
-                 suffix="%"
-                 borderless
-                 type="number"
-                 step="5"
-                 max="130"
-                 min="50"
-        ></q-input>
-        <NavButton label="Сиоль"
-                   :active="ptSettings.siol"
-                   imgBtn="/img/siol.png"
-                   @click="ptSettings.siol = !ptSettings.siol"
-        ></NavButton>
-      </div>
-      <div style="display: flex">
-        <TypeSelect></TypeSelect>
-        <NavButton label="+Профит"
-                   :active="ptSettings.addProfit"
-                   :imgBtn="'/img/profit.png'"
-                   :isDisabled="!!!AccSets.serverGroup"
-                   toolText="Расчитывать прибыль.<br>
-                    Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
-                   @onClick="addProfitActive"
-        ></NavButton>
-      </div>
-    </div>
-    <div class="menuRow">
-
-      <div class="menuSection">
-        <div>
-          <q-tooltip v-if="!ptSettings.side">Материк не выбран</q-tooltip>
-          <q-tooltip v-else-if="disabled">Категории не выбраны</q-tooltip>
-          <ZoneFromSelect v-if="Object.keys(zones).length"></ZoneFromSelect>
-          <ZoneToSelect v-if="Object.keys(zones).length"></ZoneToSelect>
-        </div>
-        <div>
-          <div>
-            <q-radio v-model="ptSettings.condition" label="Зрелые" :val="0"></q-radio>
-          </div>
-          <div>
-            <q-radio v-model="ptSettings.condition" label="Протухшие" :val="1"></q-radio>
-          </div>
-        </div>
-      </div>
-      <div class="menuSection">
-        <SelectSort></SelectSort>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import {computed, inject, onMounted, provide, ref, watch} from "vue";
 import {api} from "boot/axios";
@@ -78,10 +10,10 @@ import {useRouter} from "vue-router";
 import DialogWindow from "components/DialogWindow.vue";
 import {notifyError} from "src/myFuncts";
 import SelectSort from "components/packs/SelectSort.vue";
+import SideButtons from "components/packs/SideButtons.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const router = useRouter()
 const inputClass = ref('Input')
 const curAccount = inject('curAccount')
@@ -96,36 +28,10 @@ const Lost = inject('Lost')
 
 const ptSettings = inject('ptSettings')
 
-// const side = inject('side')
-// const zoneFromId = inject('zoneFromId')
-// const zoneToId = inject('zoneToId')
-// const ratePercent = inject('ratePercent')
-// const siol = inject('siol')
-// const addProfit = inject('addProfit')
-// const sort = inject('sort')
-// const condition = inject('condition')
-
 const progress = inject('progress')
 const disabled = inject('disabled')
 const zones = ref({})
 const allZonesTo = ref([])
-
-
-const Sides = [
-  {
-    label: 'Запад',
-    value: 1
-  },
-  {
-    label: 'Север',
-    value: 3
-  },
-  {
-    label: 'Восток',
-    value: 2
-  }
-]
-provide('Sides', Sides)
 
 const zonesFrom = computed(()=>{
   if (!Object.keys(zones.value).length || !ptSettings.value.side){
@@ -186,7 +92,7 @@ onMounted(()=> {
 })
 
 function addProfitActive(){
-  if(!!!AccSets.value.serverGroup){
+  if(!!!AccSets.value.serverGroupId){
     ptSettings.value.addProfit = false
     goToSettings()
     return false
@@ -245,39 +151,102 @@ function loadList() {
       condition: ptSettings.value.condition
     }
   })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      progress.value = false
-      packList.value = response?.data?.data?.Packs ?? []
-      Lost.value = response?.data?.data?.Lost ?? []
-      currencyPrices.value = response?.data?.data?.currencyPrices ?? []
+      .then((response) => {
+        if(!!!response?.data?.result){
+          throw new Error();
+        }
+        progress.value = false
+        packList.value = response?.data?.data?.Packs ?? []
+        Lost.value = response?.data?.data?.Lost ?? []
+        currencyPrices.value = response?.data?.data?.currencyPrices ?? []
 
-    })
-    .catch((error) => {
-      progress.value = false
-      q.notify(notifyError(error, 'Ой! Packs Не работает :('))
-      packList.value = []
-      Lost.value = []
-    })
+      })
+      .catch((error) => {
+        progress.value = false
+        q.notify(notifyError(error, 'Ой! Packs Не работает :('))
+        packList.value = []
+        Lost.value = []
+      })
 }
+
 function loadZones() {
 
   api.post(apiUrl + 'api/get/zones.php')
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      allZonesTo.value = response?.data?.data?.allZonesTo ?? []
-      zones.value = response?.data?.data?.zonesFrom ?? []
-    })
-    .catch((error) => {
-      q.notify(notifyError(error, 'Ой! Zones Не работает :('))
-      zones.value = {}
-    })
+      .then((response) => {
+        if(!!!response?.data?.result){
+          throw new Error();
+        }
+        allZonesTo.value = response?.data?.data?.allZonesTo ?? []
+        zones.value = response?.data?.data?.zonesFrom ?? []
+      })
+      .catch((error) => {
+        q.notify(notifyError(error, 'Ой! Zones Не работает :('))
+        zones.value = {}
+      })
 }
 </script>
+
+<template>
+  <div class="menuArea">
+    <div class="menuRow" style="justify-content: space-evenly">
+      <div class="sideBtnCard">
+        <SideButtons></SideButtons>
+      </div>
+      <h1>Паки 8.0</h1>
+      <div style="display: flex;">
+        <q-input v-model="ptSettings.ratePercent"
+                 class="Input"
+                 dense
+                 style="width: 9em; height: 3em; margin: 1em"
+                 suffix="%"
+                 borderless
+                 type="number"
+                 step="5"
+                 max="130"
+                 min="50"
+        ></q-input>
+        <NavButton label="Сиоль"
+                   :active="ptSettings.siol"
+                   imgBtn="/img/siol.png"
+                   @click="ptSettings.siol = !ptSettings.siol"
+        ></NavButton>
+      </div>
+      <div style="display: flex">
+        <TypeSelect></TypeSelect>
+        <NavButton label="+Профит"
+                   :active="ptSettings.addProfit"
+                   :imgBtn="'/img/profit.png'"
+                   :isDisabled="!!!AccSets.serverGroupId"
+                   toolText="Расчитывать прибыль.<br>
+                    Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
+                   @onClick="addProfitActive"
+        ></NavButton>
+      </div>
+    </div>
+    <div class="menuRow">
+
+      <div class="menuSection">
+        <div>
+          <q-tooltip v-if="!ptSettings.side">Материк не выбран</q-tooltip>
+          <q-tooltip v-else-if="disabled">Категории не выбраны</q-tooltip>
+          <ZoneFromSelect v-if="Object.keys(zones).length"></ZoneFromSelect>
+          <ZoneToSelect v-if="Object.keys(zones).length"></ZoneToSelect>
+        </div>
+        <div>
+          <div>
+            <q-radio v-model="ptSettings.condition" label="Зрелые" :val="1"></q-radio>
+          </div>
+          <div>
+            <q-radio v-model="ptSettings.condition" label="Протухшие" :val="0"></q-radio>
+          </div>
+        </div>
+      </div>
+      <div class="menuSection">
+        <SelectSort></SelectSort>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .menuArea {

@@ -5,24 +5,12 @@
           transition-hide="jump-up"
   >
     <q-card-section>
-      <CraftInfo :Craft="Craft"></CraftInfo>
+      <CraftInfo :Craft="Craft" @onSetUBest="emit('onSetUBest')"></CraftInfo>
     </q-card-section>
     <q-card-section>
       <div class="wrapContainer">
         <div class="wrapElement">
           <MatRow :Craft="Craft"></MatRow>
-        </div>
-        <div class="wrapElement" v-if="!isSingleCraft">
-          <q-btn class="DefBtn"
-                 label="Предпочитать"
-                 v-if="!Craft.countData.isUBest"
-                 @click="setAsUBest"
-          >
-            <q-tooltip class="bg-tooltip">
-              Всегда выбирать этот рецепт при расчетах
-            </q-tooltip>
-          </q-btn>
-          <q-btn v-else class="DefBtn" label="Сбросить" @click="delUBest"></q-btn>
         </div>
       </div>
     </q-card-section>
@@ -47,8 +35,6 @@ import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
-
 const itemId = inject('itemId')
 const Item = inject('Item')
 const props = defineProps({
@@ -59,44 +45,10 @@ const isSingleCraft = inject('isSingleCraft')
 //const resultAmount = ref(props.Craft.resultAmount)
 provide('resultAmount', props.Craft.resultAmount)
 
-const emit = defineEmits(['setUBest', 'delUBest'])
+const emit = defineEmits(['onSetUBest', 'delUBest'])
 
 
-function setAsUBest() {
-  api.post(apiUrl + 'api/set/craft/ubest.php', {
-    params: {
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('setUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
 
-function delUBest() {
-  api.post(apiUrl + 'api/set/craft/delubest.php', {
-    params: {
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('setUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
 </script>
 
 <style scoped>

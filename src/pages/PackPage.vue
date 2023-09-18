@@ -21,7 +21,6 @@ import PackList from "components/packs/PackList.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 
 const packList = ref([])
 provide('packList', packList)

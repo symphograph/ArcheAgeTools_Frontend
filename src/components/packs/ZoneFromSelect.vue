@@ -13,6 +13,7 @@
             :class="inputClass"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
+            :on-update:model-value="emit('onSelect')"
   >
   </q-select>
 </template>
@@ -26,7 +27,7 @@ const ptSettings = inject('ptSettings')
 
 const zonesFrom = inject('zonesFrom')
 
-
+const emit = defineEmits(['onSelect'])
 
 
 

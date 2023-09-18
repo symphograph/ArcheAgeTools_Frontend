@@ -44,10 +44,11 @@ const props = defineProps({
 //const Craft = inject('Craft')
 
 function toolTip(mat){
+  if (!mat?.Price?.method) return 'Какая-то фигня...'
   return mat.Item.name
     + '<br>'
-    + '<span style="color: ' + priceColor(mat.Price.method) +'">'
-    + priceMethod(mat.Price)
+    + '<span style="color: ' + priceColor(mat?.Price?.method || 'Не найдено') +'">'
+    + priceMethod(mat?.Price || {})
     + ':</span><br>'
     + priceImager(mat.Price.price,500)
 }

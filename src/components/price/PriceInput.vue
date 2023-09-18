@@ -30,7 +30,6 @@ import {fDate, notifyError, notifyOK, priceColor} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
 
@@ -49,7 +48,7 @@ const emit = defineEmits(['delPrice', 'updated'])
 
 const disable = computed(() =>{
   switch (true) {
-    case !!!AccSets.value.serverGroup:
+    case !!!AccSets.value.serverGroupId:
       return true
     case !!!Item.value.Pricing.isGoldable:
       return true
@@ -59,7 +58,7 @@ const disable = computed(() =>{
 })
 
 const priceErr = computed(()=> {
-  if(!AccSets.value.serverGroup){
+  if(!AccSets.value.serverGroupId){
     return 'Сервер не выбран'
   }
 
@@ -90,7 +89,7 @@ const label = computed(() => {
       return 'Цена не найдена'
     case !!!nPrice.value.author:
       return 'Неизвестный'
-    case !!!AccSets.value.serverGroup:
+    case !!!AccSets.value.serverGroupId:
       return 'Сервер не выбран'
     case !disable.value:
       return fDate(nPrice.value.updatedAt) + ' - ' +  nPrice.value.author

@@ -1,3 +1,58 @@
+<script setup>
+import {computed, inject, ref} from "vue";
+import ItemIcon from "components/ItemIcon.vue"
+import {useQuasar} from "quasar";
+import DynamicFormItem from "components/account/DynamicFormItem.vue";
+
+const q = useQuasar()
+const apiUrl = String(process.env.API)
+const authUrl = String(process.env.Auth)
+const SelfDomain = String(process.env.SelfDomain)
+
+const AccessToken = inject('AccessToken')
+const SessionToken = inject('SessionToken')
+
+const ServerGroupList = inject('ServerGroupList')
+
+const emit = defineEmits(['onSelectAccount'])
+const AccountList = inject('AccountList')
+const accId = ref(null)
+const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
+const AccSetList = inject('AccSetList')
+
+const defaultAcc = ref({
+  id: 1,
+  nickName: 'Не авторизован',
+  avatar: 'init_ava.png',
+  grade: 1,
+  serverId: 9
+})
+
+const authTypes = inject('authTypes')
+
+const selected = computed(() => {
+  if (!accId.value || !AccountList.value) {
+    return false
+  }
+  return AccountList.value.find(el => el.id === accId.value) ?? defaultAcc.value
+})
+
+const selector = ref(null)
+
+const reLogin = inject('reLogin')
+
+function AccSetsFromList(accountId){
+  return AccSetList.value.find(el => el.accountId === accountId)
+}
+
+function ServerGroupFromList(groupId)
+{
+  return ServerGroupList.value.find(el => el.id === groupId)
+}
+
+</script>
+
 <template>
   <q-select v-model="curAccount"
             v-if="AccountList"
@@ -10,7 +65,7 @@
             :options="AccountList"
             option-value="id"
             map-options
-            @update:model-value="reLogin(curAccount.id)"
+            @update:model-value="reLogin(curAccount.id, curAccount.authType)"
             option-label="nickName"
   >
     <template v-slot:append v-if="curAccount">
@@ -35,12 +90,16 @@
           <ItemIcon :locIcon="authUrl + scope.opt.Avatar.src" :grade="1" size="70px"></ItemIcon>
         </q-item-section>
         <q-item-section>
-          <q-item-label caption class="text-grey-9">Войти как</q-item-label>
+          <q-item-label caption class="text-grey-9">
+            Войти как
+            <q-icon :name="'img:'+'/img/auth/' + scope.opt.authType + '.svg'"></q-icon>
+          </q-item-label>
           <q-item-label>{{ scope.opt.nickName }}</q-item-label>
           <q-item-label caption class="text-grey-6">
-            {{ AccSetList.find(el => el.accountId === scope.opt.id)?.publicNick ?? ''}}
+            {{ AccSetsFromList(scope.opt.id)?.publicNick ?? ''}}
           </q-item-label>
-          <q-item-label v-if="false" caption class="text-grey-9">{{ getServer(scope.opt.AccSets.serverId).name }}
+          <q-item-label caption class="text-grey-9">
+            {{ ServerGroupFromList(AccSetsFromList(scope.opt.id)?.serverGroupId).label }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -48,69 +107,13 @@
     <template v-slot:after-options>
       <div v-for="authType in authTypes" :key="authType.id">
         <DynamicFormItem :btnLabel="authType.label"
-                      :icon="authType.img"
-                      :url="authUrl + authType.url"
+                         :icon="authType.img"
+                         :url="authUrl + authType.url"
         ></DynamicFormItem>
       </div>
     </template>
   </q-select>
 </template>
-
-<script setup>
-import {computed, inject, ref} from "vue";
-import ItemIcon from "components/ItemIcon.vue"
-import {useQuasar} from "quasar";
-import DynamicFormItem from "components/account/DynamicFormItem.vue";
-
-const q = useQuasar()
-const apiUrl = String(process.env.API)
-const authUrl = String(process.env.Auth)
-const SelfDomain = String(process.env.SelfDomain)
-
-const AccessToken = inject('AccessToken')
-const SessionToken = inject('SessionToken')
-
-const emit = defineEmits(['onSelectAccount'])
-const AccountList = inject('AccountList')
-const accId = ref(null)
-const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
-const AccSetList = inject('AccSetList')
-const Servers = inject('Servers')
-const defaultAcc = ref({
-  id: 1,
-  nickName: 'Не авторизован',
-  avatar: 'init_ava.png',
-  grade: 1,
-  serverId: 9
-})
-
-const authTypes = inject('authTypes')
-
-const selected = computed(() => {
-  if (!accId.value || !AccountList.value) {
-    return false
-  }
-  return AccountList.value.find(el => el.id === accId.value) ?? defaultAcc.value
-})
-
-const selector = ref(null)
-
-const reLogin = inject('reLogin')
-
-function selPers() {
-  window.location.href = authUrl + 'auth/relogin.php?accountId=' + curAccount.value.id
-}
-
-function getServer(id) {
-  if (!Servers.value || !curAccount.value) {
-
-    return {name: 'Сервер не выбран'}
-  }
-  //let id = curAccount.value.serverId
-  return Servers.value.find(el => el.id === id) ?? {name: 'Сервер не найден'}
-}
-</script>
 
 <style scoped>
 

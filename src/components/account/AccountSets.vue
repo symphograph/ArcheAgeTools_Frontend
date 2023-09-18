@@ -1,24 +1,31 @@
 <template>
-    <NickInput></NickInput>
-    <ServerSelect @saved="emit('saved')"></ServerSelect>
-    <ModeSelect @saved="emit('saved')"></ModeSelect>
+  <NickInput></NickInput>
+  <ServerGroupSelect :groupId="AccSets.serverGroupId"
+                     @onSelect="onSelectServerGroup()"
+                     @onSave="emit('saved')"
+                     ref="refServerGroupSelect"
+  ></ServerGroupSelect>
+  <ModeSelect @saved="emit('saved')"></ModeSelect>
 </template>
 
 <script setup>
 import {useQuasar} from "quasar";
-import {inject} from "vue";
+import {inject, nextTick, ref} from "vue";
 import NickInput from "components/account/NickInput.vue";
-import ServerSelect from "components/account/ServerSelect.vue";
+import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
 import ModeSelect from "components/account/ModeSelect.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
-const curAccount = inject('curAccount')
+const progress = inject('progress')
+const AccSets = inject('AccSets')
 
 const emit = defineEmits(['saved'])
+const refServerGroupSelect = ref()
 
-
+function onSelectServerGroup() {
+  refServerGroupSelect.value.saveServerGroup()
+}
 
 
 </script>
@@ -28,13 +35,14 @@ const emit = defineEmits(['saved'])
 .Params {
   padding: 1em;
 }
-.ParamRow{
+
+.ParamRow {
   display: flex;
   justify-content: flex-start;
 }
 
 
-.BtnArea{
+.BtnArea {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

@@ -21,7 +21,6 @@ import PriceListMenu from "components/price/PriceListMenu.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const curAccount = inject('curAccount')
 const route = useRoute()
 

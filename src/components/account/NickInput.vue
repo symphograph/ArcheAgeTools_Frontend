@@ -29,7 +29,6 @@ import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
 const nickErr = ref('')

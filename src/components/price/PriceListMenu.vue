@@ -3,8 +3,9 @@
     <div v-if="priceMember">
       <PriceMasterAva></PriceMasterAva>
     </div>
-    <ServerSelect @saved="loadPrices()"></ServerSelect>
+    <ServerSelect @on="loadPrices()" v-if="q.platform.is.desktop"></ServerSelect>
     <q-select :options="sortOpts"
+              v-if="q.platform.is.desktop"
               label="Порядок"
               v-model="SortSelected"
               emit-value
@@ -20,8 +21,8 @@
       <q-checkbox label="Крафтабельные" v-model="filters.craftable"></q-checkbox>
       <q-checkbox label="Некрафтабельные" v-model="filters.uncraftable"></q-checkbox>
     </div>
-    <FilterInput></FilterInput>
-    <q-btn class="DefBtn" label="Добавить" to="/item"></q-btn>
+    <FilterInput v-if="q.platform.is.desktop"></FilterInput>
+    <q-btn v-if="q.platform.is.desktop" class="DefBtn" label="Добавить" to="/item"></q-btn>
   </div>
 </template>
 
@@ -38,7 +39,6 @@ import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const route = useRoute()
 const inputClass = ref('Input')
 

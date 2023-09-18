@@ -7,15 +7,15 @@ import {useRoute} from "vue-router"
 import LoginList from "components/account/LoginList.vue"
 import DrawerContent from "components/DrawerContent.vue"
 import ItemIcon from "components/ItemIcon.vue"
-import {accountIdByJWT, notifyError} from "src/myFuncts";
+import {accountIdByJWT, notifyError, notifyOK} from "src/myFuncts";
 
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const authUrl = String(process.env.Auth)
 const route = useRoute()
-const token = ref('')
-provide('token', token)
+const progress = inject('progress')
+
 
 const AccessToken = inject('AccessToken')
 const isOptionsLoaded = inject('isOptionsLoaded')
@@ -24,23 +24,21 @@ const emit = defineEmits(['reLogin'])
 
 const AccountList = ref([])
 provide('AccountList', AccountList)
+
 const curAccount = ref(null)
 provide('curAccount', curAccount)
-const AccSets = ref({grade: 1})
+
+const AccSets = ref({grade: 1, serverGroupId: 100})
 provide('AccSets', AccSets)
 
 const selCategId = ref(0)
 provide('selCategId', selCategId)
+
 const selCategNode = ref(null)
 provide('selCategNode', selCategNode)
 
-const Servers = ref([])
-provide('Servers', Servers)
-
-const ServerGroup = computed(() => {
-  return Servers.value.find(el => el.id === AccSets.value.serverId).group
-})
-provide('ServerGroup', ServerGroup)
+const ServerGroupList = ref([])
+provide('ServerGroupList', ServerGroupList)
 
 const ProfLvls = ref([])
 provide('ProfLvls', ProfLvls)
@@ -51,7 +49,7 @@ const authTypes = ref([
     id: 2,
     label: 'Телеграм',
     url: 'auth/telegram/login.php',
-    img: '/img/auth/telegram_logo.png'
+    img: '/img/auth/telegram.svg'
   },
   {
     id: 3,
@@ -62,8 +60,14 @@ const authTypes = ref([
   {
     id: 4,
     label: 'Discord',
-    url: 'auth/discord/login.php?action=login',
+    url: 'auth/discord/login.php',
     img: '/img/auth/discord.svg'
+  },
+  {
+    id: 4,
+    label: 'VКонтакте',
+    url: 'auth/vkontakte/login.php',
+    img: '/img/auth/vkontakte.svg'
   }
 ])
 provide('authTypes', authTypes)
@@ -72,8 +76,10 @@ const leftDrawerOpen = ref(false)
 
 const CategoriesList = ref(null)
 provide('CategoriesList', CategoriesList)
+
 const expandedCategNode = ref([])
 provide('expandedCategNode', expandedCategNode)
+
 const categMode = ref(false)
 provide('categMode', categMode)
 
@@ -83,32 +89,8 @@ provide('selectOptionsStyle', selectOptionsStyle)
 const AccSetList = ref([])
 provide('AccSetList', AccSetList)
 
-//const Array1 = [{id: 1, value: 'foo'}, {id: 2, value: 'bar'}, {id: 3, value: 'bar'}]
-//const Array2 = [1,2,3]
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
-}
-
-function getTokenFromCook() {
-  let allCookies = q.cookies.getAll()
-  if (allCookies.token) {
-    token.value = allCookies.token
-    q.cookies.set('token', token.value, {
-      expires: '1d',
-      path: '/',
-      domain: null,
-      sameSite: 'Strict',
-      secure: true,
-      httpOnly: false
-    })
-    return
-  }
-  token.value = ''
-}
-
-function goToLogin() {
-  window.location.href = apiUrl + '/auth/auto.php?debug=' + String(process.env.isDebug)
 }
 
 function loadOptions() {
@@ -117,7 +99,7 @@ function loadOptions() {
       if (!!!response?.data?.result) {
         throw new Error();
       }
-      Servers.value = response?.data?.data?.Servers ?? []
+      ServerGroupList.value = response?.data?.data?.ServerGroupList ?? []
       ProfLvls.value = response?.data?.data?.ProfLvls ?? []
       loadAccountList()
     })
@@ -127,24 +109,19 @@ function loadOptions() {
 }
 
 function test() {
-  loadAccSetList()
-}
-
-function loadAccount() {
-  api.post(authUrl + 'api/account.php',{
+  api.post(authUrl + 'api/test.php',{
     params:{
       method: 'get'
     }
   })
-    .then((response) => {
-      if (!!!response?.data?.result) {
-        throw new Error();
-      }
-      curAccount.value = response?.data?.data
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+      .then((response) => {
+        if (!!!response?.data?.result) {
+          throw new Error();
+        }
+      })
+      .catch((error) => {
+        q.notify(notifyError(error))
+      })
 }
 
 function loadAccountList() {
@@ -196,7 +173,6 @@ function loadAccSetList() {
         throw new Error();
       }
       AccSetList.value = response?.data?.data ?? []
-      console.log(AccSetList.value)
       isOptionsLoaded.value = true
 
     })
@@ -210,7 +186,7 @@ watch(route, (newPath) => {
   LocalStorage.set('lastPath', newPath.path)
 })
 onBeforeMount(() => {
-  getTokenFromCook()
+
 })
 
 onMounted(() => {
@@ -257,6 +233,7 @@ onMounted(() => {
       show-if-above
       behavior="default"
       bordered
+      dark
     >
       <DrawerContent></DrawerContent>
     </q-drawer>

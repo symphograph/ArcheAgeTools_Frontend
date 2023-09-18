@@ -16,7 +16,7 @@
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps">
         <q-item-section>
-          <q-item-label caption>Группа{{ scope.opt.group }}</q-item-label>
+          <q-item-label caption>Группа{{ scope.opt.groupId }}</q-item-label>
           <q-item-label>{{ scope.opt.name }}</q-item-label>
         </q-item-section>
       </q-item>
@@ -32,7 +32,6 @@ import {notifyError, notifyOK} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
 const Servers = inject('Servers')
@@ -42,27 +41,7 @@ const progress = inject('progress')
 
 const selectOptionsStyle = inject('selectOptionsStyle')
 
-function save() {
-  progress.value = true
-  api.post(apiUrl + 'api/set/server.php', {
-    params: {
-      server: AccSets.value.serverId,
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response.data.result))
-      inputClass.value = 'Input'
-      emit('saved')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    }).finally(() => {
-    progress.value = false
-  })
-}
+
 </script>
 
 <style scoped>

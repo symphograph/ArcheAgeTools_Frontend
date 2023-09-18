@@ -7,10 +7,10 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager
+            <PriceImagerComponent
               :price="finalSalary"
               :currencyId="currencyId"
-            ></PriceImager>
+            ></PriceImagerComponent>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -20,10 +20,10 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager
+            <PriceImagerComponent
               :price="goldSalary"
               :currencyId="500"
-            ></PriceImager>
+            ></PriceImagerComponent>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -34,7 +34,7 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager :price="currencyId === 500 ? flatSalary : Math.round(flatSalary/100)" :currencyId="currencyId"></PriceImager>
+            <PriceImagerComponent :price="currencyId === 500 ? flatSalary : Math.round(flatSalary/100)" :currencyId="currencyId"></PriceImagerComponent>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -77,10 +77,10 @@
         </q-item-section>
         <q-item-section side>
           <q-item-label caption>
-            <PriceImager
+            <PriceImagerComponent
               :price="Math.round(factoryPrice)"
             >
-            </PriceImager>
+            </PriceImagerComponent>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -91,7 +91,7 @@
 
 <script setup>
 import {inject, ref} from "vue";
-import PriceImager from "components/price/PriceImager.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 
 const props = defineProps({
   testP: ref('fdsafdfsafdf'),

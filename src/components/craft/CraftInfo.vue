@@ -105,7 +105,28 @@
           <q-item-section side>
             <q-checkbox v-model="Item.isBuyOnly" @update:modelValue="setBuyable()"></q-checkbox>
           </q-item-section>
-
+        </q-item>
+        <q-item tag="label"
+                v-if="!Item.personal"
+                dense
+                v-ripple
+        >
+          <q-tooltip class="bg-tooltip">
+            Выбирать этот рецепт при расчетах
+          </q-tooltip>
+          <q-item-section avatar>
+              <ItemIcon :grade="12"
+                        :locIcon="'/img/interface/perdaru.png'"
+                        :tool-text="'Предпочитаемый'"
+                        :size="'30px'"
+              ></ItemIcon>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Предпочитаемый</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-checkbox v-model="isUBest" @update:modelValue="changeUBest()"></q-checkbox>
+          </q-item-section>
         </q-item>
       </q-list>
     </div>
@@ -164,7 +185,6 @@ import {copyToClipboard, useQuasar} from "quasar";
 import {api} from "boot/axios";
 
 const q = useQuasar()
-const token = inject('token')
 const apiUrl = String(process.env.API)
 
 const props = defineProps({
@@ -173,6 +193,8 @@ const props = defineProps({
 
 const isUBest = ref(props.Craft.countData.isUBest);
 const isBest = ref(props.Craft.countData.isBest);
+const isBuyOnly = ref(props.Craft.countData.isBuyOnly);
+const emit = defineEmits(['onSetUBest'])
 const Item = inject('Item')
 const profit = computed(() => {
   if (!Item.value.Pricing.isGoldable) {
@@ -230,6 +252,48 @@ function setBuyable() {
         throw new Error();
       }
       q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+
+function changeUBest(){
+  isUBest.value
+    ? setAsUBest()
+    : delUBest()
+}
+
+function setAsUBest() {
+  api.post(apiUrl + 'api/set/craft/ubest.php', {
+    params: {
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('onSetUBest')
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+
+function delUBest() {
+  api.post(apiUrl + 'api/set/craft/delubest.php', {
+    params: {
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('onSetUBest')
     })
     .catch((error) => {
       q.notify(notifyError(error))

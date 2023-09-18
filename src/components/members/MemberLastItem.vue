@@ -11,7 +11,7 @@
       <q-item-label caption>{{ fDate(member.LastPricedItem.Price.updatedAt) }}</q-item-label>
       <q-item-label>{{ member.LastPricedItem.name }}</q-item-label>
       <q-item-label>
-        <PriceImager :currencyId="500" :price="member.LastPricedItem.Price.price"></PriceImager>
+        <PriceImagerComponent :currencyId="500" :price="member.LastPricedItem.Price.price"></PriceImagerComponent>
       </q-item-label>
     </q-item-section>
   </q-item>
@@ -21,7 +21,7 @@
 
 import {ref} from "vue";
 import {fDate} from "src/myFuncts.js"
-import PriceImager from "components/price/PriceImager.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 import ItemIcon from "components/ItemIcon.vue";
 
 const props = defineProps({

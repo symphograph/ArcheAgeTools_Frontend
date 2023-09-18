@@ -46,25 +46,13 @@
 
 import PackRow from "components/packs/PackRow.vue";
 import {computed, inject, ref, watch} from "vue";
-import {finalSalary, goldSalary, layoutFix, profit} from "src/myFuncts";
-import ItemIcon from "components/ItemIcon.vue";
-import PriceImager from "components/price/PriceImager.vue";
+import {finalSalary, goldSalary, profit} from "src/myFuncts";
 import LostList from "components/price/LostList.vue";
-import NavButton from "components/NavButton.vue";
+
 
 const packList = inject('packList')
 const Lost = inject('Lost')
-
 const ptSettings = inject('ptSettings')
-
-// const sort = inject('sort')
-// const siol = inject('siol')
-// const ratePercent = inject('ratePercent')
-// const condition = inject('condition')
-// const addProfit = inject('addProfit')
-// const zoneFromId = inject('zoneFromId')
-// const zoneToId = inject('zoneToId')
-
 const selectedTypes = inject('selectedTypes')
 
 const selTypeIds = computed(() => {

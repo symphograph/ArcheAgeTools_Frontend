@@ -55,8 +55,8 @@ provide('Halls', Halls)
 const editMode = ref(false)
 provide('editMode', editMode)
 
-function reLogin(toAccountId) {
-  refAuth.value.reLogin(toAccountId)
+function reLogin(toAccountId, authType) {
+  refAuth.value.reLogin(toAccountId, authType)
 }
 provide('reLogin', reLogin)
 //const lastPath = '/'
@@ -141,7 +141,7 @@ body {
 }
 
 .q-drawer {
-  background-color: #efddc3e6;
+  background-color: #100d08f5;
 }
 
 .bg-tooltip {

@@ -1,7 +1,10 @@
 <template>
-  <q-item separator v-if="CategoriesList">
+  <q-item separator dark v-if="CategoriesList">
       <q-item-section>
         <q-tree
+            dark
+            color="gray"
+            control-color="black"
           ref="tree"
           accordion
           :nodes="CategoriesList"

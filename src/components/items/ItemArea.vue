@@ -3,13 +3,17 @@
         <CraftResults v-if="Item && Item.Info?.CraftResults"
                       :CraftResults="Item.Info.CraftResults">
         </CraftResults>
+        <PriceCard v-if="q.platform.is.mobile"
+                   @updated="loadItem"
+        ></PriceCard>
         <template v-if="!ItemProgress">
-
           <CurrencyArea v-if="(Item.currencyId && Item.currencyId !== 500) || Item.categId === 173"></CurrencyArea>
-
         </template>
         <CraftList v-if="Item?.craftable" ref="refCraftList"></CraftList>
         <div v-if="!Item.craftable">Некрафтабельно</div>
+        <div v-if="!ItemProgress && Item.Pricing.isGoldable">
+            <PriceHistory></PriceHistory>
+        </div>
       </div>
 </template>
 
@@ -22,17 +26,23 @@ import {api} from "boot/axios";
 import {LocalStorage, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 import CurrencyArea from "components/items/CurrencyArea.vue";
-import {notifyError} from "src/myFuncts";
+import {notifyError, priceImager} from "src/myFuncts";
+import PackCalculator from "components/packs/PackCalculator.vue";
+import PriceInput from "components/price/PriceInput.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
+import PriceCard from "components/items/PriceCard.vue";
+import PriceHistory from "components/items/PriceHistory.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const route = useRoute()
 
 const Item = inject('Item')
 const itemId = inject('itemId')
 const progress = inject('progress')
 const ItemProgress = inject('ItemProgress')
+const PriceHistoryProgress = ref('PriceHistoryProgress')
+provide('PriceHistoryProgress', PriceHistoryProgress)
 const refCraftList = ref(null)
 
 

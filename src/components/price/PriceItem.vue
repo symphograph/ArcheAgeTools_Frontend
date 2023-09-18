@@ -13,7 +13,7 @@
         <div class="PriceLabel">{{ price.name }}</div>
       </q-item-label>
       <q-item-label :lines="1">
-        <PriceImager :price="price.price" :currency-id="500"></PriceImager>
+        <PriceImagerComponent :price="price.price" :currency-id="500"></PriceImagerComponent>
       </q-item-label>
     </q-item-section>
   </q-item>
@@ -28,11 +28,10 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
 import {useRouter} from "vue-router";
-import PriceImager from "components/price/PriceImager.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const router = useRouter()
 
 const Props = defineProps({

@@ -1,10 +1,14 @@
 <template>
   <div class="WindowArea column">
     <div class="navigator" ref="navigatorRef">
-      <ServerSelect @saved="loadMembers()"></ServerSelect>
+      <ServerGroupSelect :groupId="AccSets.serverGroupId"
+                         @onSelect="onSelectServerGroup()"
+                         @onSave="loadMembers()"
+                         ref="refServerGroupSelect"
+      ></ServerGroupSelect>
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
-    <q-scroll-area v-if="Members.length" class="col" :style="'width: 100%;'">
+    <q-scroll-area v-if="Members.length" class="col">
       <q-list dense separator>
         <q-item v-for="member in Members" :key="member.id" dense>
           <MemberAvaCell :member="member"></MemberAvaCell>
@@ -34,20 +38,19 @@
 
 
 import {useRoute, useRouter} from "vue-router";
-import {useQuasar} from "quasar";
-import {inject, onMounted, ref} from "vue";
+import {useMeta, useQuasar} from "quasar";
+import {inject, nextTick, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import ServerSelect from "components/account/ServerSelect.vue";
 import MemberLastItem from "components/members/MemberLastItem.vue";
 import MemberAvaCell from "components/members/MemberAvaCell.vue";
 import {notifyError, notifyOK} from "src/myFuncts";
+import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
 
 const route = useRoute()
 const router = useRouter()
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
-
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
 const Members = ref([])
@@ -59,7 +62,7 @@ function update(member){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
       master: member.id,
-      serverId: AccSets.value.serverId,
+      serverGroupId: AccSets.value.serverGroupId,
       isFollow: member.isFollow
     }
   })
@@ -79,10 +82,14 @@ onMounted(() => {
 })
 
 function loadMembers() {
+  if(AccSets.value.serverGroupId === 100){
+    Members.value = []
+    return;
+  }
   memberListProgress.value = true
   api.post(apiUrl + '/api/get/members.php', {
     params: {
-      serverId: AccSets.value.serverId
+      serverGroupId: AccSets.value.serverGroupId
     }
   })
     .then((response) => {
@@ -101,6 +108,23 @@ function loadMembers() {
 function anyProgress(){
   return memberListProgress.value;
 }
+
+const refServerGroupSelect = ref()
+function onSelectServerGroup() {
+  refServerGroupSelect.value.saveServerGroup()
+}
+
+const metaData = {
+  title: 'Сообщество',
+  meta: {
+    viewport:
+        {
+          name: 'viewport',
+          content: 'initial-scale=0.6,width=device-width, user-scalable=yes'
+        }
+  }
+}
+useMeta(metaData)
 
 </script>
 

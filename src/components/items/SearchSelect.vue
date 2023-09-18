@@ -55,7 +55,6 @@ const router = useRouter()
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 
 const SearchList = inject('SearchList')
 const selectedItem = inject('selectedItem')
@@ -111,11 +110,7 @@ function filterFn (val, update, abort) {
   update(() => {
     const needle = val.toLowerCase()
     let List = [...SearchList.value]
-    /*
-    if(selCategId.value){
-      List = List.filter(v => v.categId === selCategId.value)
-    }
-     */
+
     if(val){
       List = [...List].filter(v => v.name.toLowerCase().indexOf(needle) > -1)
     }
@@ -138,8 +133,7 @@ function loadList() {
     })
 }
 
-function getListFromIdxDB()
-{
+function getListFromIdxDB() {
   let openRequest = indexedDB.open('prepData', 1)
   openRequest.onupgradeneeded = function() {
     //console.log('иницилиазия бд')
@@ -221,7 +215,6 @@ function clear() {
 
 onMounted(() => {
   getListFromIdxDB()
-  //loadList()
 })
 
 </script>

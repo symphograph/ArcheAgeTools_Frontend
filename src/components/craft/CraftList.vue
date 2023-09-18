@@ -1,7 +1,7 @@
 <template>
 
     <template v-if="MainCraft">
-      <CraftCard :Craft="MainCraft" :key="MainCraft.id" @setUBest="onSetUBest"></CraftCard>
+      <CraftCard :Craft="MainCraft" :key="MainCraft.id" @onSetUBest="loadCrafts()"></CraftCard>
 
     </template>
     <div v-else>Рецепты не найдены</div>
@@ -9,7 +9,7 @@
 
     <template v-if="CraftList.length">
       <q-expansion-item label="Другие рецепты" popup>
-        <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft" @setUBest="onSetUBest"></CraftCard>
+        <CraftCard v-for="Craft in CraftList" :key="Craft.id" :Craft="Craft" @onSetUBest="loadCrafts()"></CraftCard>
       </q-expansion-item>
     </template>
     <template v-if="Lost && Lost.length">
@@ -32,7 +32,6 @@ import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const route = useRoute()
 const Item = inject('Item')
 const itemId = inject('itemId')
@@ -64,10 +63,6 @@ onMounted(() => {
   //loadCrafts()
   console.log('craftList mounted')
 })
-
-function onSetUBest (){
-  loadCrafts()
-}
 
 function loadCrafts() {
 

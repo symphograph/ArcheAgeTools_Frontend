@@ -46,7 +46,6 @@ import {copy, fDate, notifyError, notifyOK} from "src/myFuncts.js"
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const router = useRouter()
 
 const Props = defineProps({

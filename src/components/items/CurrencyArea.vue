@@ -10,7 +10,7 @@
       <CurrencyTradable v-if="TradableItems.length"></CurrencyTradable>
       <div v-if="Currency.median">
         Средняя цена <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">:
-        <PriceImager :price="Currency.median" :currency-id="500"></PriceImager>
+        <PriceImagerComponent :price="Currency.median" :currency-id="500"></PriceImagerComponent>
       </div>
       <template v-if="Currency.MonetisationItems.length">
         <div class="PricesArea">
@@ -47,7 +47,7 @@ import {useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 import ItemIcon from "components/ItemIcon.vue";
 import PriceItemInput from "components/price/PriceItemInput.vue";
-import PriceImager from "components/price/PriceImager.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 import CurrencyTradable from "components/items/CurrencyTradable.vue";
 import PriceCurrencyItem from "components/price/PriceCurrencyItem.vue";
 import LostList from "components/price/LostList.vue";
@@ -55,7 +55,6 @@ import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const route = useRoute()
 const progress = inject('progress')
 const CurrencyProgress = inject('CurrencyProgress')

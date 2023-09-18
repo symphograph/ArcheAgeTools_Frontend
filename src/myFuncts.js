@@ -151,7 +151,7 @@ export function priceColor(method){
 }
 
 export function priceMethod(Price){
-  switch (Price.method){
+  switch (Price?.method || 'error'){
     case 'bySolo':
       return 'Ваша цена'
     case 'byCraft':
@@ -164,8 +164,10 @@ export function priceMethod(Price){
       return Price.author
     case 'byAny':
       return Price.author
+    case 'error':
+      return 'Ошибка'
     default:
-      return 'Неизветно:'
+      return 'Неавторизованный пользователь'
   }
 }
 
@@ -261,7 +263,9 @@ export function isExpired(error) {
     'Session does not exist',
     'Invalid tokenTime',
     'Token is Expired',
-    'tokens is empty'
+    'tokens is empty',
+    'Unknown device',
+      'cook is empty'
   ].includes(error?.response?.data?.error)
 }
 

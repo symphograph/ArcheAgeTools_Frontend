@@ -5,33 +5,17 @@
 import {LocalStorage, useQuasar} from "quasar";
 import {inject, nextTick, onBeforeMount, onMounted, provide, ref} from "vue";
 import {api} from "boot/axios";
-import {checkPowers, isExpired, isPermis, notifyError, notifyWarning} from "src/myFuncts";
+import {checkPowers, dynamicForm, isExpired, isPermis, notifyError, notifyWarning} from "src/myFuncts";
 import {useRoute} from "vue-router";
 
 //const jwtDecode = jwtDecode()
 const q = useQuasar()
 const apiUrl = String(process.env.API)
+const authUrl = String(process.env.Auth)
 const route = useRoute()
 
 const isOptionsLoaded = inject('isOptionsLoaded')
 const isTokenRefreshed = inject('isTokenRefreshed')
-
-function loadOptions() {
-  api.post(apiUrl + 'api/get/options.php', {
-    params: {}
-  })
-    .then((response) => {
-      if (!!!response?.data?.result) {
-        throw new Error();
-      }
-      Servers.value = response?.data?.data?.Servers ?? []
-      ProfLvls.value = response?.data?.data?.ProfLvls ?? []
-      isOptionsLoaded.value = true
-    })
-    .catch((error) => {
-      q.notify(notifyError(error, 'Опции не загружены'))
-    })
-}
 
 
 //--------------------------------------------------------------------
@@ -66,7 +50,7 @@ function setToken(name, value, expires = '90d') {
 }
 
 function register(){
-  api.post(String(process.env.Auth) + '/api/register.php', {
+  api.post(String(process.env.Auth) + 'api/register.php', {
     params: {
       authType: 'default'
     }
@@ -86,7 +70,7 @@ function register(){
 }
 
 function refreshAccessToken () {
-  api.post(String(process.env.Auth) + '/api/refresh.php', {
+  api.post(String(process.env.Auth) + 'api/refresh.php', {
     params: {
       SessionToken: SessionToken.value,
       AccessToken: AccessToken.value
@@ -110,7 +94,7 @@ function refreshAccessToken () {
     })
 }
 
-function reLogin (toAccountId) {
+function reLogin (toAccountId, authType) {
   isTokenRefreshed.value = false
   isOptionsLoaded.value = false
   api.post(String(process.env.Auth) + '/api/relogin.php', {
@@ -131,6 +115,12 @@ function reLogin (toAccountId) {
       if(isExpired(error)){
         register()
         return
+      }
+      if(error?.response?.data?.error === 'needLogin'){
+        dynamicForm(authUrl + 'auth/' + authType + '/login.php', {
+          AccessToken: AccessToken.value,
+          SessionToken: SessionToken.value
+        })
       }
       q.notify(notifyError(error))
     })
@@ -157,11 +147,6 @@ onMounted(() => {
     AccessToken.value = q.cookies.getAll()[AccessTokenName] ?? ''
     refreshAccessToken()
   }
-  //api.defaults.headers.common['Authorization'] = token.value
-
-
-
-
 
 })
 </script>

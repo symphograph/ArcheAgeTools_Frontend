@@ -15,14 +15,12 @@ import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
-const ServerGroup = inject('ServerGroup')
 const progress = inject('progress')
 
 const disable = computed(() => {
-  return !!!ServerGroup.value
+  return AccSets.value.serverGroupId === 100
 })
 provide('disable', disable)
 

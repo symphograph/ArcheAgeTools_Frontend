@@ -2,7 +2,7 @@
 
     <div class="WindowArea  column">
       <div class="navigator">
-        <AccountSets></AccountSets>
+        <AccountSets v-if="AccSets?.serverGroupId"></AccountSets>
       </div>
       <q-scroll-area  v-if="curAccount" class="col">
         <q-tabs v-model="tab">
@@ -25,7 +25,7 @@
 <script setup>
 import {computed, inject, onMounted, provide, ref} from "vue"
 import {api} from "boot/axios"
-import {useQuasar} from "quasar"
+import {useMeta, useQuasar} from "quasar"
 import AccountSets from "components/account/AccountSets.vue"
 import ProfList from "components/account/ProfList.vue"
 import BasedPrices from "components/price/BasedPrices.vue"
@@ -33,7 +33,7 @@ import {notifyError} from "src/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
+
 const refBasedPrices = ref(null)
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
@@ -57,6 +57,18 @@ function loadAccount() {
       q.notify(notifyError(error, 'Ой! Account Не работает :('))
     })
 }
+
+const metaData = {
+  title: 'Настройки',
+  meta: {
+    viewport:
+        {
+          name: 'viewport',
+          content: 'initial-scale=0.6,width=device-width, user-scalable=yes'
+        }
+  }
+}
+useMeta(metaData)
 </script>
 
 <style scoped>

@@ -6,20 +6,19 @@ import SearchSelect from "components/items/SearchSelect.vue"
 import ItemArea from "components/items/ItemArea.vue"
 import {useRoute, useRouter} from 'vue-router'
 import PriceInput from "components/price/PriceInput.vue"
-import PriceImager from "components/price/PriceImager.vue"
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue"
 import {priceImager} from "src/myFuncts";
 import DialogWindow from "components/DialogWindow.vue";
+import PriceCard from "components/items/PriceCard.vue";
 
 
 const route = useRoute()
 const router = useRouter()
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const token = inject('token')
 
 const curAccount = inject('curAccount')
 const AccSets = inject('AccSets')
-const Servers = inject('Servers')
 const price = ref(122345678)
 const categMode = inject('categMode')
 const navigatorRef = ref(null)
@@ -71,7 +70,7 @@ function npcPrice() {
 
 
 onMounted(() => {
-  if(!AccSets.value.serverGroup){
+  if(!AccSets.value.serverGroupId){
     goToSettings()
   }else {
     //console.log(curAccount.value)
@@ -127,17 +126,10 @@ function goToSettings () {
           {{ (Item && Item.personal) ? 'Персональный' : 'Передаваемый' }}
         </q-item-label>
       </div>
-      <div style="width: 20em">
-        <q-card class="PriceCard" v-if="Item">
-          <PriceInput :Price="Item.Pricing.Price" @updated="refItemArea.loadItem()"></PriceInput>
-          <div v-if="Item.isTradeNPC ">Продается у NPC:
-            <PriceImager :price="Item.Pricing.priceFromNPC" :currencyId="Item.Pricing.currencyId"></PriceImager>
-          </div>
-          <div v-else-if="Item.Pricing.goldable">
-            <span v-html="priceImager(Item.Pricing.Price.price)"></span>
-          </div>
-        </q-card>
+      <div v-if="q.platform.is.desktop" style="width: 20em">
+        <PriceCard></PriceCard>
       </div>
+
     </div>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
     <q-scroll-area class="col myScrollArea">
@@ -153,7 +145,5 @@ function goToSettings () {
   flex-wrap: wrap;
 }
 
-.PriceCard {
-  background: none;
-}
+
 </style>

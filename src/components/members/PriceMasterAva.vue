@@ -9,8 +9,9 @@
       <q-item-label caption>
         {{priceMember.publicNick}}
       </q-item-label>
-      <q-item-label v-if="route.params.accId*1 === curAccount.id">
+      <q-item-label>
         <q-toggle
+            :disable="route.params.accId*1 === AccSets.accoubtId"
           label="Доверять"
           v-model="priceMember.isFollow"
           @update:modelValue="setFollow()"
@@ -30,8 +31,8 @@ import {notifyOK} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const authUrl = String(process.env.Auth)
-const token = inject('token')
 const curAccount = inject('curAccount')
+const AccSets = inject('AccSets')
 const route = useRoute()
 
 const priceMember = inject('priceMember')

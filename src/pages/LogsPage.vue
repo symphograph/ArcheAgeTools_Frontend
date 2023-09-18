@@ -28,7 +28,7 @@ useMeta(metaData)
 
 function getLogs() {
 
-  //api.defaults.headers.common['Authorization'] = token.value
+
   if (process.env.isDebug) {
     //api.defaults.headers.common['Accept'] = "application/json"
   }

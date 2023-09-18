@@ -3,6 +3,10 @@
     <td class="ptCol1" colspan="2">
       <q-item dense :to="/item/ + pRoute.itemId">
         <q-item-section avatar>
+          <q-tooltip anchor="center right" class="bg-tooltip no-padding">
+
+            <MatIcons :mats="pRoute.Mats"></MatIcons>
+          </q-tooltip>
           <q-avatar size="1.5em" style="position: absolute; top: -0.3em; left: 0.5em; z-index: 99">
             <img :src="'/img/packtypes/' + pRoute.Pack.typeId + '.png'" alt="">
           </q-avatar>
@@ -53,15 +57,15 @@
                       :finalSalary="finalSalary"
           ></SalaryCard>
         </q-tooltip>
-        <PriceImager :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImager>
+        <PriceImagerComponent :price="finalSalary" :currencyId="pRoute.currencyId"></PriceImagerComponent>
       </q-item-label>
     </td>
     <td v-if="ptSettings.addProfit && !progress" style="text-align: right">
       <q-item-label>
-        <PriceImager :price="profit" :currency-id="500"></PriceImager>
+        <PriceImagerComponent :price="profit" :currency-id="500"></PriceImagerComponent>
       </q-item-label>
       <q-item-label caption>
-        <PriceImager :price="profitPerLabor" :currency-id="500"></PriceImager>/
+        <PriceImagerComponent :price="profitPerLabor" :currency-id="500"></PriceImagerComponent>/
         <img style="width: 1em"  src="/img/valuta/2.png">
       </q-item-label>
     </td>
@@ -72,9 +76,10 @@
 
 import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
-import PriceImager from "components/price/PriceImager.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 //import {profit} from "src/myFuncts.js";
 import SalaryCard from "components/packs/SalaryCard.vue";
+import MatIcons from "components/craft/MatIcons.vue";
 
 const props = defineProps({
   pRoute: ref(null)
@@ -83,10 +88,6 @@ const props = defineProps({
 const ptSettings = inject('ptSettings')
 const progress = inject('progress')
 
-// const addProfit = inject('addProfit')
-// const siol = inject('siol')
-// const ratePercent = inject('ratePercent')
-// const condition = inject('condition')
 const currencyPrices = inject('currencyPrices')
 
 
