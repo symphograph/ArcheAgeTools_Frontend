@@ -24,7 +24,7 @@ const disabled = computed(() => {
 
 const citiesProgress = ref(false)
 const companiesProgress = ref(false)
-const startedAt = ref('2023-09-20 17:45')
+const startedAt = ref('2023-09-26 17:45')
 
 const weight = ref(2)
 
@@ -67,7 +67,8 @@ function loadCompanies() {
   companiesProgress.value = true
   api.get(apiUrl + 'api/delivery.php', {
     params: {
-      method: fast.value ? 'fast' : 'slow',
+      method: 'list',
+      type: fast.value ? 'fast' : 'slow',
       weight: weight.value,
       sourceKladr: sourceKladr.value,
       targetKladr: targetKladr.value,
