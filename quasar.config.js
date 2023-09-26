@@ -72,7 +72,7 @@ module.exports = configure(function ( ctx ) {
       env: {
         API: ctx.dev
           ? 'https://tapi.aa.dllib.ru/'
-          : 'https://api.dllib.ru/',
+          : 'https://api.aa.dllib.ru/',
         isDebug: !!ctx.dev,
         Auth: ctx.dev
           ? 'https://tauth.symphograph.ru/'
