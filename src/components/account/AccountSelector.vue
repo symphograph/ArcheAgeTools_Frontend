@@ -18,6 +18,10 @@ const emit = defineEmits(['onSelectAccount'])
 const AccountList = inject('AccountList')
 const accId = ref(null)
 const curAccount = inject('curAccount')
+const filteredList = computed(() => {
+  let list = [...AccountList.value]
+  return list.filter(el => el.authType !== 'default')
+})
 const AccSets = inject('AccSets')
 const AccSetList = inject('AccSetList')
 
@@ -62,7 +66,7 @@ function ServerGroupFromList(groupId)
             label-color="grey"
             filled
             :label="AccSets.publicNick ?? ''"
-            :options="AccountList"
+            :options="filteredList"
             option-value="id"
             map-options
             @update:model-value="reLogin(curAccount.id, curAccount.authType)"

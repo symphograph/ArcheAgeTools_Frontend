@@ -215,7 +215,7 @@ onMounted(() => {
         <q-tabs v-if="q.platform.is.desktop" inline-label class="bg-primary text-white shadow-2" align="center">
 
           <q-btn label="test" @click="test()"></q-btn>
-          <AccountSelector v-if="AccountList && AccountList.length > 1" @onSelectAccount="emit('reLogin')"></AccountSelector>
+          <AccountSelector v-if="AccountList" @onSelectAccount="emit('reLogin')"></AccountSelector>
           <LoginList v-else></LoginList>
         </q-tabs>
         <template v-else>
