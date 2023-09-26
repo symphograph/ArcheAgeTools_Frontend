@@ -78,7 +78,9 @@ function refreshAccessToken () {
   })
     .then((response) => {
       if(!!!response?.data?.result){
+
         throw new Error();
+
       }
       setToken(SessionTokenName, response?.data?.data.SessionToken ?? '')
       setToken(AccessTokenName, response?.data?.data.AccessToken ?? '')
@@ -86,7 +88,7 @@ function refreshAccessToken () {
 
     })
     .catch((error) => {
-      if(isExpired(error)){
+      if(error?.response?.status === 401){
         register()
         return
       }

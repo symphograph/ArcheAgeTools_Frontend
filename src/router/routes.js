@@ -72,6 +72,13 @@ const routes = [
           { path: '', component: () => import('pages/PackInfoPage.vue') }
         ]
       },
+      {
+        path: '/delivery',
+        component: () => import('layouts/MidLayout.vue'),
+        children: [
+          { path: '', component: () => import('pages/DeliveryPage.vue') }
+        ]
+      },
     ]
   },
   {

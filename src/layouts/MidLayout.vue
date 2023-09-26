@@ -211,8 +211,9 @@ onMounted(() => {
         <q-toolbar-title>
           GraphTools
         </q-toolbar-title>
-
+        <div style="margin: auto; color: red">* В разработке *</div>
         <q-tabs v-if="q.platform.is.desktop" inline-label class="bg-primary text-white shadow-2" align="center">
+
           <q-btn label="test" @click="test()"></q-btn>
           <AccountSelector v-if="AccountList && AccountList.length > 1" @onSelectAccount="emit('reLogin')"></AccountSelector>
           <LoginList v-else></LoginList>
@@ -249,7 +250,7 @@ onMounted(() => {
     </q-page-container>
     <q-footer>
       <div class="footer">© <a href="https://vk.com/roman_chubich" target="_blank">Граф</a> * <a
-        href="https://github.com/symphograph/dllib" target="_blank">Github</a> * Шаеда
+        href="https://github.com/symphograph/ArcheAgeTools_Frontend" target="_blank">Github</a> * Шаеда
       </div>
     </q-footer>
   </q-layout>
