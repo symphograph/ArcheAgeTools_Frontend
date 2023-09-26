@@ -103,7 +103,7 @@ function loadList() {
 
     params: {
       side: ptSettings.value.side,
-      addProfit: true,
+      addProfit: false,
       //siol: ptSettings.value.siol,
       //condition: ptSettings.value.condition
     }

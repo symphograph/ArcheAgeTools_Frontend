@@ -3,7 +3,7 @@
     <div v-if="priceMember">
       <PriceMasterAva></PriceMasterAva>
     </div>
-    <ServerSelect @on="loadPrices()" v-if="q.platform.is.desktop"></ServerSelect>
+    <ServerSelect @on="loadPrices()" v-if="false"></ServerSelect>
     <q-select :options="sortOpts"
               v-if="q.platform.is.desktop"
               label="Порядок"
@@ -72,24 +72,25 @@ onMounted(() => {
 
 function loadPrices() {
   progress.value = true
-  api.post(apiUrl + '/api/get/prices.php', {
+  api.post(apiUrl + '/api/price.php', {
     params: {
-      serverId: AccSets.value.serverId,
-      accId: route.params.accId
+      method: 'listOfMember',
+      accountId: route.params.accId ?? null
     }
   })
     .then((response) => {
       if(!!!response?.data?.result){
         throw new Error();
       }
-      progress.value = false
       Prices.value = response?.data?.data?.Prices ?? []
       priceMember.value = response?.data?.data?.priceMember ?? null
     })
     .catch((error) => {
-      progress.value = false
       Prices.value = []
       q.notify(notifyError(error))
+    })
+    .finally(() => {
+      progress.value = false
     })
 }
 </script>
