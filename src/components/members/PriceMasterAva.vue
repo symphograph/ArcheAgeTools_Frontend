@@ -11,7 +11,7 @@
       </q-item-label>
       <q-item-label>
         <q-toggle
-            :disable="route.params.accId*1 === AccSets.accoubtId"
+            :disable="route.params.accId*1 === curAccount.id"
           label="Доверять"
           v-model="priceMember.isFollow"
           @update:modelValue="setFollow()"
@@ -32,7 +32,6 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const authUrl = String(process.env.Auth)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const route = useRoute()
 
 const priceMember = inject('priceMember')
@@ -41,7 +40,7 @@ function setFollow(){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
       master: priceMember.value.accountId,
-      serverId: AccSets.value.serverId,
+      serverId: curAccount.value.settings.serverId,
       isFollow: priceMember.value.isFollow
     }
   })

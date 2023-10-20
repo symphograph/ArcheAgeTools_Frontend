@@ -52,7 +52,7 @@ const linksList = [
     title: 'Настройки',
     caption: 'Настройте свои параметры',
     ava: '/img/settings.png',
-    link: '/account'
+    link: '/settings'
   }
 ]
 //const Servers = inject('Servers')
@@ -69,7 +69,7 @@ onMounted(() => {
 
 <template>
   <template v-if="q.platform.is.mobile">
-    <AccountSelector v-if="AccountList && AccountList.length > 1"></AccountSelector>
+    <AccountSelector v-if="AccountList && AccountList.some(item => item.authType !== 'default')"></AccountSelector>
     <LoginList v-else></LoginList>
   </template>
   <q-list separator>

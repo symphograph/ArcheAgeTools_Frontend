@@ -58,7 +58,6 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 const router = useRouter()
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 
 const Props = defineProps({
   price: ref(null)
@@ -77,8 +76,9 @@ function goTo(id){
 }
 
 function delPrice(){
-  api.post(apiUrl + 'api/set/price/del.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'del',
       itemId: Props.price.itemId
     }
   })
@@ -96,8 +96,9 @@ function delPrice(){
 function savePrice() {
 
   priceRef.value.blur()
-  api.post(apiUrl + 'api/set/price/price.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'set',
       price: nPrice.value.price,
       itemId: Props.price.itemId
     }
@@ -108,7 +109,7 @@ function savePrice() {
       }
       q.notify(notifyOK())
       nPrice.value.accountId = curAccount?.value?.id ?? 0
-      nPrice.value.author = AccSets.value?.publicNick ?? 'Error'
+      nPrice.value.author = curAccount.value?.settings?.publicNick ?? 'Error'
       nPrice.value.method = 'bySolo'
     })
     .catch((error) => {

@@ -4,7 +4,7 @@
   :class="inputClass"
   :options="ProfLvls"
   option-value="lvl"
-  v-model="AccSets.Profs.find(el => el.id === prof.id).lvl"
+  v-model="curAccount.settings.Profs.find(el => el.id === prof.id).lvl"
   @update:model-value="save"
   map-options
   emit-value
@@ -14,7 +14,7 @@
 >
   <template v-slot:prepend>
     <ItemIcon :loc-icon="'/img/profs/'+ prof.id +'.png'"
-              :grade="AccSets.Profs.find(el => el.id === prof.id).lvl"
+              :grade="curAccount.settings.Profs.find(el => el.id === prof.id).lvl"
     >
     </ItemIcon>
   </template>
@@ -54,7 +54,7 @@ const profRef = ref(null)
 
 const inputClass = ref('Input')
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
+
 
 const selectOptionsStyle = inject('selectOptionsStyle')
 
@@ -63,7 +63,7 @@ function save(){
   api.post(apiUrl + 'api/set/prof.php', {
     params: {
       profId: Props.prof.id,
-      lvl: AccSets.value.Profs.find(el => el.id === Props.prof.id).lvl
+      lvl: curAccount.value.settings.Profs.find(el => el.id === Props.prof.id).lvl
     }
   })
     .then((response) => {

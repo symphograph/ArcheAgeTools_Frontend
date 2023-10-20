@@ -36,7 +36,6 @@ const groupIdMutable = ref(props.groupId)
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const inputClass = ref('Input')
 const emit = defineEmits(['onSelect', 'onSave'])
 const progress = inject('progress')
@@ -61,7 +60,7 @@ function saveServerGroup() {
         if (!!!response?.data?.result) {
           throw new Error();
         }
-        AccSets.value.serverGroupId = groupIdMutable.value
+        curAccount.value.settings.serverGroupId = groupIdMutable.value
         emit('onSave')
       })
       .catch((error) => {

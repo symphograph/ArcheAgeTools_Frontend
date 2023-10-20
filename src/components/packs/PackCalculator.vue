@@ -83,7 +83,11 @@ const listInProgress = ref(false)
 
 function loadZones() {
 
-  api.post(apiUrl + 'api/get/zones.php')
+  api.post(apiUrl + 'api/options.php', {
+    params: {
+      method: 'getZones'
+    }
+  })
       .then((response) => {
         if(!!!response?.data?.result){
           throw new Error();

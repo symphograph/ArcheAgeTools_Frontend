@@ -1,6 +1,6 @@
 <template>
   <NickInput></NickInput>
-  <ServerGroupSelect :groupId="AccSets.serverGroupId"
+  <ServerGroupSelect :groupId="curAccount.settings.serverGroupId"
                      @onSelect="onSelectServerGroup()"
                      @onSave="emit('saved')"
                      ref="refServerGroupSelect"
@@ -18,7 +18,8 @@ import ModeSelect from "components/account/ModeSelect.vue";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const progress = inject('progress')
-const AccSets = inject('AccSets')
+const curAccount = inject('curAccount')
+
 
 const emit = defineEmits(['saved'])
 const refServerGroupSelect = ref()

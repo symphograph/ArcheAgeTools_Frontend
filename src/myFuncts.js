@@ -9,10 +9,64 @@ export function rateInfo (val) {
 
 export function fDate(date) {
   if (date) {
+
     return moment(String(date)).format('DD.MM.YYYY')
   }
   return ''
 }
+
+export function fDateTime(date, format = 'YYYY-MM-DD HH:mm:ss [UTC]') {
+  if (date) {
+    const iso8601Date = moment(date, format).toISOString();
+    return moment(String(iso8601Date)).format('DD.MM.YYYY H:mm')
+  }
+  return ''
+}
+
+export function formatTimeDifference(time) {
+  const currentTime = new Date(); // Ваше текущее время
+  const targetTime = new Date(time + " UTC"); // Преобразуем targetTime в UTC
+  const timeDifference = currentTime - targetTime;
+
+  // Конвертируем разницу в минуты
+  const minutesDifference = Math.floor(timeDifference / (1000 * 60));
+
+  switch (true) {
+    case minutesDifference < 1:
+      return "Минуту назад";
+    case minutesDifference < 60:
+      return "Недавно";
+    case minutesDifference < 120:
+      return "Час назад";
+    default:
+      const todayUTC = new Date();
+      todayUTC.setUTCHours(0, 0, 0, 0);
+
+      if (targetTime > todayUTC) {
+        return "Сегодня";
+      } else {
+        const yesterdayUTC = new Date(todayUTC);
+        yesterdayUTC.setUTCDate(todayUTC.getUTCDate() - 1);
+
+        if (targetTime > yesterdayUTC) {
+          return "Вчера";
+        } else {
+          const daysDifference = Math.floor(minutesDifference / (60 * 24));
+          switch (true) {
+            case daysDifference < 30:
+              return `${daysDifference} дней назад`;
+            default:
+              const monthsDifference = Math.floor(daysDifference / 30);
+              return `${monthsDifference} месяцев назад`;
+          }
+        }
+      }
+  }
+}
+
+
+
+
 
 export function toDate(date) {
   let now = moment(new Date()).format('YYYY-MM-DD')

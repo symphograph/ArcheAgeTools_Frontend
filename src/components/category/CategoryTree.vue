@@ -68,8 +68,9 @@ function setCategMode() {
 
 function loadCategList() {
 
-  api.post(apiUrl + 'api/get/categories.php', {
+  api.post(apiUrl + 'api/options.php', {
     params: {
+      method: 'getCategories'
     }
   })
     .then((response) => {

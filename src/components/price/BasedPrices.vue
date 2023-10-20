@@ -16,11 +16,10 @@ import {notifyError} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const progress = inject('progress')
 
 const disable = computed(() => {
-  return AccSets.value.serverGroupId === 100
+  return curAccount.value.settings.serverGroupId === 100
 })
 provide('disable', disable)
 
@@ -34,7 +33,11 @@ defineExpose({
 })
 
 function loadPrices() {
-  api.post(apiUrl + '/api/get/price/based.php')
+  api.post(apiUrl + '/api/price.php', {
+    params: {
+      method: 'getBasedList'
+    }
+  })
     .then((response) => {
       if(!!!response?.data?.result){
         throw new Error();

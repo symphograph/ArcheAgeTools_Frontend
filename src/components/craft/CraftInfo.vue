@@ -265,8 +265,9 @@ function changeUBest(){
 }
 
 function setAsUBest() {
-  api.post(apiUrl + 'api/set/craft/ubest.php', {
+  api.post(apiUrl + 'api/craft.php', {
     params: {
+      method: 'setAsUBest',
       craftId: props.Craft.id
     }
   })
@@ -283,8 +284,9 @@ function setAsUBest() {
 }
 
 function delUBest() {
-  api.post(apiUrl + 'api/set/craft/delubest.php', {
+  api.post(apiUrl + 'api/craft.php', {
     params: {
+      method: 'resetUBest',
       craftId: props.Craft.id
     }
   })

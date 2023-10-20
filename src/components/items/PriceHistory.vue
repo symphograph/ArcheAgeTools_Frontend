@@ -1,24 +1,23 @@
 <script setup>
 
-import {computed, inject, nextTick, onMounted, provide, ref} from "vue";
+import {computed, inject, onMounted, ref} from "vue";
 import {api} from "boot/axios";
-import {LocalStorage, useQuasar} from "quasar";
+import {useQuasar} from "quasar";
 import {fDate, notifyError} from "src/myFuncts";
 import {useRoute} from "vue-router";
 import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
-import {DatetimeFormat} from "vue-i18n";
 import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const apiAuth = String(process.env.Auth)
 const route = useRoute()
-const AccSets = inject('AccSets')
+const curAccount = inject('curAccount')
 
 const PriceHistoryProgress = inject('PriceHistoryProgress')
 const PriceHistoryList = ref([])
 const ServerGroupList = inject('ServerGroupList')
-const selectedServerGroupId = ref(AccSets.value.serverGroupId)
+const selectedServerGroupId = ref(curAccount.value.settings.serverGroupId)
 const filteredList = computed(() => {
   if(!PriceHistoryList.value?.length){
     return []

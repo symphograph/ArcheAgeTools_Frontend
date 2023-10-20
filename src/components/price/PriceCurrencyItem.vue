@@ -80,8 +80,9 @@ function goTo(id) {
 }
 
 function delPrice() {
-  api.post(apiUrl + 'api/set/price/del.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'del',
       itemId: Props.CurItem.Item.id
     }
   })
@@ -99,8 +100,9 @@ function delPrice() {
 function savePrice() {
 
   priceRef.value.blur()
-  api.post(apiUrl + 'api/set/price/price.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'set',
       price: nPrice.value,
       itemId: Props.CurItem.Item.id
     }

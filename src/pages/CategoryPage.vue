@@ -203,7 +203,11 @@ function indexDB(list) {
 
 function loadList() {
 
-  api.post(apiUrl + 'api/get/search.php')
+  api.post(apiUrl + 'api/options.php', {
+    params: {
+      method: 'getSearchList'
+    }
+  })
     .then((response) => {
       if(!!!response?.data?.result){
         throw new Error();

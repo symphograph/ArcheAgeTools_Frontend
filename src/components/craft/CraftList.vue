@@ -71,9 +71,10 @@ function loadCrafts() {
   }
   Lost.value = [];
   CraftProgress.value = true
-  //CraftList.value = null
-  api.post(apiUrl + 'api/get/crafts.php', {
+
+  api.post(apiUrl + 'api/craft.php', {
     params: {
+      method: 'getList',
       itemId: route.params.id
     }
   })

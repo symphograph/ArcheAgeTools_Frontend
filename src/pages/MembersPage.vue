@@ -1,7 +1,7 @@
 <template>
   <div class="WindowArea column">
     <div class="navigator" ref="navigatorRef">
-      <ServerGroupSelect :groupId="AccSets.serverGroupId"
+      <ServerGroupSelect :groupId="curAccount.settings.serverGroupId"
                          @onSelect="onSelectServerGroup()"
                          @onSave="loadMembers()"
                          ref="refServerGroupSelect"
@@ -39,9 +39,8 @@
 
 import {useRoute, useRouter} from "vue-router";
 import {useMeta, useQuasar} from "quasar";
-import {inject, nextTick, onMounted, ref} from "vue";
+import {inject, onMounted, ref} from "vue";
 import {api} from "boot/axios";
-import ServerSelect from "components/account/ServerSelect.vue";
 import MemberLastItem from "components/members/MemberLastItem.vue";
 import MemberAvaCell from "components/members/MemberAvaCell.vue";
 import {notifyError, notifyOK} from "src/myFuncts";
@@ -52,7 +51,6 @@ const router = useRouter()
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const Members = ref([])
 const memberListProgress = ref(false)
 
@@ -62,7 +60,7 @@ function update(member){
   api.post(apiUrl + 'api/set/follow.php', {
     params: {
       master: member.id,
-      serverGroupId: AccSets.value.serverGroupId,
+      serverGroupId: curAccount.value.settings.serverGroupId,
       isFollow: member.isFollow
     }
   })
@@ -82,14 +80,14 @@ onMounted(() => {
 })
 
 function loadMembers() {
-  if(AccSets.value.serverGroupId === 100){
+  if(curAccount.value.settings.serverGroupId === 100){
     Members.value = []
     return;
   }
   memberListProgress.value = true
   api.post(apiUrl + '/api/get/members.php', {
     params: {
-      serverGroupId: AccSets.value.serverGroupId
+      serverGroupId: curAccount.value.settings.serverGroupId
     }
   })
     .then((response) => {

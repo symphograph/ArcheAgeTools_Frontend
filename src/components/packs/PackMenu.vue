@@ -17,7 +17,7 @@ const apiUrl = String(process.env.API)
 const router = useRouter()
 const inputClass = ref('Input')
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
+
 
 const emit = defineEmits(['sideSelected'])
 
@@ -92,7 +92,7 @@ onMounted(()=> {
 })
 
 function addProfitActive(){
-  if(!!!AccSets.value.serverGroupId){
+  if(!!!curAccount.value.settings.serverGroupId){
     ptSettings.value.addProfit = false
     goToSettings()
     return false
@@ -171,7 +171,11 @@ function loadList() {
 
 function loadZones() {
 
-  api.post(apiUrl + 'api/get/zones.php')
+  api.post(apiUrl + 'api/options.php', {
+    params: {
+      method: 'getZones'
+    }
+  })
       .then((response) => {
         if(!!!response?.data?.result){
           throw new Error();
@@ -216,7 +220,7 @@ function loadZones() {
         <NavButton label="+Профит"
                    :active="ptSettings.addProfit"
                    :imgBtn="'/img/profit.png'"
-                   :isDisabled="!!!AccSets.serverGroupId"
+                   :isDisabled="!!!curAccount.settings.serverGroupId"
                    toolText="Расчитывать прибыль.<br>
                     Если вы не указали профессии и цены в настройках, это совершенно бесполезная опция"
                    @onClick="addProfitActive"

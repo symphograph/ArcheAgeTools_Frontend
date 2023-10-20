@@ -1,6 +1,6 @@
 <template>
   <div class="ProfList">
-    <template v-for="prof in AccSets.Profs" :key="prof.id">
+    <template v-for="prof in curAccount.settings.Profs" :key="prof.id">
       <ProfSelect :prof="prof"></ProfSelect>
     </template>
   </div>
@@ -12,7 +12,6 @@ import {inject} from "vue";
 import ProfSelect from "components/account/ProfSelect.vue";
 
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 </script>
 
 <style scoped>

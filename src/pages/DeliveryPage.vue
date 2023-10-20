@@ -24,7 +24,7 @@ const disabled = computed(() => {
 
 const citiesProgress = ref(false)
 const companiesProgress = ref(false)
-const startedAt = ref('2023-09-26 17:45')
+const startedAt = ref('2023-09-27 17:45')
 
 const weight = ref(2)
 

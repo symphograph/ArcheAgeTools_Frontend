@@ -20,16 +20,41 @@ const progress = inject('progress')
 const AccessToken = inject('AccessToken')
 const isOptionsLoaded = inject('isOptionsLoaded')
 const isTokenRefreshed = inject('isTokenRefreshed')
+const isAccountsLoaded = inject('isAccountsLoaded')
 const emit = defineEmits(['reLogin'])
 
 const AccountList = ref([])
 provide('AccountList', AccountList)
 
-const curAccount = ref(null)
+const curAccount = ref({settings: {}})
 provide('curAccount', curAccount)
+//provide('AccSets', curAccount.value.settings)
 
-const AccSets = ref({grade: 1, serverGroupId: 100})
+const AccSets = ref({})
 provide('AccSets', AccSets)
+
+const AccSetList = ref([])
+provide('AccSetList', AccSetList)
+
+const ServerGroupList = ref([])
+provide('ServerGroupList', ServerGroupList)
+
+function initAccountSettingsInList() {
+  let list = AccountList.value.map(account => {
+    const accSet = AccSetList.value.find(accSet => accSet.accountId === account.id)
+    if (accSet) {
+      return {
+        ...account,
+        settings: accSet
+      }
+    } else {
+      return account;
+    }
+  })
+  AccountList.value = list.sort((a, b) => new Date(b.visitedAt) - new Date(a.visitedAt))
+}
+
+
 
 const selCategId = ref(0)
 provide('selCategId', selCategId)
@@ -37,8 +62,7 @@ provide('selCategId', selCategId)
 const selCategNode = ref(null)
 provide('selCategNode', selCategNode)
 
-const ServerGroupList = ref([])
-provide('ServerGroupList', ServerGroupList)
+
 
 const ProfLvls = ref([])
 provide('ProfLvls', ProfLvls)
@@ -86,15 +110,16 @@ provide('categMode', categMode)
 const selectOptionsStyle = { backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }
 provide('selectOptionsStyle', selectOptionsStyle)
 
-const AccSetList = ref([])
-provide('AccSetList', AccSetList)
-
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
 function loadOptions() {
-  api.post(apiUrl + 'api/get/options.php')
+  api.post(apiUrl + 'api/options.php', {
+    params: {
+      method: 'getMain'
+    }
+  })
     .then((response) => {
       if (!!!response?.data?.result) {
         throw new Error();
@@ -118,6 +143,7 @@ function test() {
         if (!!!response?.data?.result) {
           throw new Error();
         }
+        q.notify(notifyOK(response.data.result))
       })
       .catch((error) => {
         q.notify(notifyError(error))
@@ -134,8 +160,10 @@ function loadAccountList() {
       if (!!!response?.data?.result) {
         throw new Error();
       }
-      AccountList.value = response?.data?.data
-      curAccount.value = AccountList.value.find(el => el.id === accountIdByJWT(AccessToken.value))
+
+      let list = response?.data?.data
+      curAccount.value = list.find(el => el.id === accountIdByJWT(AccessToken.value))
+      AccountList.value = list.filter(el => el.authType !== 'default')
       loadSettings()
     })
     .catch((error) => {
@@ -154,6 +182,7 @@ function loadSettings() {
         throw new Error();
       }
       AccSets.value = response?.data?.data
+      curAccount.value.settings = response?.data?.data
       loadAccSetList()
     })
     .catch((error) => {
@@ -173,6 +202,8 @@ function loadAccSetList() {
         throw new Error();
       }
       AccSetList.value = response?.data?.data ?? []
+      initAccountSettingsInList()
+
       isOptionsLoaded.value = true
 
     })
@@ -191,7 +222,6 @@ onBeforeMount(() => {
 
 onMounted(() => {
   loadOptions()
-
 })
 </script>
 
@@ -215,7 +245,7 @@ onMounted(() => {
         <q-tabs v-if="q.platform.is.desktop" inline-label class="bg-primary text-white shadow-2" align="center">
 
           <q-btn label="test" @click="test()"></q-btn>
-          <AccountSelector v-if="AccountList" @onSelectAccount="emit('reLogin')"></AccountSelector>
+          <AccountSelector v-if="AccountList && AccountList.some(item => item.authType !== 'default')" @onSelectAccount="emit('reLogin')"></AccountSelector>
           <LoginList v-else></LoginList>
         </q-tabs>
         <template v-else>

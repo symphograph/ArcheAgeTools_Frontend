@@ -58,8 +58,9 @@ onMounted(()=> {
 
 function loadItem() {
   ItemProgress.value = true
-  api.post(apiUrl + '/api/get/item.php', {
+  api.post(apiUrl + '/api/item.php', {
     params: {
+      method: 'get',
       id: route.params.id
     }
   })

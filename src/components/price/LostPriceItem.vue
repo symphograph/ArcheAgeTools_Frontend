@@ -63,8 +63,9 @@ function goTo(id){
 function savePrice() {
 
   priceRef.value.blur()
-  api.post(apiUrl + 'api/set/price/price.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'set',
       price: nPrice.value,
       itemId: Props.price.itemId
     }

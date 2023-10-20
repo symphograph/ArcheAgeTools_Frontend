@@ -3,7 +3,6 @@
     <div v-if="priceMember">
       <PriceMasterAva></PriceMasterAva>
     </div>
-    <ServerSelect @on="loadPrices()" v-if="false"></ServerSelect>
     <q-select :options="sortOpts"
               v-if="q.platform.is.desktop"
               label="Порядок"
@@ -29,7 +28,6 @@
 <script setup>
 
 import PriceMasterAva from "components/members/PriceMasterAva.vue";
-import ServerSelect from "components/account/ServerSelect.vue";
 import {api} from "boot/axios";
 import {inject, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
@@ -44,7 +42,6 @@ const inputClass = ref('Input')
 
 const progress = inject('progress')
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const priceMember = inject('priceMember')
 const SortSelected = inject('SortSelected')
 const Prices = inject('Prices')

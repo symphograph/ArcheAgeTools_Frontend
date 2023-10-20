@@ -20,6 +20,9 @@ provide('pageSettings', pageSettings)
 const isOptionsLoaded = ref(false)
 provide('isOptionsLoaded', isOptionsLoaded)
 
+const isAccountsLoaded = ref(false)
+provide('isAccountsLoaded', isAccountsLoaded)
+
 const refAuth = ref()
 const q = useQuasar()
 

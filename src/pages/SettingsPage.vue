@@ -1,8 +1,7 @@
 <template>
-
     <div class="WindowArea  column">
       <div class="navigator">
-        <AccountSets v-if="AccSets?.serverGroupId"></AccountSets>
+        <AccountSets v-if="curAccount.settings?.serverGroupId"></AccountSets>
       </div>
       <q-scroll-area  v-if="curAccount" class="col">
         <q-tabs v-model="tab">
@@ -17,7 +16,6 @@
             <ProfList></ProfList>
           </q-tab-panel>
         </q-tab-panels>
-
       </q-scroll-area>
     </div>
 </template>
@@ -36,7 +34,6 @@ const apiUrl = String(process.env.API)
 
 const refBasedPrices = ref(null)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const tab = ref('basedPrices')
 const progress = inject('progress')
 
@@ -44,19 +41,6 @@ onMounted(() => {
   console.log('AccountPage mounted')
   //loadAccount()
 })
-
-function loadAccount() {
-  api.post(apiUrl + 'api/get/account.php')
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      curAccount.value = response?.data?.data?.curAccount ?? null
-    })
-    .catch((error) => {
-      q.notify(notifyError(error, 'Ой! Account Не работает :('))
-    })
-}
 
 const metaData = {
   title: 'Настройки',

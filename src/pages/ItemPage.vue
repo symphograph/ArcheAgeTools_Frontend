@@ -18,7 +18,6 @@ const q = useQuasar()
 const apiUrl = String(process.env.API)
 
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const price = ref(122345678)
 const categMode = inject('categMode')
 const navigatorRef = ref(null)
@@ -70,7 +69,7 @@ function npcPrice() {
 
 
 onMounted(() => {
-  if(!AccSets.value.serverGroupId){
+  if(!curAccount.value.settings.serverGroupId || curAccount.value.settings.serverGroupId === 100){
     goToSettings()
   }else {
     //console.log(curAccount.value)

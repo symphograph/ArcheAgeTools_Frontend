@@ -1,5 +1,5 @@
 <template>
-  <q-select v-model="AccSets.mode"
+  <q-select v-model="curAccount.settings.mode"
             :options="PriceModes"
             borderless
             option-value="mode"
@@ -35,7 +35,6 @@ import {notifyError, notifyOK} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 const inputClass = ref('Input')
 const emit = defineEmits(['saved'])
 const progress = inject('progress')
@@ -71,7 +70,7 @@ function save() {
   api.post(apiUrl + 'api/set/mode.php', {
 
     params: {
-      mode: AccSets.value.mode,
+      mode: curAccount.value.settings.mode,
     }
   })
     .then((response) => {

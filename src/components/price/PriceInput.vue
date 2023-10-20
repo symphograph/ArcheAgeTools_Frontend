@@ -31,7 +31,6 @@ import {fDate, notifyError, notifyOK, priceColor} from "src/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const curAccount = inject('curAccount')
-const AccSets = inject('AccSets')
 
 const props = defineProps({
   Price: ref(null)
@@ -48,7 +47,7 @@ const emit = defineEmits(['delPrice', 'updated'])
 
 const disable = computed(() =>{
   switch (true) {
-    case !!!AccSets.value.serverGroupId:
+    case !!!curAccount.value.settings.serverGroupId:
       return true
     case !!!Item.value.Pricing.isGoldable:
       return true
@@ -58,7 +57,7 @@ const disable = computed(() =>{
 })
 
 const priceErr = computed(()=> {
-  if(!AccSets.value.serverGroupId){
+  if(!curAccount.value.settings.serverGroupId){
     return 'Сервер не выбран'
   }
 
@@ -89,7 +88,7 @@ const label = computed(() => {
       return 'Цена не найдена'
     case !!!nPrice.value.author:
       return 'Неизвестный'
-    case !!!AccSets.value.serverGroupId:
+    case !!!curAccount.value.settings.serverGroupId:
       return 'Сервер не выбран'
     case !disable.value:
       return fDate(nPrice.value.updatedAt) + ' - ' +  nPrice.value.author
@@ -100,8 +99,9 @@ const label = computed(() => {
 
 function savePrice() {
   priceRef.value.blur()
-  api.post(apiUrl + 'api/set/price/price.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'set',
       price: nPrice.value.price,
       itemId: Item.value.id
     }
