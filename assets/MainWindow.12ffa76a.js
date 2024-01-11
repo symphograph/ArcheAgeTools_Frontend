@@ -1,0 +1,1 @@
+import{av as o,o as n,q as t,s as _,t as a,f as s}from"./index.5175d5c0.js";const r={class:"WindowArea column"},c={__name:"MainWindow",setup(i){return n(()=>{console.log("MainWindow mounted")}),(d,p)=>{const e=t("router-view");return _(),a("div",r,[s(e)])}}};var l=o(c,[["__scopeId","data-v-231604c7"]]);export{l as default};
