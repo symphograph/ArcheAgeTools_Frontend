@@ -1,6 +1,6 @@
 <script setup>
 import {inject, onMounted, ref} from "vue";
-import {accountIdByJWT, fDateTime, formatTimeDifference, notifyError} from "src/myFuncts";
+import {accountIdByJWT, fDateAnyFormat, fDateTime, formatTimeDifference, notifyError} from "src/myFuncts";
 import ItemIcon from "components/ItemIcon.vue";
 import {useQuasar} from "quasar";
 import NickInput from "components/account/NickInput.vue";
@@ -118,7 +118,7 @@ onMounted(() => {
               </q-item-section>
               <q-item-section>
                 <q-item-label caption>
-                  {{ fDateTime(device.visitedAt + ' UTC') }}
+                  {{ fDateAnyFormat(device.visitedAt) }}
                 </q-item-label>
                 <q-item-label caption>
                   {{ device.platform }}
@@ -139,7 +139,7 @@ onMounted(() => {
 <style scoped>
 .MyCard {
   background-color: rgba(211, 238, 144, 0.06);
-  box-shadow: 0 3px 0.7em 0 rgb(77 56 9);
+  box-shadow: inset 0 0 0.3em 0 rgb(77 56 9);
   margin: 1em 0.7em;
   padding: 1em;
 }

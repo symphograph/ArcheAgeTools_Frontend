@@ -14,6 +14,10 @@ const ServerGroupList = inject('ServerGroupList')
 const emit = defineEmits(['onSelectAccount'])
 const AccountList = inject('AccountList')
 
+function FAccountList (){
+  return AccountList.value.filter(el => el.authType !== 'deefault')
+}
+
 const curAccount = inject('curAccount')
 
 
@@ -52,21 +56,21 @@ function ServerGroupFromList(groupId)
 }
 
 onMounted(() => {
-
+console.log(FAccountList())
 })
 
 </script>
 
 <template>
   <q-select v-model="curAccount"
-            v-if="AccountList"
+            v-if="FAccountList()?.length"
             style="min-width: 16em"
             ref="selector"
             dark
             label-color="grey"
             filled
             :label="curAccount?.settings?.publicNick ?? 'dsd'"
-            :options="AccountList"
+            :options="FAccountList()"
             option-value="id"
             map-options
             @update:model-value="reLogin(curAccount.id, curAccount.authType)"
@@ -100,10 +104,10 @@ onMounted(() => {
           </q-item-label>
           <q-item-label>{{ scope.opt.nickName }}</q-item-label>
           <q-item-label caption class="text-grey-6">
-            {{ scope.opt.settings.publicNick ?? ''}}
+            {{ scope.opt.settings?.publicNick ?? ''}}
           </q-item-label>
           <q-item-label caption class="text-grey-9">
-            {{ ServerGroupFromList(scope.opt.settings.serverGroupId).label }}
+            {{ ServerGroupFromList(scope.opt.settings?.serverGroupId).label }}
           </q-item-label>
         </q-item-section>
       </q-item>

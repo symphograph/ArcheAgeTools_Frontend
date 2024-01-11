@@ -14,28 +14,41 @@ const AccountList = inject('AccountList')
 const linksList = [
   {
     title: 'Паки',
-    caption: 'Таблица паков',
+    caption: 'Раскрываемый',
     ava: '/img/pack.png',
-    link: '/packs'
+    children: [
+      {
+        title: 'Паки',
+        caption: 'Таблица паков',
+        ava: '/img/pack.png',
+        link: '/packs'
+      },
+      {
+        title: 'Пакулятор',
+        caption: 'Калькулятор паков',
+        ava: '/img/packmaker.png',
+        link: '/packinfo'
+      },
+    ]
   },
   {
-    title: 'Пакулятор',
-    caption: 'Калькулятор паков',
-    ava: '/img/packmaker.png',
-    link: '/packinfo'
-  },
-  {
-    title: 'Крафкулятор',
+    title: 'Предметы',
     caption: 'Расчет себестоимости',
     ava: '/img/crafcul.png',
-    link: '/item/'
+    children: [
+      {
+        title: 'Крафкулятор',
+        caption: 'Расчет себестоимости',
+        link: '/item/'
+      },
+      {
+        title: 'Категории',
+        caption: 'Предметы и категории',
+        link: '/category'
+      },
+    ]
   },
-  {
-    title: 'Категории',
-    caption: 'Предметы и категории',
-    ava: '/img/crafcul.png',
-    link: '/category'
-  },
+
   {
     title: 'Мои цены',
     caption: 'Цены предметов',
@@ -45,7 +58,7 @@ const linksList = [
   {
     title: 'Сообщество',
     caption: 'Цены игроков',
-    ava: '/img/comunity.png',
+    ava: '/img/community.png',
     link: '/members'
   },
   {
@@ -78,12 +91,40 @@ onMounted(() => {
     >
       Graph Tools
     </q-item-label>
+    <template v-for="item in linksList" :key="item.title">
+      <template v-if="item?.children && item?.children.length">
+        <q-expansion-item
+          :content-inset-level="0.2"
+          expand-separator
+          :label="item.title"
+          :caption="item.caption"
+          default-closed
+        >
+          <template v-slot:header>
+            <q-item-section avatar v-if="item?.ava">
+              <q-avatar>
+                <img :src="item.ava">
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              {{ item.title }}
+            </q-item-section>
+          </template>
+          <EssentialLink
+            v-for="link in item.children"
+            :key="link.title"
+            v-bind="link"
+            :title="link.title"></EssentialLink>
+        </q-expansion-item>
+      </template>
+      <template v-else>
+        <EssentialLink
+          :key="item.title"
+          v-bind="item"
+          :title="item.title"></EssentialLink>
+      </template>
+    </template>
 
-    <EssentialLink
-      v-for="link in linksList"
-      :key="link.title"
-      v-bind="link"
-     :title="link.title"></EssentialLink>
     <CategoryTree v-if="isItemPage && ServerGroupList.length"></CategoryTree>
   </q-list>
 </template>

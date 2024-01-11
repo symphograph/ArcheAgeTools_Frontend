@@ -1,9 +1,10 @@
 <script setup>
 
-import {priceImager} from "src/myFuncts";
+
 import {inject} from "vue";
 import PriceInput from "components/price/PriceInput.vue";
 import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
+import {priceImager} from "src/myJS/price";
 const Item = inject('Item')
 const emit = defineEmits(['updated'])
 </script>

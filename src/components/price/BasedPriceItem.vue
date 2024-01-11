@@ -49,10 +49,11 @@
 import {useQuasar} from "quasar"
 import {inject, onMounted, ref} from "vue"
 import {useRouter} from "vue-router"
-import {notifyError, notifyOK, priceColor} from "src/myFuncts.js"
+import {notifyError, notifyOK} from "src/myFuncts.js"
 import {api} from "boot/axios";
 import DelBtn from "components/price/DelBtn.vue"
 import ItemIcon from "components/ItemIcon.vue"
+import {priceColor} from "src/myJS/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

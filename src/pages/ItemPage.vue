@@ -5,9 +5,6 @@ import {onMounted, ref, provide, inject, watch, computed} from "vue"
 import SearchSelect from "components/items/SearchSelect.vue"
 import ItemArea from "components/items/ItemArea.vue"
 import {useRoute, useRouter} from 'vue-router'
-import PriceInput from "components/price/PriceInput.vue"
-import PriceImagerComponent from "components/price/PriceImagerComponent.vue"
-import {priceImager} from "src/myFuncts";
 import DialogWindow from "components/DialogWindow.vue";
 import PriceCard from "components/items/PriceCard.vue";
 
@@ -104,7 +101,7 @@ function goToSettings () {
   }).onOk(() => {
     // console.log('>>>> OK')
   }).onOk(() => {
-    router.push('/account')
+    router.push('/settings')
     // console.log('>>>> second OK catcher')
   }).onCancel(() => {
     //emit('Cancel')

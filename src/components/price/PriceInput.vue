@@ -26,7 +26,8 @@
 import {computed, inject, onBeforeMount, onMounted, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
-import {fDate, notifyError, notifyOK, priceColor} from "src/myFuncts";
+import {fDate, notifyError, notifyOK} from "src/myFuncts";
+import {priceColor} from "src/myJS/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

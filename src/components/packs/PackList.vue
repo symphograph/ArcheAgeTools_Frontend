@@ -46,7 +46,7 @@
 
 import PackRow from "components/packs/PackRow.vue";
 import {computed, inject, ref, watch} from "vue";
-import {finalSalary, goldSalary, profit} from "src/myFuncts";
+import {finalSalary, goldSalary, profit} from "src/myJS/price";
 import LostList from "components/price/LostList.vue";
 
 

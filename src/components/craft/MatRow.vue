@@ -33,7 +33,7 @@
 
 import {inject, ref} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
-import {priceColor, priceImager, priceMethod} from "src/myFuncts.js"
+import {priceColor, priceImager, priceMethod} from "src/myJS/price.js"
 
 const itemId = inject('itemId')
 const Item = inject('Item')

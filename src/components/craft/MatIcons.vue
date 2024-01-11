@@ -1,7 +1,7 @@
 <script setup>
 
 import ItemIcon from "components/ItemIcon.vue";
-import {priceColor, priceImager, priceMethod} from "src/myFuncts";
+import {priceColor, priceImager, priceMethod} from "src/myJS/price";
 import {ref} from "vue";
 
 const props = defineProps({

@@ -4,7 +4,7 @@
 
 <script setup>
 import {ref} from "vue";
-import {priceImager} from "src/myFuncts.js"
+import {priceImager} from "src/myJS/price.js";
 const Props = defineProps({
   price: ref(null),
   currencyId: ref(null)

@@ -13,7 +13,6 @@ const routes = [
             component: () => import('layouts/MainWindow.vue'),
             children: [
               { path: '/accounts', component: () => import('pages/AccountsPage.vue') },
-              { path: '/tttrrr', component: () => import('pages/AccountsPage.vue') }
             ]
           },
         ]

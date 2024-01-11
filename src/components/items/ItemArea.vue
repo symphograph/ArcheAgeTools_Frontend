@@ -26,13 +26,9 @@ import {api} from "boot/axios";
 import {LocalStorage, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 import CurrencyArea from "components/items/CurrencyArea.vue";
-import {notifyError, priceImager} from "src/myFuncts";
-import PackCalculator from "components/packs/PackCalculator.vue";
-import PriceInput from "components/price/PriceInput.vue";
-import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
+import {notifyError} from "src/myFuncts";
 import PriceCard from "components/items/PriceCard.vue";
 import PriceHistory from "components/items/PriceHistory.vue";
-
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const route = useRoute()

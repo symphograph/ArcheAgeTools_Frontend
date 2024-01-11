@@ -48,6 +48,10 @@ const  props = defineProps({
   ava: {
     type: String,
     default: ''
+  },
+  children: {
+    type: Array,
+    default: () => []
   }
 
 })

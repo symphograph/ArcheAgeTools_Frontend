@@ -180,9 +180,10 @@
 
 import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue"
-import {notifyError, notifyOK, priceImager} from "src/myFuncts.js"
+import {notifyError, notifyOK} from "src/myFuncts.js"
 import {copyToClipboard, useQuasar} from "quasar";
 import {api} from "boot/axios";
+import {priceImager} from "src/myJS/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
