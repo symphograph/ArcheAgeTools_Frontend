@@ -11,8 +11,8 @@ export function rateInfo (val) {
 export function fDateAnyFormat(inputDate, outputFormat = 'DD.MM.yyyy HH:mm') {
   const formats = [
     'DD.MM.YYYY',
-    'MM/DD/YYYY',
     'YYYY-MM-DD',
+    'MM/DD/YYYY',
     'YYYY/MM/DD',
     'MM-DD-YYYY',
     'YYYY.MM.DD',

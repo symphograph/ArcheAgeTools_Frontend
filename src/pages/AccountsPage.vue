@@ -14,6 +14,7 @@ const metaData = {
   }
 }
 useMeta(metaData)
+
 </script>
 
 <template>

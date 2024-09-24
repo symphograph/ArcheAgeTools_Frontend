@@ -9,6 +9,7 @@ import {api} from "boot/axios";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const authUrl = String(process.env.Auth)
+const emit = defineEmits(['onUnlinkAccount'])
 
 const curAccount = inject('curAccount')
 const AccountList = inject('AccountList')
@@ -17,7 +18,21 @@ const AccountList = inject('AccountList')
 const deviceList = ref([])
 
 function unlink(id) {
-  console.log('unlink', id)
+  api.post(authUrl + 'api/device.php', {
+    params: {
+      method: 'unlinkByAccount',
+      accountId: id
+    }
+  })
+    .then((response) => {
+      if (!!!response?.data?.result) {
+        throw new Error();
+      }
+      loadDevices()
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
 }
 
 function loadDevices() {
@@ -83,7 +98,7 @@ onMounted(() => {
                   {{ formatTimeDifference(Account.visitedAt) }}
                 </q-item-label>
                 <q-item-label>
-                  {{ Account.settings.nickName }}
+                  {{ Account.nickName }}
                 </q-item-label>
                 <q-item-label>
                   {{ Account.settings.publicNick }}
