@@ -13,7 +13,7 @@
 
 <script setup>
 import {computed, inject} from "vue";
-import {layoutFix} from "src/myFuncts";
+import {layoutFix} from "src/js/myFuncts";
 import PriceItemInput from "components/price/PriceItemInput.vue";
 import PriceItem from "components/price/PriceItem.vue";
 

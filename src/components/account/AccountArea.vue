@@ -1,6 +1,6 @@
 <script setup>
 import {inject, onMounted, ref} from "vue";
-import {accountIdByJWT, fDateAnyFormat, fDateTime, formatTimeDifference, notifyError} from "src/myFuncts";
+import {fDateAnyFormat, formatTimeDifference, notifyError} from "src/js/myFuncts";
 import ItemIcon from "components/ItemIcon.vue";
 import {useQuasar} from "quasar";
 import NickInput from "components/account/NickInput.vue";

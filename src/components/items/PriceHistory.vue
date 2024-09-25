@@ -3,7 +3,7 @@
 import {computed, inject, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
-import {fDate, notifyError} from "src/myFuncts";
+import {fDate, notifyError} from "src/js/myFuncts";
 import {useRoute} from "vue-router";
 import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 import ServerGroupSelect from "components/account/ServerGroupSelect.vue";

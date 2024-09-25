@@ -26,7 +26,7 @@ import {api} from "boot/axios";
 import {LocalStorage, useQuasar} from "quasar";
 import {useRoute} from "vue-router";
 import CurrencyArea from "components/items/CurrencyArea.vue";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 import PriceCard from "components/items/PriceCard.vue";
 import PriceHistory from "components/items/PriceHistory.vue";
 const q = useQuasar()

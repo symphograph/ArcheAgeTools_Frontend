@@ -43,7 +43,7 @@ import {inject, onMounted, ref} from "vue";
 import {api} from "boot/axios";
 import MemberLastItem from "components/members/MemberLastItem.vue";
 import MemberAvaCell from "components/members/MemberAvaCell.vue";
-import {notifyError, notifyOK} from "src/myFuncts";
+import {notifyError, notifyOK} from "src/js/myFuncts";
 import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
 
 const route = useRoute()

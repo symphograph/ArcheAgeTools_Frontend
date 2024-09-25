@@ -31,7 +31,7 @@ import MatPool from "components/craft/MatPool.vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import TrashPool from "components/craft/TrashPool.vue";
-import {notifyError, notifyOK} from "src/myFuncts";
+import {notifyError, notifyOK} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

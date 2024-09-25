@@ -26,7 +26,7 @@ import {api} from "boot/axios";
 import {inject} from "vue";
 import {useQuasar} from "quasar";
 import {useRoute} from "vue-router";
-import {notifyOK} from "src/myFuncts";
+import {notifyOK} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

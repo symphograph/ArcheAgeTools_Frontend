@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, ref, provide, computed} from "vue";
 import {api} from "boot/axios";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 import CitySelect from "components/CitySelect.vue";
 import {useQuasar} from "quasar";
 

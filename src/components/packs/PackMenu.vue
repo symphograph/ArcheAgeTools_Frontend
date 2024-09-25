@@ -8,7 +8,7 @@ import TypeSelect from "components/packs/TypeSelect.vue";
 import NavButton from "components/NavButton.vue";
 import {useRouter} from "vue-router";
 import DialogWindow from "components/DialogWindow.vue";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 import SelectSort from "components/packs/SelectSort.vue";
 import SideButtons from "components/packs/SideButtons.vue";
 

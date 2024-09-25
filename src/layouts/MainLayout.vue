@@ -1,9 +1,3 @@
-<template>
-  <AuthComponent ref="refAuth"></AuthComponent>
-  <router-view @reLogin="refAuth.reLogin" v-if="isTokenRefreshed"/>
-</template>
-
-
 <script setup>
 import {ref, provide, computed, onMounted, onBeforeMount, watch, inject} from 'vue'
 import {useQuasar, Dialog, LocalStorage, useMeta} from 'quasar'
@@ -110,8 +104,8 @@ onMounted(() => {
   if (!process.env.isDebug) {
     api.defaults.headers.common['Accept'] = "application/json"
   }
-  console.log('mainLayout Mounted')
   showCookieConfirm()
+  console.log('mainLayout Mounted')
 })
 
 const metaData = {
@@ -125,6 +119,11 @@ const metaData = {
 }
 useMeta(metaData)
 </script>
+
+<template>
+  <AuthComponent ref="refAuth"></AuthComponent>
+  <router-view @reLogin="refAuth.reLogin" v-if="isTokenRefreshed"/>
+</template>
 
 <style>
 body {

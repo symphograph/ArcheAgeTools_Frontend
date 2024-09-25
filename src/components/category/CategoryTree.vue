@@ -26,7 +26,7 @@ import {inject, onMounted, ref, watch} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {useRoute, useRouter} from "vue-router";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 const q = useQuasar()
 const apiUrl = String(process.env.API)
 const route = useRoute()

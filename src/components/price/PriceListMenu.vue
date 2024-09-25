@@ -33,7 +33,7 @@ import {inject, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {useQuasar} from "quasar";
 import FilterInput from "components/price/FilterInput.vue";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

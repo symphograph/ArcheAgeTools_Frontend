@@ -2,7 +2,7 @@
 
 import ZoneFromSelect from "components/packs/ZoneFromSelect.vue";
 import {api} from "boot/axios";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 import {onMounted, ref, provide, computed, watch} from "vue";
 import {useQuasar} from "quasar";
 import ZoneToSelect from "components/packs/ZoneToSelect.vue";

@@ -7,7 +7,8 @@ import {useRoute} from "vue-router"
 import LoginList from "components/account/LoginList.vue"
 import DrawerContent from "components/DrawerContent.vue"
 import ItemIcon from "components/ItemIcon.vue"
-import {accountIdByJWT, notifyError, notifyOK} from "src/myFuncts";
+import {notifyError, notifyOK} from "src/js/myFuncts";
+import { myUser } from 'src/js/myAuth';
 
 
 const q = useQuasar()
@@ -19,8 +20,7 @@ const progress = inject('progress')
 
 const AccessToken = inject('AccessToken')
 const isOptionsLoaded = inject('isOptionsLoaded')
-const isTokenRefreshed = inject('isTokenRefreshed')
-const isAccountsLoaded = inject('isAccountsLoaded')
+
 const emit = defineEmits(['reLogin'])
 
 const AccountList = ref([])
@@ -162,11 +162,12 @@ function loadAccountList() {
       }
 
       let list = response?.data?.data
-      curAccount.value = list.find(el => el.id === accountIdByJWT(AccessToken.value))
+      curAccount.value = list.find(el => el.id === myUser.self.accountId())
       AccountList.value = list.filter(el => el.authType !== 'default')
       loadSettings()
     })
     .catch((error) => {
+      console.error(error)
       q.notify(notifyError(error))
     })
 }
@@ -217,7 +218,7 @@ watch(route, (newPath) => {
   LocalStorage.set('lastPath', newPath.path)
 })
 onBeforeMount(() => {
-
+  console.log('midLayout BeforeMount')
 })
 
 onMounted(() => {

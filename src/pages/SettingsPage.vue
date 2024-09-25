@@ -27,7 +27,7 @@ import {useMeta, useQuasar} from "quasar"
 import AccountSets from "components/account/AccountSets.vue"
 import ProfList from "components/account/ProfList.vue"
 import BasedPrices from "components/price/BasedPrices.vue"
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

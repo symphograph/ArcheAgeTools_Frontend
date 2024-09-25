@@ -51,7 +51,7 @@ import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 import CurrencyTradable from "components/items/CurrencyTradable.vue";
 import PriceCurrencyItem from "components/price/PriceCurrencyItem.vue";
 import LostList from "components/price/LostList.vue";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

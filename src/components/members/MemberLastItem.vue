@@ -20,7 +20,7 @@
 <script setup>
 
 import {ref} from "vue";
-import {fDate} from "src/myFuncts.js"
+import {fDate} from "src/js/myFuncts"
 import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
 import ItemIcon from "components/ItemIcon.vue";
 

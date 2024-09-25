@@ -10,7 +10,7 @@
 import {api} from "boot/axios"
 import {onMounted, ref} from "vue";
 import {useMeta, useQuasar} from "quasar";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 import LogRow from "components/logs/LogRow.vue";
 
 const q = useQuasar()

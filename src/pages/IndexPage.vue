@@ -5,9 +5,7 @@
 </template>
 
 <script setup>
-import {inject} from "vue";
-import NickInput from "components/account/NickInput.vue";
 
-const curAccount = inject('curAccount')
+
 
 </script>

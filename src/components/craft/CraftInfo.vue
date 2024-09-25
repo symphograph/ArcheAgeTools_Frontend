@@ -1,3 +1,131 @@
+<script setup>
+
+import {computed, inject, ref} from "vue";
+import ItemIcon from "components/ItemIcon.vue"
+import {notifyError, notifyOK} from "src/js/myFuncts.ts"
+import {copyToClipboard, useQuasar} from "quasar";
+import {api} from "boot/axios";
+import {priceImager} from "src/myJS/price";
+
+const q = useQuasar()
+const apiUrl = String(process.env.API)
+
+const props = defineProps({
+  Craft: ref(null)
+})
+
+const isUBest = ref(props.Craft.countData.isUBest);
+const isBest = ref(props.Craft.countData.isBest);
+const isBuyOnly = ref(props.Craft.countData.isBuyOnly);
+const emit = defineEmits(['onSetUBest'])
+const Item = inject('Item')
+const profit = computed(() => {
+  if (!Item.value.Pricing.isGoldable) {
+    return 0
+  }
+  if (!Item.value.Pricing.Price.price) {
+    return false
+  }
+  let price = Item.value.Pricing.Price.price + ''
+  price = price.replace(/[^0-9]/g, "") * 0.9
+  price = Math.round(price)
+  return price - props.Craft.countData.craftCost
+
+})
+
+function copy(val) {
+  copyToClipboard(val)
+    .then(() => {
+      q.notify({
+        color: 'positive',
+        position: 'center',
+        message: 'Скопировано',
+        icon: 'content_copy',
+        timeout: 1
+      })
+    })
+    .catch(() => {
+      // fail
+    })
+}
+
+function profNeed(need) {
+  if (!need) {
+    return ''
+  }
+  if (need < 1000) {
+    return need
+  }
+  return Math.round(need / 1000) + 'k'
+}
+
+function round(val) {
+  return Math.round(val * 100) / 100
+}
+
+function setBuyable() {
+  api.post(apiUrl + 'api/item.php', {
+    params: {
+      method: Item.value.isBuyOnly ? 'addToBuyable' : 'delFromBuyable',
+      itemId: Item.value.id
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+
+function changeUBest(){
+  isUBest.value
+    ? setAsUBest()
+    : delUBest()
+}
+
+function setAsUBest() {
+  api.post(apiUrl + 'api/craft.php', {
+    params: {
+      method: 'setAsUBest',
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('onSetUBest')
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+
+function delUBest() {
+  api.post(apiUrl + 'api/craft.php', {
+    params: {
+      method: 'resetUBest',
+      craftId: props.Craft.id
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('onSetUBest')
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+</script>
+
 <template>
   <div class="CraftInfo" v-if="Craft">
     <div class="InfoCol">
@@ -175,134 +303,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-
-import {computed, inject, ref} from "vue";
-import ItemIcon from "components/ItemIcon.vue"
-import {notifyError, notifyOK} from "src/myFuncts.js"
-import {copyToClipboard, useQuasar} from "quasar";
-import {api} from "boot/axios";
-import {priceImager} from "src/myJS/price";
-
-const q = useQuasar()
-const apiUrl = String(process.env.API)
-
-const props = defineProps({
-  Craft: ref(null)
-})
-
-const isUBest = ref(props.Craft.countData.isUBest);
-const isBest = ref(props.Craft.countData.isBest);
-const isBuyOnly = ref(props.Craft.countData.isBuyOnly);
-const emit = defineEmits(['onSetUBest'])
-const Item = inject('Item')
-const profit = computed(() => {
-  if (!Item.value.Pricing.isGoldable) {
-    return 0
-  }
-  if (!Item.value.Pricing.Price.price) {
-    return false
-  }
-  let price = Item.value.Pricing.Price.price + ''
-  price = price.replace(/[^0-9]/g, "") * 0.9
-  price = Math.round(price)
-  return price - props.Craft.countData.craftCost
-
-})
-
-function copy(val) {
-  copyToClipboard(val)
-    .then(() => {
-      q.notify({
-        color: 'positive',
-        position: 'center',
-        message: 'Скопировано',
-        icon: 'content_copy',
-        timeout: 1
-      })
-    })
-    .catch(() => {
-      // fail
-    })
-}
-
-function profNeed(need) {
-  if (!need) {
-    return ''
-  }
-  if (need < 1000) {
-    return need
-  }
-  return Math.round(need / 1000) + 'k'
-}
-
-function round(val) {
-  return Math.round(val * 100) / 100
-}
-
-function setBuyable() {
-  api.post(apiUrl + 'api/set/price/buyable.php', {
-    params: {
-      buyable: Item.value.isBuyOnly,
-      itemId: Item.value.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function changeUBest(){
-  isUBest.value
-    ? setAsUBest()
-    : delUBest()
-}
-
-function setAsUBest() {
-  api.post(apiUrl + 'api/craft.php', {
-    params: {
-      method: 'setAsUBest',
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('onSetUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function delUBest() {
-  api.post(apiUrl + 'api/craft.php', {
-    params: {
-      method: 'resetUBest',
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('onSetUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-</script>
 
 <style scoped>
 .InfoCol {

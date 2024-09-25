@@ -22,7 +22,7 @@
 <script setup>
 
 import {inject} from "vue";
-import {dynamicForm} from "src/myFuncts";
+import {dynamicForm} from "src/js/myFuncts";
 import {useQuasar} from "quasar";
 
 const q = useQuasar()

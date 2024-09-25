@@ -49,7 +49,7 @@
 import {useQuasar} from "quasar"
 import {inject, onMounted, ref} from "vue"
 import {useRouter} from "vue-router"
-import {notifyError, notifyOK} from "src/myFuncts.js"
+import {notifyError, notifyOK} from "src/js/myFuncts"
 import {api} from "boot/axios";
 import DelBtn from "components/price/DelBtn.vue"
 import ItemIcon from "components/ItemIcon.vue"

@@ -25,7 +25,7 @@
 import {useQuasar} from "quasar";
 import {inject, ref} from "vue";
 import {api} from "boot/axios";
-import {notifyError, notifyOK} from "src/myFuncts";
+import {notifyError, notifyOK} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

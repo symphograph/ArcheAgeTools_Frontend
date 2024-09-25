@@ -48,7 +48,7 @@ import {LocalStorage, useQuasar} from 'quasar'
 import {onMounted, ref, provide, inject, watch} from "vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {useRoute, useRouter} from 'vue-router'
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 
 const route = useRoute()
 const router = useRouter()

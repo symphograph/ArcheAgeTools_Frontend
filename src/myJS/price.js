@@ -1,4 +1,4 @@
-import {toNums} from "src/myFuncts";
+import {toNums} from "src/js/myFuncts";
 
 export function priceImager(value, vid = 500) {
   let minus = ''

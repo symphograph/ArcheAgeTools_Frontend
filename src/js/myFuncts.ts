@@ -1,14 +1,9 @@
-import moment from 'moment'
-import {copyToClipboard} from "quasar";
-import jwt_decode from "jwt-decode";
-// import { parse, format } from 'date-fns';
 
-export function rateInfo (val) {
-  let rates = [1, 0.5, 'гпх', 'гпх', 0.25]
-  return rates[val - 1]
-}
+import { copyToClipboard, QVueGlobals } from 'quasar';
+import moment from 'moment';
 
-export function fDateAnyFormat(inputDate, outputFormat = 'DD.MM.yyyy HH:mm') {
+
+export function fDateAnyFormat(inputDate: string, outputFormat = 'DD.MM.yyyy HH:mm') {
   const formats = [
     'DD.MM.YYYY',
     'YYYY-MM-DD',
@@ -43,7 +38,7 @@ export function fDateAnyFormat(inputDate, outputFormat = 'DD.MM.yyyy HH:mm') {
   return normalizedDate;
 }
 
-export function fDate(date) {
+export function fDate(date: string) {
   if (date) {
 
     return moment(String(date)).format('DD.MM.YYYY')
@@ -51,7 +46,7 @@ export function fDate(date) {
   return ''
 }
 
-export function fDateTime(date, format = 'YYYY-MM-DD HH:mm:ss [UTC]') {
+export function fDateTime(date: string, format = 'YYYY-MM-DD HH:mm:ss [UTC]') {
   if (date) {
     const iso8601Date = moment(date, format).toISOString();
     return moment(String(iso8601Date)).format('DD.MM.YYYY H:mm')
@@ -59,10 +54,10 @@ export function fDateTime(date, format = 'YYYY-MM-DD HH:mm:ss [UTC]') {
   return ''
 }
 
-export function formatTimeDifference(time) {
+export function formatTimeDifference(time: string) {
   const currentTime = new Date(); // Ваше текущее время
   const targetTime = new Date(String(time)); // Преобразуем targetTime в UTC
-  const timeDifference = currentTime - targetTime;
+  const timeDifference = currentTime.getTime() - targetTime.getTime();
 
   // Конвертируем разницу в минуты
   const minutesDifference = Math.floor(timeDifference / (1000 * 60));
@@ -100,22 +95,15 @@ export function formatTimeDifference(time) {
   }
 }
 
-export function toDate(date) {
+export function toDate(date: string) {
   let now = moment(new Date()).format('YYYY-MM-DD')
   if(now < date)
     return 'н.в.'
   return fDate(date)
 }
 
-export function validRate (val) {
-  return Number.isInteger(val * 100 / 25) && val <= 2 && val > 0
-}
 
-export function validAccept (accept,created) {
-  return accept >= created
-}
-
-export function fullFIO (Pers) {
+export function fullFIO (Pers: any) {
   let patron = ''
   if(Pers.patron){
     patron = ' ' + Pers.patron
@@ -123,7 +111,7 @@ export function fullFIO (Pers) {
   return Pers.last_name + ' ' + Pers.name + patron
 }
 
-export function fullIO (Pers) {
+export function fullIO (Pers: any) {
   let patron = ''
   if(Pers.patron){
     patron = ' ' + Pers.patron
@@ -131,7 +119,7 @@ export function fullIO (Pers) {
   return Pers.name + patron
 }
 
-export function shortFio(Pers) {
+export function shortFio(Pers: any) {
   let patron = ''
   if(Pers.patron){
     patron = ' ' + Pers.patron[0] + '.'
@@ -139,48 +127,42 @@ export function shortFio(Pers) {
   return Pers.last_name + ' ' + Pers.name[0] + '.' + patron
 }
 
-export function layoutFix(str) {
-  if(!str) return ''
+export function layoutFix(str: string): string {
+  if (!str) return '';
 
-  let replacer = {
-    "q":"й", "w":"ц"  , "e":"у" , "r":"к" , "t":"е", "y":"н", "u":"г",
-    "i":"ш", "o":"щ", "p":"з" , "[":"х" , "]":"ъ", "a":"ф", "s":"ы",
-    "d":"в" , "f":"а"  , "g":"п" , "h":"р" , "j":"о", "k":"л", "l":"д",
-    ";":"ж" , "'":"э"  , "z":"я", "x":"ч", "c":"с", "v":"м", "b":"и",
-    "n":"т" , "m":"ь"  , ",":"б" , ".":"ю" , "/":".",
+  const replacer: { [key: string]: string } = {
+    "q": "й", "w": "ц", "e": "у", "r": "к", "t": "е", "y": "н", "u": "г",
+    "i": "ш", "o": "щ", "p": "з", "[": "х", "]": "ъ", "a": "ф", "s": "ы",
+    "d": "в", "f": "а", "g": "п", "h": "р", "j": "о", "k": "л", "l": "д",
+    ";": "ж", "'": "э", "z": "я", "x": "ч", "c": "с", "v": "м", "b": "и",
+    "n": "т", "m": "ь", ",": "б", ".": "ю", "/": ".",
   };
 
-  let i
-  let replace
-  for(i=0; i < str.length; i++){
-    if( replacer[ str[i].toLowerCase() ] !== undefined){
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    const lowerChar = char.toLowerCase();
 
-      if(str[i] === str[i].toLowerCase()){
-        replace = replacer[ str[i].toLowerCase() ];
-      } else if(str[i] === str[i].toUpperCase()){
-        replace = replacer[ str[i].toLowerCase() ].toUpperCase();
-      }
-
-      str = str.replace(str[i], replace);
+    if (replacer.hasOwnProperty(lowerChar)) {
+      const replace = char === lowerChar
+        ? replacer[lowerChar]
+        : replacer[lowerChar].toUpperCase();
+      result += replace;
+    } else {
+      result += char;
     }
   }
 
-  return str;
+  return result;
 }
 
-export function isPermis(needPows, userPows) {
-  return needPows.some(l => userPows.includes(l))
-}
-
-export function toNums(val) {
-  val += ''
+export function toNums(val: string|number) {
+  val = String(val)
   val = val.replace(/[^\d]/g, '')
   return +val
 }
 
-
-
-export function copy (val, q) {
+export function copy (val: string, q: QVueGlobals) {
   //console.log(val)
   copyToClipboard(val)
     .then(() => {
@@ -207,7 +189,7 @@ export function notifyOK (message = 'Готово') {
   }
 }
 
-export function notifyError (error, defaultMsg = 'Ой! Не работает :(') {
+export function notifyError (error: any, defaultMsg = 'Ой! Не работает :(') {
   return {
     color: 'negative',
     position: 'center',
@@ -220,7 +202,7 @@ export function notifyError (error, defaultMsg = 'Ой! Не работает :(
   }
 }
 
-export function notifyWarning (error, defaultMsg = 'Ой! Не работает :(') {
+export function notifyWarning (error: any, defaultMsg = 'Ой! Не работает :(') {
   return {
     color: 'orange',
     position: 'center',
@@ -234,7 +216,7 @@ export function notifyWarning (error, defaultMsg = 'Ой! Не работает 
   }
 }
 
-export function isExpired(error) {
+export function isExpired(error: any) {
   return [
     'Session does not exist',
     'Invalid tokenTime',
@@ -245,28 +227,7 @@ export function isExpired(error) {
   ].includes(error?.response?.data?.error)
 }
 
-export function powersByJWT(jwt) {
-  return jwt_decode(jwt).powers ?? []
-}
-
-export function userIdByJWT(jwt) {
-  return jwt_decode(jwt).uid ?? 0
-}
-
-export function accountIdByJWT(jwt) {
-  return jwt_decode(jwt).accountId ?? 0
-}
-
-export function authTypeByJWT(jwt) {
-  return jwt_decode(jwt).authType ?? 0
-}
-
-export function checkPowers(allowed, AccessToken) {
-  let powers = powersByJWT(AccessToken)
-  return allowed.some(l=>powers.includes(l))
-}
-
-export function dynamicForm(path, params, method = 'post') {
+export function dynamicForm(path: string, params: any, method = 'post') {
 
   // The rest of this code assumes you are not using a library.
   // It can be made less verbose if you use one.

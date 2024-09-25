@@ -28,7 +28,7 @@ import CraftCard from "components/craft/CraftCard.vue"
 import LostList from "components/price/LostList.vue"
 import MatPool from "components/craft/MatPool.vue";
 import {useRoute} from "vue-router";
-import {notifyError} from "src/myFuncts";
+import {notifyError} from "src/js/myFuncts";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)

@@ -1,6 +1,6 @@
-# ArcheAgeTools Frontend
+# aats (aats)
 
-This repository is part of project [<b>ArcheAgeTools</b>](https://github.com/symphograph/ArcheAgeTools)
+ArcheAge Tools Frointend
 
 ## Install the dependencies
 ```bash

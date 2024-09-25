@@ -53,7 +53,7 @@
 
 import ItemIcon from "components/ItemIcon.vue";
 import {inject, ref} from "vue";
-import {copy, fDate, notifyError, notifyOK} from "src/myFuncts.js"
+import {copy, fDate, notifyError, notifyOK} from "src/js/myFuncts"
 import {api} from "boot/axios";
 import {copyToClipboard, useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";

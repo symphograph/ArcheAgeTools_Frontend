@@ -12,7 +12,7 @@ import CategoryNavigator from "components/category/CategoryNavigator.vue"
 import ItemRow from "components/category/ItemRow.vue"
 import ItemList from "components/items/ItemList.vue"
 import {api} from "boot/axios";
-import {layoutFix, notifyError} from "src/myFuncts";
+import {layoutFix, notifyError} from "src/js/myFuncts";
 import {useQuasar} from "quasar";
 
 const q = useQuasar()
