@@ -1,0 +1,1 @@
+import{_ as o}from"./plugin-vue_export-helper.21dcd24c.js";import{o as n,n as t,q as _,t as a,f as r}from"./index.be968432.js";const s={class:"WindowArea column"},c={__name:"MainWindow",setup(i){return n(()=>{console.log("MainWindow mounted")}),(d,p)=>{const e=t("router-view");return _(),a("div",s,[r(e)])}}};var m=o(c,[["__scopeId","data-v-231604c7"]]);export{m as default};
