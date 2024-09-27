@@ -1,26 +1,3 @@
-<template>
-  <q-input v-model="curAccount.settings.publicNick"
-           ref="nickRef"
-           label="Публичный ник"
-           borderless
-           autocomplete="off"
-           :class="nickClass"
-           @focus="nickClass = 'Input InputActive'"
-           @blur="nickClass = 'Input'"
-           @update:model-value="isNickValid()"
-           :rules="[val => !nickErr.length || nickErr]"
-  >
-    <template v-slot:append>
-      <q-btn label="Ok"
-             v-if="nickErr === ''"
-             class="DefBtn"
-             dense
-             no-caps
-             @click="saveNick()" ></q-btn>
-    </template>
-  </q-input>
-</template>
-
 <script setup>
 import {useQuasar} from "quasar";
 import {inject, ref} from "vue";
@@ -33,6 +10,7 @@ const curAccount = inject('curAccount')
 const nickErr = ref('')
 const nickRef = ref(null)
 const nickClass = ref('Input')
+const isFocus = ref(false)
 
 
 function isNickValid()
@@ -75,8 +53,9 @@ function NickLangValid(){
 }
 
 function servValidNick() {
-  api.post(apiUrl + 'api/set/nick.php', {
+  api.post(apiUrl + 'api/settings.php', {
     params: {
+      method: 'setNick',
       nick: curAccount.value.settings.publicNick,
       save: false
     }
@@ -99,8 +78,9 @@ function servValidNick() {
 
 function saveNick() {
   nickRef.value.blur()
-  api.post(apiUrl + 'api/set/nick.php', {
+  api.post(apiUrl + 'api/settings.php', {
     params: {
+      method: 'setNick',
       nick: curAccount.value.settings.publicNick,
       save: true
     }
@@ -115,7 +95,42 @@ function saveNick() {
       q.notify(notifyError(error))
     })
 }
+
+function onFocus() {
+  nickClass.value = 'Input InputActive'
+  isFocus.value = true
+}
+function onBlur() {
+  nickClass.value = 'Input'
+  isFocus.value = false
+}
 </script>
 
+<template>
+  <q-input v-model="curAccount.settings.publicNick"
+           ref="nickRef"
+           label="Публичный ник"
+           borderless
+           autocomplete="off"
+           :class="nickClass"
+           @focus="onFocus"
+           @blur="onBlur"
+           @update:model-value="isNickValid()"
+           :rules="[val => !nickErr.length || nickErr]"
+  >
+    <template v-slot:append>
+      <q-btn label="Ok"
+             v-if="!nickErr && isFocus"
+             class="DefBtn"
+             dense
+             no-caps
+             @click="saveNick()" ></q-btn>
+    </template>
+  </q-input>
+</template>
+
 <style scoped>
+.Input {
+  min-width: 25em;
+}
 </style>

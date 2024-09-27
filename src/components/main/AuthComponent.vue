@@ -23,10 +23,6 @@ const isTokenRefreshed = inject('isTokenRefreshed') as Ref<boolean>
 
 //--------------------------------------------------------------------
 
-
-const AccessToken = ref('')
-const SessionToken = ref('')
-
 const SessionTokenName = 'aaSessionToken'
 const AccessTokenName = 'aaAccessToken'
 
@@ -41,12 +37,10 @@ function setToken(name: string, value: string, expires = '90d') {
   })
   if(name === AccessTokenName){
     api.defaults.headers.common['AccessToken'] = value
-    AccessToken.value = value
     myUser.self.AccessToken = value
   }
 
   if(name === SessionTokenName){
-    SessionToken.value = value
     myUser.self.SessionToken = value
   }
 }
@@ -64,12 +58,13 @@ function register(){
       }
       setToken(AccessTokenName, response?.data?.data.AccessToken ?? '')
       setToken(SessionTokenName, response?.data?.data.SessionToken ?? '')
-      // loadOptions()
+      isTokenRefreshed.value = true
+
 
     })
     .catch((error) => {
       console.error(error)
-      //q.notify(notifyError(error))
+      q.notify(notifyError(error))
     })
 }
 provide('register', register)
@@ -89,7 +84,6 @@ function refreshAccessToken () {
       setToken(SessionTokenName, response?.data?.data.SessionToken ?? '')
       setToken(AccessTokenName, response?.data?.data.AccessToken ?? '')
       isTokenRefreshed.value = true
-      // loadOptions()
 
     })
     .catch((error) => {
@@ -98,7 +92,7 @@ function refreshAccessToken () {
         return
       }
       console.error(error)
-      //q.notify(notifyError(error))
+      q.notify(notifyError(error))
     })
 }
 provide('refreshAccessToken', refreshAccessToken)
@@ -109,8 +103,8 @@ function reLogin (toAccountId: number, authType: string) {
   api.post(String(process.env.Auth) + '/api/relogin.php', {
     params: {
       method: 'reload',
-      SessionToken: SessionToken.value,
-      AccessToken: AccessToken.value,
+      SessionToken: myUser.self.SessionToken,
+      AccessToken: myUser.self.AccessToken,
       toAccountId: toAccountId
     }
   })
@@ -128,13 +122,14 @@ function reLogin (toAccountId: number, authType: string) {
       }
       if(error?.response?.data?.error === 'needLogin'){
         dynamicForm(authUrl + 'auth/' + authType + '/login.php', {
-          AccessToken: AccessToken.value,
-          SessionToken: SessionToken.value
+            AccessToken: myUser.self.AccessToken,
+            SessionToken: myUser.self.SessionToken
         })
       }
       //q.notify(notifyError(error))
     })
 }
+
 
 defineExpose({
   reLogin

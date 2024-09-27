@@ -1,55 +1,44 @@
-<script setup>
+<script setup lang="ts">
 
-import {computed, inject, ref} from "vue";
+import {computed, inject, Ref, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue"
-import {notifyError, notifyOK} from "src/js/myFuncts.ts"
-import {copyToClipboard, useQuasar} from "quasar";
-import {api} from "boot/axios";
+import {copy} from "src/js/myFuncts"
+import {useQuasar} from "quasar";
 import {priceImager} from "src/myJS/price";
+import {ItemClass} from "src/js/item";
+import {Craft} from "src/js/craft";
 
 const q = useQuasar()
-const apiUrl = String(process.env.API)
 
-const props = defineProps({
-  Craft: ref(null)
-})
+const props = defineProps<{
+  craft: Craft
+}>()
 
-const isUBest = ref(props.Craft.countData.isUBest);
-const isBest = ref(props.Craft.countData.isBest);
-const isBuyOnly = ref(props.Craft.countData.isBuyOnly);
+const loading = ref(false)
+
+const isUBest = ref(props.craft.countData.isUBest);
+const isBest = ref(props.craft.countData.isBest);
+
 const emit = defineEmits(['onSetUBest'])
-const Item = inject('Item')
+const curItem = inject('Item') as Ref<ItemClass>
+
 const profit = computed(() => {
-  if (!Item.value.Pricing.isGoldable) {
+  if (!curItem.value.Pricing.isGoldable) {
     return 0
   }
-  if (!Item.value.Pricing.Price.price) {
+  if (!curItem.value.Pricing.Price.price) {
     return false
   }
-  let price = Item.value.Pricing.Price.price + ''
+
+  let price = curItem.value.Pricing.Price.price
+  price = String(price)
   price = price.replace(/[^0-9]/g, "") * 0.9
   price = Math.round(price)
-  return price - props.Craft.countData.craftCost
+  return price - props.craft.countData.craftCost
 
 })
 
-function copy(val) {
-  copyToClipboard(val)
-    .then(() => {
-      q.notify({
-        color: 'positive',
-        position: 'center',
-        message: 'Скопировано',
-        icon: 'content_copy',
-        timeout: 1
-      })
-    })
-    .catch(() => {
-      // fail
-    })
-}
-
-function profNeed(need) {
+function profNeed(need: number) {
   if (!need) {
     return ''
   }
@@ -59,26 +48,12 @@ function profNeed(need) {
   return Math.round(need / 1000) + 'k'
 }
 
-function round(val) {
+function round(val: number) {
   return Math.round(val * 100) / 100
 }
 
 function setBuyable() {
-  api.post(apiUrl + 'api/item.php', {
-    params: {
-      method: Item.value.isBuyOnly ? 'addToBuyable' : 'delFromBuyable',
-      itemId: Item.value.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+ ItemClass.setBuyOnly(q,curItem.value.id, curItem.value.isBuyOnly)
 }
 
 function changeUBest(){
@@ -87,47 +62,25 @@ function changeUBest(){
     : delUBest()
 }
 
-function setAsUBest() {
-  api.post(apiUrl + 'api/craft.php', {
-    params: {
-      method: 'setAsUBest',
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('onSetUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+async function setAsUBest() {
+  loading.value = true
+  if (await Craft.setAsUBest(q, props.craft.id)) {
+    emit('onSetUBest')
+  }
+  loading.value = false
 }
 
-function delUBest() {
-  api.post(apiUrl + 'api/craft.php', {
-    params: {
-      method: 'resetUBest',
-      craftId: props.Craft.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('onSetUBest')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+async function delUBest() {
+  loading.value = true
+  if (await Craft.resetUBest(q, props.craft.id)) {
+    emit('onSetUBest')
+  }
+  loading.value = false
 }
 </script>
 
 <template>
-  <div class="CraftInfo" v-if="Craft">
+  <div class="CraftInfo" v-if="craft">
     <div class="InfoCol">
       <q-item dense v-if="isBest">
         <q-item-section>
@@ -139,11 +92,11 @@ function delUBest() {
           Craft Id:
         </q-item-section>
         <q-item-section side>
-          <q-btn :label="Craft.id"
+          <q-btn :label="craft.id"
                  icon-right="content_copy"
                  class="no-padding"
                  dense flat
-                 @click="copy(Craft.id)"
+                 @click="copy(craft.id, q)"
           >
           </q-btn>
         </q-item-section>
@@ -156,7 +109,7 @@ function delUBest() {
         </q-item-section>
         <q-item-section side>
           <q-item-label>
-            {{ round(Craft.countData.spmu) }}
+            {{ round(craft.countData.spmu) }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -168,7 +121,7 @@ function delUBest() {
         </q-item-section>
         <q-item-section side>
           <q-item-label>
-            <span v-html="priceImager(Craft.countData.craftCost)"></span>
+            <span v-html="priceImager(craft.countData.craftCost)"></span>
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -189,16 +142,16 @@ function delUBest() {
       <q-list dense>
         <q-item dense>
           <q-item-section avatar>
-            <ItemIcon :grade="Craft.Prof.lvl"
-                      :locIcon="'/img/profs/' + Craft.Prof.id + '.png'"
+            <ItemIcon :grade="craft.Prof?.lvl || 0"
+                      :locIcon="'/img/profs/' + craft.Prof.id + '.png'"
                       :tool-text="'Профессия'"
                       :size="'30px'"></ItemIcon>
           </q-item-section>
           <q-item-section>
-            {{ Craft.Prof.name }}
+            {{ craft.Prof.name }}
           </q-item-section>
           <q-item-section side>
-            {{ profNeed(Craft.profNeed) }}
+            {{ profNeed(craft.profNeed) }}
           </q-item-section>
         </q-item>
         <q-item dense>
@@ -209,13 +162,13 @@ function delUBest() {
                       :size="'30px'"></ItemIcon>
           </q-item-section>
           <q-item-section>
-            {{ Craft.doodName }}
+            {{ craft.doodName }}
           </q-item-section>
           <q-item-section side>
           </q-item-section>
         </q-item>
         <q-item tag="label"
-                v-if="isBest && Item.isMat && !Item.personal"
+                v-if="isBest && curItem.isMat && !curItem.personal"
                 dense
                 v-ripple
         >
@@ -231,11 +184,13 @@ function delUBest() {
             <q-item-label>Покупаемый</q-item-label>
           </q-item-section>
           <q-item-section side>
-            <q-checkbox v-model="Item.isBuyOnly" @update:modelValue="setBuyable()"></q-checkbox>
+            <q-checkbox v-model="curItem.isBuyOnly"
+                        :disable="loading"
+                        @update:modelValue="setBuyable()"></q-checkbox>
           </q-item-section>
         </q-item>
         <q-item tag="label"
-                v-if="!Item.personal"
+                v-if="!curItem.personal"
                 dense
                 v-ripple
         >
@@ -268,7 +223,7 @@ function delUBest() {
           </q-item-section>
           <q-item-section side>
             <q-item-label>
-              {{ round(Craft.countData.LaborData.forThisCraftBonused) }}
+              {{ round(craft.countData.LaborData.forThisCraftBonused) }}
               <img class="smallIcon" src="/img/valuta/2.png" alt=""/>
             </q-item-label>
           </q-item-section>
@@ -281,7 +236,7 @@ function delUBest() {
           </q-item-section>
           <q-item-section side>
             <q-item-label>
-              {{ round(Craft.countData.LaborData.forOneUnitOfThisCraft) }}
+              {{ round(craft.countData.LaborData.forOneUnitOfThisCraft) }}
               <img class="smallIcon" src="/img/valuta/2.png" alt=""/>
             </q-item-label>
           </q-item-section>
@@ -294,7 +249,7 @@ function delUBest() {
           </q-item-section>
           <q-item-section side>
             <q-item-label>
-              {{ round(Craft.countData.laborTotal) }}
+              {{ round(craft.countData.laborTotal) }}
               <img class="smallIcon" src="/img/valuta/2.png" alt=""/>
             </q-item-label>
           </q-item-section>

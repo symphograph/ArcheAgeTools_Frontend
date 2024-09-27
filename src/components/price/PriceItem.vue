@@ -49,62 +49,6 @@ function goTo(id) {
   router.push({path: '/item/' + id})
 }
 
-function setBuyable() {
-  api.post(apiUrl + 'api/set/price/buyable.php', {
-    params: {
-      buyable: buyable.value,
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function delPrice() {
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'del',
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function savePrice() {
-
-  priceRef.value.blur()
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'set',
-      price: nPrice.value,
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
 </script>
 
 <style scoped>

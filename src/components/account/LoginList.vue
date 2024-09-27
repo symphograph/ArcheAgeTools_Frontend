@@ -29,9 +29,6 @@ const apiUrl = String(process.env.API)
 const authUrl = String(process.env.Auth)
 const authTypes = inject('authTypes')
 
-const AccessToken = inject('AccessToken')
-const SessionToken = inject('SessionToken')
-
 const selected = ref(null)
 
 function goTo(url){

@@ -104,7 +104,7 @@ function addProfitActive(){
       message: 'Материк не выбран',
       icon: 'report_problem',
       timeout: 100,
-      closeBtn: 'Закрыть'
+      closeBtn: 'x'
     })
     return false
   }
@@ -141,32 +141,34 @@ function goToSettings () {
 }
 
 function loadList() {
+  if(progress.value) return
 
   progress.value = true
-  api.post(apiUrl + 'api/get/packs.php', {
+  api.post(apiUrl + 'api/pack.php', {
     params: {
+      method: 'list',
       side: ptSettings.value.side,
       addProfit: ptSettings.value.addProfit,
       siol: ptSettings.value.siol,
-      condition: ptSettings.value.condition
+      //condition: ptSettings.value.condition
     }
   })
       .then((response) => {
-        if(!!!response?.data?.result){
-          throw new Error();
-        }
-        progress.value = false
+        if(!response?.data?.result) throw new Error()
+
         packList.value = response?.data?.data?.Packs ?? []
         Lost.value = response?.data?.data?.Lost ?? []
         currencyPrices.value = response?.data?.data?.currencyPrices ?? []
 
       })
       .catch((error) => {
-        progress.value = false
-        q.notify(notifyError(error, 'Ой! Packs Не работает :('))
+        q.notify(notifyError(error))
         packList.value = []
         Lost.value = []
       })
+    .finally(() => {
+      progress.value = false
+    })
 }
 
 function loadZones() {

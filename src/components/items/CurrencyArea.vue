@@ -1,45 +1,3 @@
-<template>
-  <div v-if="Currency">
-    <q-expansion-item label="Конвертор валюты"
-                      :icon="'img:/img/valuta/' + Currency.id + '.png'"
-    >
-      <PriceItemInput :price="Currency.Price"></PriceItemInput>
-      <div class="MainName">Передаваемые предметы за
-        <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">
-      </div>
-      <CurrencyTradable v-if="TradableItems.length"></CurrencyTradable>
-      <div v-if="Currency.median">
-        Средняя цена <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">:
-        <PriceImagerComponent :price="Currency.median" :currency-id="500"></PriceImagerComponent>
-      </div>
-      <template v-if="Currency.MonetisationItems.length">
-        <div class="PricesArea">
-          <template v-for="item in Currency.MonetisationItems" :key="item.id">
-            <PriceCurrencyItem :CurItem="item" @updated="loadList" @delPrice="loadList"></PriceCurrencyItem>
-          </template>
-        </div>
-      </template>
-
-      <template v-if="Currency.lost.length">
-        <div v-if="Currency.MonetisationItems.length">
-          Значение можно уточнить.<br>
-        </div>
-        <div v-else>
-          Не удалось расчитать среднюю цену <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt=""><br>
-        </div>
-        <q-expansion-item label="Добавить цены" icon="add">
-          <LostList :Lost="Currency.lost"
-                    :msg="'Чем больше цен известно калькулятору, тем точнее результат'"
-          ></LostList>
-        </q-expansion-item>
-
-      </template>
-    </q-expansion-item>
-
-
-  </div>
-</template>
-
 <script setup>
 import {computed, inject, onBeforeUpdate, onMounted, provide, ref, watch} from "vue";
 import {api} from "boot/axios";
@@ -100,29 +58,70 @@ function lostMsg() {
 function loadList() {
   CurrencyProgress.value = true
 
-  api.post(apiUrl + 'api/get/currency.php', {
+  api.post(apiUrl + 'api/price.php', {
     params: {
+      method: 'getCurrency',
       id: currencyId.value
     }
   })
     .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      progress.value = false
+      if(!response?.data?.result) throw new Error();
+
       Currency.value = response?.data?.data ?? null
 
     })
     .catch((error) => {
       Currency.value = null
-      progress.value = false
       q.notify(notifyError(error,'Ой! Currency Не работает :('))
-    }).finally(() =>
-  {
-    CurrencyProgress.value = false
-  })
+    })
+    .finally(() => {
+      progress.value = false
+      CurrencyProgress.value = false
+    })
 }
 </script>
+
+<template>
+  <div v-if="Currency">
+    <q-expansion-item label="Конвертор валюты"
+                      :icon="'img:/img/valuta/' + Currency.id + '.png'"
+    >
+      <PriceItemInput :price="Currency.Price"></PriceItemInput>
+      <div class="MainName">Передаваемые предметы за
+        <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">
+      </div>
+      <CurrencyTradable v-if="TradableItems.length"></CurrencyTradable>
+      <div v-if="Currency.median">
+        Средняя цена <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">:
+        <PriceImagerComponent :price="Currency.median" :currency-id="500"></PriceImagerComponent>
+      </div>
+      <template v-if="Currency.MonetisationItems.length">
+        <div class="PricesArea">
+          <template v-for="item in Currency.MonetisationItems" :key="item.id">
+            <PriceCurrencyItem :CurItem="item" @updated="loadList" @delPrice="loadList"></PriceCurrencyItem>
+          </template>
+        </div>
+      </template>
+
+      <template v-if="Currency.lost.length">
+        <div v-if="Currency.MonetisationItems.length">
+          Значение можно уточнить.<br>
+        </div>
+        <div v-else>
+          Не удалось расчитать среднюю цену <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt=""><br>
+        </div>
+        <q-expansion-item label="Добавить цены" icon="add">
+          <LostList :Lost="Currency.lost"
+                    :msg="'Чем больше цен известно калькулятору, тем точнее результат'"
+          ></LostList>
+        </q-expansion-item>
+
+      </template>
+    </q-expansion-item>
+
+
+  </div>
+</template>
 
 <style scoped>
 

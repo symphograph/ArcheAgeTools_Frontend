@@ -1,7 +1,44 @@
+<script setup>
+import {useQuasar} from "quasar";
+import {inject, ref} from "vue";
+
+import {myAccSets} from "src/js/myAuth";
+
+const props = defineProps({
+  groupId: Number
+})
+const groupIdMutable = ref(props.groupId)
+const q = useQuasar()
+const curAccount = inject('curAccount')
+const inputClass = ref('Input')
+const emit = defineEmits(['onSelect', 'onSave'])
+const progress = inject('progress')
+const ServerGroupList = inject('ServerGroupList')
+const selectOptionsStyle = inject('selectOptionsStyle')
+
+defineExpose({
+  saveServerGroup
+})
+function onSelect() {
+
+}
+
+async function saveServerGroup() {
+  progress.value = true
+  const result = await myAccSets.setServerGroup(q, groupIdMutable.value)
+  if(result) {
+    curAccount.value.settings.serverGroupId = groupIdMutable.value
+    emit('onSave')
+  }
+  progress.value = false
+}
+</script>
+
 <template>
   <q-select v-model="groupIdMutable"
             :options="ServerGroupList"
             borderless
+            :loading="progress"
             option-value="id"
             :popup-content-style="selectOptionsStyle"
             @focus="inputClass = 'Input InputActive'"
@@ -22,55 +59,6 @@
     </template>
   </q-select>
 </template>
-
-<script setup>
-import {useQuasar} from "quasar";
-import {inject, ref} from "vue";
-import {api} from "boot/axios";
-import {notifyError, notifyOK} from "src/js/myFuncts";
-
-const props = defineProps({
-  groupId: Number
-})
-const groupIdMutable = ref(props.groupId)
-const q = useQuasar()
-const apiUrl = String(process.env.API)
-const curAccount = inject('curAccount')
-const inputClass = ref('Input')
-const emit = defineEmits(['onSelect', 'onSave'])
-const progress = inject('progress')
-const ServerGroupList = inject('ServerGroupList')
-const selectOptionsStyle = inject('selectOptionsStyle')
-
-defineExpose({
-  saveServerGroup
-})
-function onSelect() {
-
-}
-
-function saveServerGroup() {
-  progress.value = true
-  api.post(apiUrl + 'api/set/server.php', {
-    params: {
-      serverGroupId: groupIdMutable.value,
-    }
-  })
-      .then((response) => {
-        if (!!!response?.data?.result) {
-          throw new Error();
-        }
-        curAccount.value.settings.serverGroupId = groupIdMutable.value
-        emit('onSave')
-      })
-      .catch((error) => {
-        q.notify(notifyError(error))
-      })
-      .finally(() => {
-        progress.value = false
-      })
-}
-</script>
 
 <style scoped>
 

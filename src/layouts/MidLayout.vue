@@ -8,7 +8,8 @@ import LoginList from "components/account/LoginList.vue"
 import DrawerContent from "components/DrawerContent.vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {notifyError, notifyOK} from "src/js/myFuncts";
-import { myUser } from 'src/js/myAuth';
+import {myAccSets, myUser} from 'src/js/myAuth';
+import MainHeader from "components/main/MainHeader.vue";
 
 
 const q = useQuasar()
@@ -17,8 +18,6 @@ const authUrl = String(process.env.Auth)
 const route = useRoute()
 const progress = inject('progress')
 
-
-const AccessToken = inject('AccessToken')
 const isOptionsLoaded = inject('isOptionsLoaded')
 
 const emit = defineEmits(['reLogin'])
@@ -28,7 +27,6 @@ provide('AccountList', AccountList)
 
 const curAccount = ref({settings: {}})
 provide('curAccount', curAccount)
-//provide('AccSets', curAccount.value.settings)
 
 const AccSets = ref({})
 provide('AccSets', AccSets)
@@ -96,7 +94,7 @@ const authTypes = ref([
 ])
 provide('authTypes', authTypes)
 
-const leftDrawerOpen = ref(false)
+
 
 const CategoriesList = ref(null)
 provide('CategoriesList', CategoriesList)
@@ -110,9 +108,7 @@ provide('categMode', categMode)
 const selectOptionsStyle = { backgroundColor: 'rgb(181 238 8 / 93%)', color: '#4B3A23' }
 provide('selectOptionsStyle', selectOptionsStyle)
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+
 
 function loadOptions() {
   api.post(apiUrl + 'api/options.php', {
@@ -133,22 +129,7 @@ function loadOptions() {
     })
 }
 
-function test() {
-  api.post(authUrl + 'api/test.php',{
-    params:{
-      method: 'get'
-    }
-  })
-      .then((response) => {
-        if (!!!response?.data?.result) {
-          throw new Error();
-        }
-        q.notify(notifyOK(response.data.result))
-      })
-      .catch((error) => {
-        q.notify(notifyError(error))
-      })
-}
+
 
 function loadAccountList() {
   api.post(authUrl + 'api/account.php',{
@@ -184,6 +165,7 @@ function loadSettings() {
       }
       AccSets.value = response?.data?.data
       curAccount.value.settings = response?.data?.data
+      myAccSets.self = new myAccSets(response.data.data)
       loadAccSetList()
     })
     .catch((error) => {
@@ -214,9 +196,11 @@ function loadAccSetList() {
 }
 
 const lastPath = '/'
+
 watch(route, (newPath) => {
   LocalStorage.set('lastPath', newPath.path)
 })
+
 onBeforeMount(() => {
   console.log('midLayout BeforeMount')
 })
@@ -228,47 +212,8 @@ onMounted(() => {
 
 <template>
   <q-layout v-if="isOptionsLoaded" view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+    <MainHeader @reLogin="emit('reLogin')"></MainHeader>
 
-        <q-toolbar-title>
-          GraphTools
-        </q-toolbar-title>
-        <div style="margin: auto; color: red">* В разработке *</div>
-        <q-tabs v-if="q.platform.is.desktop" inline-label class="bg-primary text-white shadow-2" align="center">
-
-          <q-btn label="test" @click="test()"></q-btn>
-          <AccountSelector v-if="AccountList && AccountList.some(item => item.authType !== 'default')" @onSelectAccount="emit('reLogin')"></AccountSelector>
-          <LoginList v-else></LoginList>
-        </q-tabs>
-        <template v-else>
-          <ItemIcon
-                    :locIcon="authUrl + curAccount.Avatar.src"
-                    :grade="AccSets.grade"
-                    @click="toggleLeftDrawer"
-          ></ItemIcon>
-        </template>
-
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      behavior="default"
-      bordered
-      dark
-    >
-      <DrawerContent></DrawerContent>
-    </q-drawer>
 
     <q-page-container v-if="curAccount">
       <q-page class="row no-wrap">

@@ -1,3 +1,73 @@
+<script setup>
+
+import {computed, inject, ref} from "vue";
+import ItemIcon from "components/ItemIcon.vue";
+import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
+import SalaryCard from "components/packs/SalaryCard.vue";
+import MatIcons from "components/craft/MatIcons.vue";
+
+const props = defineProps({
+  pRoute: ref(null)
+})
+
+const ptSettings = inject('ptSettings')
+const progress = inject('progress')
+
+const currencyPrices = inject('currencyPrices')
+
+
+
+const freshLvlKey = computed(() => {
+  if(ptSettings.value.condition){
+      return props.pRoute.Freshness.bestLvl
+  }
+  return props.pRoute.Freshness.worstLvl
+})
+
+const freshPercent = computed(() => {
+  return props.pRoute.Freshness.FreshLvls[freshLvlKey.value].percent
+})
+
+const flatSalary = computed(() => {
+  return Math.round(props.pRoute.dbPrice / 130 * 100)
+})
+
+const siolPercent = computed(()=> {
+  return ptSettings.value.siol && (props.pRoute.currencyId === 500) ? 5 : 0
+})
+
+const factoryPrice = computed(()=>{
+  let result = flatSalary.value * (ptSettings.value.ratePercent / 100)
+  return  result * (1 + siolPercent.value / 100)
+})
+
+const finalSalary = computed(()=> {
+  let salary = factoryPrice.value * (1 + (freshPercent.value / 100))
+  salary *= 1.02 // Стандартная надбавка 2%
+
+  if(props.pRoute.currencyId !== 500){
+    salary /= 100
+  }
+  return Math.round(salary)
+})
+
+const goldSalary = computed(() => {
+  if(props.pRoute.currencyId === 500){
+    return finalSalary.value
+  }
+  let gold = finalSalary.value * currencyPrices.value[props.pRoute.currencyId].price * 0.9
+  return Math.round(gold)
+})
+
+const profit = computed(() => {
+  return goldSalary.value - props.pRoute.Pack.craftPrice
+})
+
+const profitPerLabor = computed(() => {
+  return Math.round(profit.value / props.pRoute.Pack.laborNeed)
+})
+</script>
+
 <template>
   <tr>
     <td class="ptCol1" colspan="2">
@@ -71,77 +141,6 @@
     </td>
   </tr>
 </template>
-
-<script setup>
-
-import {computed, inject, ref} from "vue";
-import ItemIcon from "components/ItemIcon.vue";
-import PriceImagerComponent from "components/price/PriceImagerComponent.vue";
-//import {profit} from "src/myFuncts.js";
-import SalaryCard from "components/packs/SalaryCard.vue";
-import MatIcons from "components/craft/MatIcons.vue";
-
-const props = defineProps({
-  pRoute: ref(null)
-})
-
-const ptSettings = inject('ptSettings')
-const progress = inject('progress')
-
-const currencyPrices = inject('currencyPrices')
-
-
-
-const freshLvlKey = computed(() => {
-  if(ptSettings.value.condition){
-      return props.pRoute.Freshness.bestLvl
-  }
-  return props.pRoute.Freshness.worstLvl
-})
-
-const freshPercent = computed(() => {
-  return props.pRoute.Freshness.FreshLvls[freshLvlKey.value].percent
-})
-
-const flatSalary = computed(() => {
-  return Math.round(props.pRoute.dbPrice / 130 * 100)
-})
-
-const siolPercent = computed(()=> {
-  return ptSettings.value.siol && (props.pRoute.currencyId === 500) ? 5 : 0
-})
-
-const factoryPrice = computed(()=>{
-  let result = flatSalary.value * (ptSettings.value.ratePercent / 100)
-  return  result * (1 + siolPercent.value / 100)
-})
-
-const finalSalary = computed(()=> {
-  let salary = factoryPrice.value * (1 + (freshPercent.value / 100))
-  salary *= 1.02 // Стандартная надбавка 2%
-
-  if(props.pRoute.currencyId !== 500){
-    salary /= 100
-  }
-  return Math.round(salary)
-})
-
-const goldSalary = computed(() => {
-  if(props.pRoute.currencyId === 500){
-    return finalSalary.value
-  }
-  let gold = finalSalary.value * currencyPrices.value[props.pRoute.currencyId].price * 0.9
-  return Math.round(gold)
-})
-
-const profit = computed(() => {
-  return goldSalary.value - props.pRoute.Pack.craftPrice
-})
-
-const profitPerLabor = computed(() => {
-  return Math.round(profit.value / props.pRoute.Pack.laborNeed)
-})
-</script>
 
 <style scoped>
 .packName{

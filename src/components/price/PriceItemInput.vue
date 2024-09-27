@@ -58,6 +58,7 @@ import {api} from "boot/axios";
 import {copyToClipboard, useQuasar} from "quasar";
 import DelBtn from "components/price/DelBtn.vue";
 import {useRouter} from "vue-router";
+import {ItemClass} from "src/js/item";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -79,21 +80,7 @@ function goTo(id) {
 }
 
 function setBuyable() {
-  api.post(apiUrl + 'api/set/price/buyable.php', {
-    params: {
-      buyable: buyable.value,
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+  ItemClass.setBuyOnly(q,Props.price.itemId,buyable.value)
 }
 
 function delPrice() {

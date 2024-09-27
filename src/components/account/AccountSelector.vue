@@ -55,8 +55,13 @@ function ServerGroupFromList(groupId)
   return ServerGroupList.value.find(el => el.id === groupId)
 }
 
+const curServer = computed(() => {
+  const s = ServerGroupFromList(curAccount.value?.settings?.serverGroupId)
+  return !!s ? s : null
+})
+
 onMounted(() => {
-console.log(FAccountList())
+
 })
 
 </script>
@@ -69,13 +74,20 @@ console.log(FAccountList())
             dark
             label-color="grey"
             filled
-            :label="curAccount?.settings?.publicNick ?? 'dsd'"
+            :label="`${curAccount?.settings?.publicNick ?? 'dsd'}`"
             :options="FAccountList()"
             option-value="id"
             map-options
             @update:model-value="reLogin(curAccount.id, curAccount.authType)"
             option-label="nickName"
   >
+    <template v-slot:selected>
+      <q-item dark dense>
+        <q-item-section>
+          <q-item-label caption>{{ curServer?.label }}</q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
     <template v-slot:append v-if="curAccount">
       <div style="width: 40px" v-if="curAccount.Avatar">
         <ItemIcon :locIcon="authUrl + curAccount.Avatar.src" :grade="curAccount.settings.grade"></ItemIcon>
@@ -95,7 +107,7 @@ console.log(FAccountList())
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps" v-if="scope.opt.id !== curAccount.id && scope.opt.authType !== 'default'">
         <q-item-section avatar>
-          <ItemIcon :locIcon="authUrl + scope.opt.Avatar.src" :grade="1" size="70px"></ItemIcon>
+          <ItemIcon :locIcon="authUrl + scope.opt.Avatar?.src" :grade="1" size="70px"></ItemIcon>
         </q-item-section>
         <q-item-section>
           <q-item-label caption class="text-grey-9">

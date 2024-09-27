@@ -5,9 +5,6 @@ import {useRoute, useRouter} from 'vue-router'
 import AuthComponent from "components/main/AuthComponent.vue";
 import {api} from "boot/axios";
 
-
-const router = useRouter()
-
 const pageSettings = ref()
 provide('pageSettings', pageSettings)
 
@@ -20,11 +17,7 @@ provide('isAccountsLoaded', isAccountsLoaded)
 const refAuth = ref()
 const q = useQuasar()
 
-const apiUrl = String(process.env.API)
 const route = useRoute()
-
-const AccessToken = ref('')
-provide('AccessToken', AccessToken)
 
 const SessionToken = ref('')
 provide('SessionToken', SessionToken)

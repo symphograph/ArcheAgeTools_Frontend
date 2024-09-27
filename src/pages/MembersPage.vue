@@ -1,67 +1,29 @@
-<template>
-  <div class="WindowArea column">
-    <div class="navigator" ref="navigatorRef">
-      <ServerGroupSelect :groupId="curAccount.settings.serverGroupId"
-                         @onSelect="onSelectServerGroup()"
-                         @onSave="loadMembers()"
-                         ref="refServerGroupSelect"
-      ></ServerGroupSelect>
-    </div>
-    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
-    <q-scroll-area v-if="Members.length" class="col">
-      <q-list dense separator>
-        <q-item v-for="member in Members" :key="member.id" dense>
-          <MemberAvaCell :member="member"></MemberAvaCell>
-          <q-item-section>
-            <MemberLastItem :member="member"></MemberLastItem>
-          </q-item-section>
-          <q-item-section side>
-            <q-toggle v-model="member.isFollow"
-                      v-if="member.accountId !== curAccount.id"
-                      @update:model-value="update(
-                        {
-                        id: member.accountId,
-                        isFollow: member.isFollow
-                        }
-                        )"
-            >
-            <q-tooltip>Доверять</q-tooltip>
-            </q-toggle>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-scroll-area>
-  </div>
-</template>
+<script setup lang="ts">
 
-<script setup>
-
-
-import {useRoute, useRouter} from "vue-router";
 import {useMeta, useQuasar} from "quasar";
-import {inject, onMounted, ref} from "vue";
+import {inject, onMounted, Ref, ref} from "vue";
 import {api} from "boot/axios";
 import MemberLastItem from "components/members/MemberLastItem.vue";
 import MemberAvaCell from "components/members/MemberAvaCell.vue";
 import {notifyError, notifyOK} from "src/js/myFuncts";
 import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
+import {Member} from "src/js/member";
 
-const route = useRoute()
-const router = useRouter()
 const q = useQuasar()
 const apiUrl = String(process.env.API)
-const curAccount = inject('curAccount')
-const Members = ref([])
+const curAccount = inject('curAccount') as Ref<any>
+const Members = ref([]) as Ref<Member[]>
 const memberListProgress = ref(false)
 
 const navigatorRef = ref(null)
 
-function update(member){
-  api.post(apiUrl + 'api/set/follow.php', {
+function update(memberId: number, isFollow: boolean){
+  api.post(apiUrl + 'api/member.php', {
     params: {
-      master: member.id,
+      method: 'followToggle',
+      master: memberId,
       serverGroupId: curAccount.value.settings.serverGroupId,
-      isFollow: member.isFollow
+      isFollow: isFollow
     }
   })
     .then((response) => {
@@ -85,8 +47,9 @@ function loadMembers() {
     return;
   }
   memberListProgress.value = true
-  api.post(apiUrl + '/api/get/members.php', {
+  api.post(apiUrl + '/api/member.php', {
     params: {
+      method: 'list',
       serverGroupId: curAccount.value.settings.serverGroupId
     }
   })
@@ -116,15 +79,46 @@ const metaData = {
   title: 'Сообщество',
   meta: {
     viewport:
-        {
-          name: 'viewport',
-          content: 'initial-scale=0.6,width=device-width, user-scalable=yes'
-        }
+      {
+        name: 'viewport',
+        content: 'initial-scale=0.6,width=device-width, user-scalable=yes'
+      }
   }
 }
 useMeta(metaData)
 
 </script>
+
+<template>
+  <div class="WindowArea column">
+    <div class="navigator" ref="navigatorRef">
+      <ServerGroupSelect :groupId="curAccount.settings.serverGroupId"
+                         @onSelect="onSelectServerGroup()"
+                         @onSave="loadMembers()"
+                         ref="refServerGroupSelect"
+      ></ServerGroupSelect>
+    </div>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="anyProgress()"></q-linear-progress>
+    <q-scroll-area v-if="Members.length" class="col">
+      <q-list dense separator>
+        <q-item v-for="member in Members" :key="member.accountId" dense>
+          <MemberAvaCell :member="member"></MemberAvaCell>
+          <q-item-section>
+            <MemberLastItem :member="member"></MemberLastItem>
+          </q-item-section>
+          <q-item-section side>
+            <q-toggle v-model="member.isFollow"
+                      v-if="member.accountId !== curAccount.id"
+                      @update:model-value="update(member.accountId, member.isFollow)"
+            >
+            <q-tooltip>Доверять</q-tooltip>
+            </q-toggle>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-scroll-area>
+  </div>
+</template>
 
 <style scoped>
 .navigator {

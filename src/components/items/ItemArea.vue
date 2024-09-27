@@ -37,7 +37,7 @@ const Item = inject('Item')
 const itemId = inject('itemId')
 const progress = inject('progress')
 const ItemProgress = inject('ItemProgress')
-const PriceHistoryProgress = ref('PriceHistoryProgress')
+const PriceHistoryProgress = ref(false)
 provide('PriceHistoryProgress', PriceHistoryProgress)
 const refCraftList = ref(null)
 

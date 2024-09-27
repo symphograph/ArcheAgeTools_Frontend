@@ -1,3 +1,7 @@
+import {QVueGlobals} from "quasar";
+import {api} from "boot/axios";
+import {notifyError, notifyOK} from "src/js/myFuncts";
+
 interface jwtPayload {
   uid: number;
   powers: number[];
@@ -97,4 +101,63 @@ export class myJWT {
     return Payload.accountId;
   }
 
+}
+
+export class myAccSets {
+  static self: myAccSets;
+
+  accountId: number;
+  publicNick: string;
+  grade: number;
+  mode: number;
+  old_id: number|null;
+  siol: boolean;
+  authType: string;
+  avaFileName: string|null;
+  serverGroupId: number;
+
+
+
+  constructor({
+                accountId = -1,
+                publicNick = '',
+                grade = 1,
+                mode = 1,
+                old_id = null,
+                siol = false,
+                authType = 'default',
+                avaFileName = null,
+                serverGroupId = 100
+              }: Partial<myAccSets> = {}) {
+
+    this.accountId = accountId;
+    this.publicNick = publicNick;
+    this.grade = grade;
+    this.mode = mode;
+    this.old_id = old_id;
+    this.siol = siol;
+    this.authType = authType;
+    this.avaFileName = avaFileName;
+    this.serverGroupId = serverGroupId;
+  }
+
+  static async setServerGroup(q: QVueGlobals, serverGroupId: number): Promise<boolean> {
+    const url = String(process.env.API) + 'api/settings.php';
+    const params = {
+      method: 'setServerGroup',
+      serverGroupId: serverGroupId,
+      name: this.name,
+    };
+    try {
+      const response = await api.post(url, { params });
+
+      if (!response?.data?.result) throw new Error();
+
+      q.notify(notifyOK());
+      return true;
+    } catch (error) {
+      q.notify(notifyError(error));
+      return false;
+    }
+  }
 }

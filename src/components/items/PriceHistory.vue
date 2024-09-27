@@ -1,6 +1,6 @@
 <script setup>
 
-import {computed, inject, onMounted, ref} from "vue";
+import {computed, inject, onMounted, provide, ref} from "vue";
 import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {fDate, notifyError} from "src/js/myFuncts";
@@ -15,6 +15,7 @@ const route = useRoute()
 const curAccount = inject('curAccount')
 
 const PriceHistoryProgress = inject('PriceHistoryProgress')
+provide('progress', PriceHistoryProgress)
 const PriceHistoryList = ref([])
 const ServerGroupList = inject('ServerGroupList')
 const selectedServerGroupId = ref(curAccount.value.settings.serverGroupId)
@@ -31,6 +32,7 @@ const filteredList = computed(() => {
 
 function onSelectServerGroup(id){
   selectedServerGroupId.value = id
+  loadPriceHistory()
 }
 
 function loadPriceHistory() {
@@ -38,7 +40,8 @@ function loadPriceHistory() {
   api.post(apiUrl + '/api/price.php', {
     params: {
       method: 'history',
-      itemId: route.params.id
+      itemId: route.params.id,
+      serverGroupId: selectedServerGroupId.value
     }
   })
     .then((response) => {
@@ -76,7 +79,7 @@ onMounted(() => {
           </q-item-label>
         </q-item-section>
       </q-item>
-      <q-item v-for="price in filteredList" :key="
+      <q-item v-for="price in PriceHistoryList" :key="
       String(price.accountId)
       + String(price.serverGroupId)
       + price.updatedAt"

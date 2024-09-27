@@ -5,7 +5,7 @@
           transition-hide="jump-up"
   >
     <q-card-section>
-      <CraftInfo :Craft="Craft" @onSetUBest="emit('onSetUBest')"></CraftInfo>
+      <CraftInfo :craft="Craft" @onSetUBest="emit('onSetUBest')"></CraftInfo>
     </q-card-section>
     <q-card-section>
       <div class="wrapContainer">

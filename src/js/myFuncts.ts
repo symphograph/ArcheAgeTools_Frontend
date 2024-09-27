@@ -1,6 +1,7 @@
 
-import { copyToClipboard, QVueGlobals } from 'quasar';
+import {copyToClipboard, QNotifyCreateOptions, QVueGlobals} from 'quasar';
 import moment from 'moment';
+import {myUser} from "src/js/myAuth";
 
 
 export function fDateAnyFormat(inputDate: string, outputFormat = 'DD.MM.yyyy HH:mm') {
@@ -162,9 +163,9 @@ export function toNums(val: string|number) {
   return +val
 }
 
-export function copy (val: string, q: QVueGlobals) {
+export function copy (val: string|number, q: QVueGlobals) {
   //console.log(val)
-  copyToClipboard(val)
+  copyToClipboard(String(val))
     .then(() => {
       q.notify({
         color: 'positive',
@@ -179,17 +180,17 @@ export function copy (val: string, q: QVueGlobals) {
     })
 }
 
-export function notifyOK (message = 'Готово') {
+export function notifyOK (message = 'Готово') :QNotifyCreateOptions {
   return {
     color: 'positive',
     position: 'center',
     message: message,
     timeout: 100,
-    closeBtn: 'Закрыть'
+    closeBtn: 'x'
   }
 }
 
-export function notifyError (error: any, defaultMsg = 'Ой! Не работает :(') {
+export function notifyError (error: any, defaultMsg = 'Ой! Не работает :(') :QNotifyCreateOptions {
   return {
     color: 'negative',
     position: 'center',
@@ -202,7 +203,7 @@ export function notifyError (error: any, defaultMsg = 'Ой! Не работае
   }
 }
 
-export function notifyWarning (error: any, defaultMsg = 'Ой! Не работает :(') {
+export function notifyWarning (error: any, defaultMsg = 'Ой! Не работает :(') :QNotifyCreateOptions {
   return {
     color: 'orange',
     position: 'center',

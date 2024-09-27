@@ -1,47 +1,3 @@
-<template>
-  <table v-if="packList.length" style="width: 100%">
-    <thead style="position: sticky; top: 0">
-      <tr>
-        <th style="max-width: 2em; text-align: left">
-
-        </th>
-        <th style="text-align: left">
-
-
-        </th>
-        <th style="max-width: 150px" class="mobile-hide">
-          Откуда
-        </th>
-        <th class="mobile-hide">
-          Куда
-
-        </th>
-        <th style="min-width: 100px">
-          Выручка
-        </th>
-        <th v-if="ptSettings.addProfit" style="min-width: 100px; font-size: 12px; align-content: end">
-          <div style="display: flex; justify-content: end">
-            <q-item>
-              <q-item-section>
-                <q-item-label>Прибыль</q-item-label>
-                <q-item-label caption>на 1ор</q-item-label>
-              </q-item-section>
-            </q-item>
-
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="pRoute in sortedList" :key="pRoute.itemId + '_' + pRoute.zoneFromId + '_' + pRoute.zoneToId">
-        <PackRow :pRoute="pRoute"></PackRow>
-      </template>
-    </tbody>
-  </table>
-  <LostList v-if="Lost.length" :Lost="Lost" msg="<b>Расчет не получился.</b><br>
-    Необходимо знать некоторые цены."></LostList>
-</template>
-
 <script setup>
 
 import PackRow from "components/packs/PackRow.vue";
@@ -104,6 +60,8 @@ function profitPerLabor(pRoute) {
   let profit2 = profit(getGoldSalary(pRoute), pRoute.Pack.craftPrice)
   return Math.round(profit2 / pRoute.Pack.laborNeed)
 }
+
+
 // Sorting____________________________________________________________________________
 const byTypeOnly = (a, b) => a.Pack.typeId - b.Pack.typeId
 const byNameOnly = (a, b) => a.Pack.name.localeCompare(b.Pack.name, 'ru')
@@ -146,6 +104,50 @@ const sortedList = computed(() => {
 
 
 </script>
+
+<template>
+  <table v-if="packList.length" style="width: 100%">
+    <thead style="position: sticky; top: 0">
+      <tr>
+        <th style="max-width: 2em; text-align: left">
+
+        </th>
+        <th style="text-align: left">
+
+
+        </th>
+        <th style="max-width: 150px" class="mobile-hide">
+          Откуда
+        </th>
+        <th class="mobile-hide">
+          Куда
+
+        </th>
+        <th style="min-width: 100px">
+          Выручка
+        </th>
+        <th v-if="ptSettings.addProfit" style="min-width: 100px; font-size: 12px; align-content: end">
+          <div style="display: flex; justify-content: end">
+            <q-item>
+              <q-item-section>
+                <q-item-label>Прибыль</q-item-label>
+                <q-item-label caption>на 1ор</q-item-label>
+              </q-item-section>
+            </q-item>
+
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <template v-for="pRoute in sortedList" :key="pRoute.itemId + '_' + pRoute.zoneFromId + '_' + pRoute.zoneToId">
+        <PackRow :pRoute="pRoute"></PackRow>
+      </template>
+    </tbody>
+  </table>
+  <LostList v-if="Lost.length" :Lost="Lost" msg="<b>Расчет не получился.</b><br>
+    Необходимо знать некоторые цены."></LostList>
+</template>
 
 <style scoped>
 table {

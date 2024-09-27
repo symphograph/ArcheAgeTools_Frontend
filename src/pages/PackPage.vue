@@ -1,17 +1,4 @@
-<template>
-  <div class="WindowArea column">
-    <PackMenu></PackMenu>
-    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
-
-    <q-scroll-area class="col myScrollArea">
-      <PackList></PackList>
-
-    </q-scroll-area>
-  </div>
-</template>
-
 <script setup>
-
 
 import {computed, inject, onBeforeMount, onMounted, provide, ref, watch} from "vue";
 import {api} from "boot/axios";
@@ -127,6 +114,18 @@ const metaData = {
 }
 useMeta(metaData)
 </script>
+
+<template>
+  <div class="WindowArea column">
+    <PackMenu></PackMenu>
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
+
+    <q-scroll-area class="col myScrollArea">
+      <PackList></PackList>
+
+    </q-scroll-area>
+  </div>
+</template>
 
 <style>
 html {
