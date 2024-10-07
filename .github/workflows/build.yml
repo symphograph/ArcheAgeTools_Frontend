@@ -31,4 +31,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           BASE_BRANCH: master
+          BRANCH: gh-pages
           FOLDER: dist/spa
