@@ -1,1 +1,0 @@
-import{api as n}from"./axios.84dd43a9.js";import{a as e,n as c}from"./myFuncts.325243df.js";class m{static async set(r,a,s){var o;const i=String("https://aa.dllib.ru/be/")+a;try{console.log("myAxios");const t=await n.post(i,{params:s});if(!((o=t==null?void 0:t.data)!=null&&o.result))throw new Error;return r.notify(e()),!0}catch(t){return r.notify(c(t)),!1}}}export{m};

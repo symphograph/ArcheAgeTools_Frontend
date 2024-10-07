@@ -1,0 +1,1 @@
+import{api as n}from"./axios.ddc478b8.js";import{a as c,n as e}from"./myFuncts.8be67628.js";class m{static async set(r,a,i){var o;const s=String("https://aa.dllib.ru/tapi/")+a;try{console.log("myAxios");const t=await n.post(s,{params:i});if(!((o=t==null?void 0:t.data)!=null&&o.result))throw new Error;return r.notify(c()),!0}catch(t){return r.notify(e(t)),!1}}}export{m};
