@@ -70,25 +70,25 @@ const authTypes = ref([
   {
     id: 2,
     label: 'Телеграм',
-    url: 'auth/telegram/login.php',
+    url: 'login/telegram/login.php',
     img: '/img/auth/telegram.svg'
   },
   {
     id: 3,
     label: 'MailRu',
-    url: 'auth/mailru/login.php',
+    url: 'login/mailru/login.php',
     img: '/img/auth/mailru.svg'
   },
   {
     id: 4,
     label: 'Discord',
-    url: 'auth/discord/login.php',
+    url: 'login/discord/login.php',
     img: '/img/auth/discord.svg'
   },
   {
     id: 4,
     label: 'VКонтакте',
-    url: 'auth/vkontakte/login.php',
+    url: 'login/vkontakte/login.php',
     img: '/img/auth/vkontakte.svg'
   }
 ])
@@ -216,10 +216,11 @@ onMounted(() => {
 
 
     <q-page-container v-if="curAccount">
-      <q-page class="row no-wrap">
+      <router-view v-if="isOptionsLoaded"/>
+      <q-page v-if="false" class="row no-wrap">
         <div class="col">
           <div class="column full-height">
-            <router-view v-if="isOptionsLoaded"/>
+
           </div>
         </div>
       </q-page>

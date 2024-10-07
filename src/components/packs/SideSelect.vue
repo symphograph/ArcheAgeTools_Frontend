@@ -13,8 +13,15 @@
   >
     <template v-slot:prepend v-if="ptSettings.side">
       <q-avatar>
-        <img :src="'/img/side/' + ptSettings.side + '.png'" alt="">
+        <img :src="'/img/side/' + ptSettings.side + '.png'" alt="" @click.stop.prevent="next">
       </q-avatar>
+    </template>
+    <template v-slot:append>
+      <NavButton
+        :active="ptSettings.siol"
+        imgBtn="/img/siol.png"
+        @click.stop.prevent="ptSettings.siol = !ptSettings.siol"
+      ></NavButton>
     </template>
     <template v-slot:option="scope">
       <q-item v-bind="scope.itemProps">
@@ -35,19 +42,29 @@
 
 import ItemIcon from "components/ItemIcon.vue";
 import {inject, ref} from "vue";
+import NavButton from "components/NavButton.vue";
 
-const Sides = inject('Sides')
+const Sides = [
+  {label: 'Запад', value: 1},
+  {label: 'Север', value: 3},
+  {label: 'Восток', value: 2}
+]
 
-
+function next() {
+  const currentIdx = Sides.findIndex(side => side.value === ptSettings.value.side);
+  const nextIdx = (currentIdx + 1) % Sides.length;
+  ptSettings.value.side = Sides[nextIdx].value;
+  emit('selected')
+}
 
 const inputClass = ref('Input')
 const ptSettings = inject('ptSettings')
-//const side = inject('side')
 const emit = defineEmits(['selected'])
 </script>
 
 <style scoped>
 .Input {
-  max-width: 16em;
+  min-width: 16em;
+  padding: 0 2em;
 }
 </style>

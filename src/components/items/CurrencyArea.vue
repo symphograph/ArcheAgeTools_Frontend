@@ -10,6 +10,7 @@ import CurrencyTradable from "components/items/CurrencyTradable.vue";
 import PriceCurrencyItem from "components/price/PriceCurrencyItem.vue";
 import LostList from "components/price/LostList.vue";
 import {notifyError} from "src/js/myFuncts";
+import MainPriceItem from "components/price/MainPriceItem.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -84,9 +85,9 @@ function loadList() {
 <template>
   <div v-if="Currency">
     <q-expansion-item label="Конвертор валюты"
+                      default-opened
                       :icon="'img:/img/valuta/' + Currency.id + '.png'"
     >
-      <PriceItemInput :price="Currency.Price"></PriceItemInput>
       <div class="MainName">Передаваемые предметы за
         <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">
       </div>
@@ -95,6 +96,15 @@ function loadList() {
         Средняя цена <img class="imgValut" :src="'/img/valuta/' + Currency.id + '.png'" alt="">:
         <PriceImagerComponent :price="Currency.median" :currency-id="500"></PriceImagerComponent>
       </div>
+      <PriceItemInput :price="Currency.Price"></PriceItemInput>
+      <MainPriceItem :itemId="Currency.id"
+                     :val="Currency.Price.price"
+                     :itemName="Currency.name"
+                     :icon="`${Currency.icon}`"
+                     :updatedAt="Currency.Price.updatedAt"
+                     :grade="Currency.Price.grade"
+                     :author="Currency.Price.author"
+                     :method="Currency.Price.method"></MainPriceItem>
       <template v-if="Currency.MonetisationItems.length">
         <div class="PricesArea">
           <template v-for="item in Currency.MonetisationItems" :key="item.id">

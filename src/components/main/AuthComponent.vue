@@ -121,7 +121,7 @@ function reLogin (toAccountId: number, authType: string) {
         return
       }
       if(error?.response?.data?.error === 'needLogin'){
-        dynamicForm(authUrl + 'auth/' + authType + '/login.php', {
+        dynamicForm(authUrl + 'login/' + authType + '/login.php', {
             AccessToken: myUser.self.AccessToken,
             SessionToken: myUser.self.SessionToken
         })

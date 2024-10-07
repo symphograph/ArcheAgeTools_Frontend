@@ -11,6 +11,7 @@ import PackSelect from "components/packs/PackSelect.vue";
 import SalaryCard from "components/packs/SalaryCard.vue";
 import FreshSelect from "components/packs/FreshSelect.vue";
 import NavButton from "components/NavButton.vue";
+import SideSelect from "components/packs/SideSelect.vue";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -80,6 +81,7 @@ const filteredPackList = computed(() => {
 provide('filteredPackList', filteredPackList)
 
 const listInProgress = ref(false)
+provide('loading', listInProgress)
 
 function loadZones() {
 
@@ -103,13 +105,13 @@ function loadZones() {
 
 function loadList() {
   listInProgress.value = true
-  api.post(apiUrl + 'api/get/packs.php', {
+  //packList.value = []
+  api.post(apiUrl + 'api/pack.php', {
 
     params: {
+      method: 'list',
       side: ptSettings.value.side,
       addProfit: false,
-      //siol: ptSettings.value.siol,
-      //condition: ptSettings.value.condition
     }
   })
       .then((response) => {
@@ -138,14 +140,31 @@ function onSelectPack() {
   selectedFresh.value = selectedPack.value.Freshness.FreshLvls[selectedPack.value.Freshness.bestLvl]
 }
 
-function ttt() {
-  //selectedPack.value = null
-  //console.log(filteredPackList.value)
+function onSelectedFrom() {
+  selectedPack.value = null
+}
+
+function onSelectedTo() {
+
+  if(!selectedPack.value) return;
+  if(!ptSettings.value.zoneToId) {
+    selectedPack.value = null
+    return;
+  }
+  const fff = filteredByFrom.value.find((el) =>
+    el.itemId === selectedPack.value.itemId
+    &&
+    el.zoneToId === ptSettings.value.zoneToId
+  )
+  if(fff) {
+    selectedPack.value = fff
+  }
 }
 
 function onSideSelected(){
   ptSettings.value.zoneFromId = 0
   ptSettings.value.zoneToId = 0
+  selectedPack.value = null
   loadList()
 }
 
@@ -224,26 +243,19 @@ onMounted(()=> {
 <template>
 <div class="paculatorArea">
   <q-card class="packCard">
-    <q-card-section horizontal>
-        <div style="display: flex; justify-content: space-evenly; width: 100%">
-          <SideButtons @sideSelected="onSideSelected()"></SideButtons>
-        </div>
-      <div>
-        <ZoneFromSelect @onSelect="ttt()"></ZoneFromSelect>
-        <ZoneToSelect></ZoneToSelect>
-      </div>
-      <div style="width: 100%; display: flex; justify-content: center">
-        <NavButton
-            :active="ptSettings.siol"
-            imgBtn="/img/siol.png"
-            @click="ptSettings.siol = !ptSettings.siol"
-        ></NavButton>
-      </div>
-
-    </q-card-section>
-    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="disabled"></q-linear-progress>
     <q-card-section>
-    <PackSelect v-if="filteredPackList.length" @onSelect="onSelectPack"></PackSelect>
+      <SideSelect @selected="onSideSelected"></SideSelect>
+      <div>
+        <ZoneFromSelect @onSelect="onSelectedFrom()"></ZoneFromSelect>
+        <ZoneToSelect @onSelect="onSelectedTo()"></ZoneToSelect>
+      </div>
+    </q-card-section>
+
+    <q-linear-progress :animation-speed="200"  color="green" :indeterminate="disabled"></q-linear-progress>
+    <q-btn v-if="false" icon="help" @click.stop.prevent="() => { console.log(packList)}"></q-btn>
+
+    <q-card-section>
+      <PackSelect v-if="filteredPackList.length" @onSelect="onSelectPack"></PackSelect>
     </q-card-section>
     <q-card-section v-if="selectedPack">
       <div style="display: flex; justify-content: space-evenly">

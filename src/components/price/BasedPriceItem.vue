@@ -54,6 +54,7 @@ import {api} from "boot/axios";
 import DelBtn from "components/price/DelBtn.vue"
 import ItemIcon from "components/ItemIcon.vue"
 import {priceColor} from "src/myJS/price";
+import {PriceClass} from "src/js/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -95,27 +96,8 @@ function delPrice(){
 }
 
 function savePrice() {
-
   priceRef.value.blur()
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'set',
-      price: nPrice.value.price,
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK())
-      nPrice.value.accountId = curAccount?.value?.id ?? 0
-      nPrice.value.author = curAccount.value?.settings?.publicNick ?? 'Error'
-      nPrice.value.method = 'bySolo'
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+  PriceClass.set(q,Props.price.itemId, nPrice.value.price)
 }
 
 onMounted(() => {

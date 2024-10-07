@@ -1,29 +1,19 @@
-<template>
-  <div class="PricesArea">
-    <template v-for="price in sortedList" :key="price.itemId">
-      <PriceItemInput :price="price"
-                      v-if="priceMember.accountId === curAccount.id"
-
-                      @delPrice="delPrice(price.itemId)"
-      ></PriceItemInput>
-      <PriceItem v-else :price="price"></PriceItem>
-    </template>
-  </div>
-</template>
-
 <script setup>
 import {computed, inject} from "vue";
 import {layoutFix} from "src/js/myFuncts";
 import PriceItemInput from "components/price/PriceItemInput.vue";
 import PriceItem from "components/price/PriceItem.vue";
+import {PriceClass} from "src/js/price";
+import {useQuasar} from "quasar";
 
-
+const q = useQuasar()
 const Prices = inject('Prices')
 const filters = inject('filters')
 const searchText = inject('searchText')
 const SortSelected = inject('SortSelected')
 const priceMember = inject('priceMember')
 const curAccount = inject('curAccount')
+
 
 const onlyCraftable = computed(() => {
   if (!filters.value.craftable)
@@ -84,12 +74,26 @@ const sortedList = computed(() => {
   }
 })
 
-function delPrice(itemId){
-  let Element = Prices.value.find(el => el.itemId === itemId)
-  let index = Prices.value.indexOf(Element)
-  Prices.value.splice(index,1)
+async function delPrice(itemId) {
+  if (await PriceClass.del(q, itemId)) {
+    const Element = Prices.value.find(el => el.itemId === itemId)
+    const index = Prices.value.indexOf(Element)
+    Prices.value.splice(index, 1)
+  }
 }
 </script>
+
+<template>
+  <div class="PricesArea">
+    <template v-for="price in sortedList" :key="price.itemId">
+      <PriceItemInput :price="price"
+                      v-if="priceMember.accountId === curAccount.id"
+                      @delPrice="delPrice(price.itemId)"
+      ></PriceItemInput>
+      <PriceItem v-else :price="price"></PriceItem>
+    </template>
+  </div>
+</template>
 
 <style scoped>
 

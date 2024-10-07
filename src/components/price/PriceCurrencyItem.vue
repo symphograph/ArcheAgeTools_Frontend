@@ -1,3 +1,71 @@
+<script setup>
+
+import ItemIcon from "components/ItemIcon.vue";
+import {inject, ref} from "vue";
+import {fDate, notifyError, notifyOK} from "src/js/myFuncts"
+import {priceColor, priceImager} from "src/myJS/price";
+import {api} from "boot/axios";
+import {copyToClipboard, useQuasar} from "quasar";
+import DelBtn from "components/price/DelBtn.vue";
+import {useRouter} from "vue-router";
+import {PriceClass} from "src/js/price";
+
+const q = useQuasar()
+const router = useRouter()
+
+const Props = defineProps({
+  CurItem: ref(null),
+  itemId: Number,
+  authorNick: String,
+  updatedAt: String,
+  itemName: String
+})
+
+const emit = defineEmits(['delPrice', 'updated'])
+
+const nPrice = ref(Props.CurItem.Item.Price.price)
+const priceRef = ref(null)
+const focused = ref(false)
+const curAccount = inject('curAccount')
+
+function goTo(id) {
+  router.push({path: '/item/' + id})
+}
+
+async function delPrice() {
+  priceRef.value.blur()
+
+  if (await PriceClass.del(q, Props.CurItem.Item.id)) {
+    emit('updated')
+  }
+}
+
+async function savePrice() {
+  priceRef.value.blur()
+
+  if (await PriceClass.set(q, Props.CurItem.Item.id, nPrice.value)) {
+    emit('updated')
+  }
+}
+
+function copy (val) {
+  copyToClipboard(val)
+    .then(() => {
+      q.notify({
+        color: 'positive',
+        position: 'center',
+        message: 'Скопировано',
+        icon: 'content_copy',
+        timeout: 1
+      })
+    })
+    .catch(() => {
+      // fail
+    })
+}
+
+</script>
+
 <template>
   <q-item dense class="PriceCell">
     <q-item-section>
@@ -48,98 +116,6 @@
     </q-item-section>
   </q-item>
 </template>
-
-<script setup>
-
-import ItemIcon from "components/ItemIcon.vue";
-import {inject, ref} from "vue";
-import {fDate, notifyError, notifyOK} from "src/js/myFuncts"
-import {priceColor, priceImager} from "src/myJS/price";
-import {api} from "boot/axios";
-import {copyToClipboard, useQuasar} from "quasar";
-import DelBtn from "components/price/DelBtn.vue";
-import {useRouter} from "vue-router";
-
-const q = useQuasar()
-const apiUrl = String(process.env.API)
-const router = useRouter()
-
-const Props = defineProps({
-  CurItem: ref(null)
-})
-
-const emit = defineEmits(['delPrice', 'updated'])
-
-const nPrice = ref(Props.CurItem.Item.Price.price)
-const priceRef = ref(null)
-const focused = ref(false)
-const buyable = ref(Props.CurItem.Item.Price.buyOnly)
-const curAccount = inject('curAccount')
-
-function goTo(id) {
-  router.push({path: '/item/' + id})
-}
-
-function delPrice() {
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'del',
-      itemId: Props.CurItem.Item.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function savePrice() {
-
-  priceRef.value.blur()
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'set',
-      price: nPrice.value,
-      itemId: Props.CurItem.Item.id
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('updated')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function copy (val) {
-  copyToClipboard(val)
-    .then(() => {
-      q.notify({
-        color: 'positive',
-        position: 'center',
-        message: 'Скопировано',
-        icon: 'content_copy',
-        timeout: 1
-      })
-    })
-    .catch(() => {
-      // fail
-    })
-}
-
-function test(){
-  return '<img class="imgValut" src="/img/valuta/' + Props.CurItem.Item.currencyId + '.png" ' + ' alt="v"/>'
-}
-</script>
 
 <style scoped>
 .PriceInput {

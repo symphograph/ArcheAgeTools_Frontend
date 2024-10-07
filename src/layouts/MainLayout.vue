@@ -28,19 +28,14 @@ provide('isTokenRefreshed', isTokenRefreshed)
 const admin = ref(false)
 provide('admin', admin)
 
-
-
 const progress = ref(false)
 provide('progress', progress)
 
 const leftDrawerOpen = ref(false)
 provide('leftDrawerOpen', leftDrawerOpen)
 
-
 const Halls = ref([])
 provide('Halls', Halls)
-
-
 
 const editMode = ref(false)
 provide('editMode', editMode)
@@ -119,12 +114,18 @@ useMeta(metaData)
 </template>
 
 <style>
+html, body, #q-app, .q-layout, .q-page-container {
+  height: 100%;
+  margin: 0;
+}
+
 body {
   background: url(/img/bg.jpg) no-repeat fixed center center / cover;
   font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", Helvetica, Arial, "sans-serif";
   font-size: 14px;
   overflow: hidden;
 }
+
 
 .footer {
   text-align: center;
@@ -170,6 +171,11 @@ body {
   color: #6c3f00;
 }
 
+.myScrollArea {
+  width: 100%;
+  max-width: 100vw;
+}
+
 .navigator {
   padding: 1em 0;
   display: flex;
@@ -194,6 +200,7 @@ body {
   background-image: url(/img/interface/reward2.png);
   background-repeat: no-repeat;
   width: 100%;
+  min-width: 50%;
   height: 4.2em;
   max-width: 25em;
   padding: 0 2em;
@@ -229,10 +236,5 @@ body {
   justify-content: flex-start;
   align-content: flex-start;
   padding-bottom: 20px;
-}
-
-.myScrollArea {
-  width: 100%;
-  max-width: 100vw;
 }
 </style>

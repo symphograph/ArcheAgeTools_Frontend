@@ -7,7 +7,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="WindowArea column">
+  <div class="WindowArea">
     <router-view/>
   </div>
 </template>
@@ -15,5 +15,8 @@ onMounted(() => {
 <style scoped>
 .WindowArea {
   padding: 1em;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 </style>

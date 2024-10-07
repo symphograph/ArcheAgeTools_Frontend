@@ -26,9 +26,10 @@ import {api} from 'boot/axios'
 import {useQuasar} from 'quasar'
 import CraftCard from "components/craft/CraftCard.vue"
 import LostList from "components/price/LostList.vue"
-import MatPool from "components/craft/MatPool.vue";
+import {Craft, CraftPool} from "src/js/craft";
 import {useRoute} from "vue-router";
 import {notifyError} from "src/js/myFuncts";
+import {PriceClass} from "src/js/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -49,29 +50,36 @@ defineExpose({
   loadCrafts
 })
 
-watch(Item, () => {
-  if (Item.value && Item.value.craftable) {
-    //console.log('watchItem')
-    //console.log(Item.value)
-   //loadCrafts()
-  }else {
-    //CraftList.value = null
-  }
-}, {deep: true})
-
 onMounted(() => {
   //loadCrafts()
   console.log('craftList mounted')
 })
 
-function loadCrafts() {
+async function loadCrafts() {
 
-  if(!Item.value.craftable){
-    return
-  }
   Lost.value = [];
   CraftProgress.value = true
+  const result = await Craft.getList(q, Number(route.params.id))
 
+  if (result instanceof CraftPool) {
+
+    CraftList.value = result.otherCrafts
+    MainCraft.value = result.mainCraft
+
+  } else if (Array.isArray(result) && result.length > 0 && result[0] instanceof PriceClass) {
+
+    Lost.value = result
+    CraftList.value = []
+    MainCraft.value = null
+
+  } else {
+    console.error('Неизвестный тип данных');
+    CraftList.value = []
+    MainCraft.value = null
+  }
+  CraftProgress.value = false
+
+  /*
   api.post(apiUrl + 'api/craft.php', {
     params: {
       method: 'getList',
@@ -79,11 +87,11 @@ function loadCrafts() {
     }
   })
     .then((response) => {
-      if(!!!response?.data?.result){
+      if (!!!response?.data?.result) {
         throw new Error();
       }
 
-      if(!!response?.data?.data?.Lost?.length){
+      if (!!response?.data?.data?.Lost?.length) {
         Lost.value = response?.data?.data?.Lost ?? []
         CraftList.value = []
         MainCraft.value = null
@@ -97,7 +105,10 @@ function loadCrafts() {
       CraftList.value = []
       MainCraft.value = null
       q.notify(notifyError(error, 'Ой! CraftList Не работает :('))
-    }).finally(() => {CraftProgress.value = false})
+    }).finally(() => {
+    CraftProgress.value = false
+  })
+  */
 }
 </script>
 

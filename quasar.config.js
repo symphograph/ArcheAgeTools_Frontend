@@ -62,12 +62,15 @@ module.exports = configure(function (ctx ) {
       // analyze: true,
       env: {
         API: ctx.dev
-          ? 'https://tapi.aa.dllib.ru/'
-          : 'https://api.aa.dllib.ru/',
+          ? 'https://aa.dllib.ru/tapi/'
+          : 'https://aa.dllib.ru/be/',
         isDebug: !!ctx.dev,
         Auth: ctx.dev
-          ? 'https://tauth.symphograph.ru/'
+          ? 'https://aa.dllib.ru/tauth/'
           : 'https://auth.symphograph.ru/',
+        DLAuth: ctx.dev
+          ? 'https://tapi.aa.dllib.ru/tauth/'
+          : 'https://api.aa.dllib.ru/auth/',
         DelivApi: ctx.dev
           ? 'https://tapi.delivery.demo.symphograph.ru/'
           : 'https://api.delivery.demo.symphograph.ru/',
@@ -112,7 +115,7 @@ module.exports = configure(function (ctx ) {
       host: '192.168.0.200',
       https: true,
       port: 9300,
-      open: false // opens browser window automatically
+      open: false, // opens browser window automatically
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

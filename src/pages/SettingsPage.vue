@@ -1,25 +1,3 @@
-<template>
-    <div class="WindowArea  column">
-      <div class="navigator">
-        <AccountSets v-if="curAccount.settings?.serverGroupId"></AccountSets>
-      </div>
-      <q-scroll-area  v-if="curAccount" class="col">
-        <q-tabs v-model="tab">
-          <q-tab name="basedPrices" label="Базовые цены"></q-tab>
-          <q-tab name="profs" label="Профессии"></q-tab>
-        </q-tabs>
-        <q-tab-panels v-model="tab" animated class="TabPanels">
-          <q-tab-panel name="basedPrices">
-            <BasedPrices ref="refBasedPrices" v-if="!progress"></BasedPrices>
-          </q-tab-panel>
-          <q-tab-panel name="profs">
-            <ProfList></ProfList>
-          </q-tab-panel>
-        </q-tab-panels>
-      </q-scroll-area>
-    </div>
-</template>
-
 <script setup>
 import {computed, inject, onMounted, provide, ref} from "vue"
 import {api} from "boot/axios"
@@ -54,6 +32,26 @@ const metaData = {
 }
 useMeta(metaData)
 </script>
+
+<template>
+    <div class="navigator">
+      <AccountSets v-if="curAccount.settings?.serverGroupId"></AccountSets>
+    </div>
+    <q-scroll-area  v-if="curAccount" class="col">
+      <q-tabs v-model="tab">
+        <q-tab name="basedPrices" label="Базовые цены"></q-tab>
+        <q-tab name="profs" label="Профессии"></q-tab>
+      </q-tabs>
+      <q-tab-panels v-model="tab" animated class="TabPanels">
+        <q-tab-panel name="basedPrices">
+          <BasedPrices ref="refBasedPrices" v-if="!progress"></BasedPrices>
+        </q-tab-panel>
+        <q-tab-panel name="profs">
+          <ProfList></ProfList>
+        </q-tab-panel>
+      </q-tab-panels>
+    </q-scroll-area>
+</template>
 
 <style scoped>
 .TabPanels {

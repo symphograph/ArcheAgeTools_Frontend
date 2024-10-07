@@ -1,3 +1,17 @@
+<script setup>
+
+import {inject, ref} from "vue";
+
+const ptSettings = inject('ptSettings')
+
+const inputClass = ref('Input')
+
+const zonesTo = inject('zonesTo')
+const disabled = inject('disabled')
+const selectOptionsStyle = inject('selectOptionsStyle')
+const emit = defineEmits(['onSelect'])
+</script>
+
 <template>
   <q-select label="Куда"
             ref="refZonesTo"
@@ -14,29 +28,16 @@
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
             :popup-content-style="selectOptionsStyle"
-            :on-update:model-value="emit('onSelect')"
+            @update:model-value="emit('onSelect')"
   ></q-select>
 </template>
-
-<script setup>
-
-import {inject, ref} from "vue";
-
-const ptSettings = inject('ptSettings')
-
-const inputClass = ref('Input')
-
-const zonesTo = inject('zonesTo')
-const disabled = inject('disabled')
-const selectOptionsStyle = inject('selectOptionsStyle')
-const emit = defineEmits(['onSelect'])
-</script>
 
 <style scoped>
 .Input {
   height: max-content;
-  max-width: 20em;
-  min-width: 15em;
+  padding: 1em 2em;
+  width: 100%;
+  max-width: 200em;
   font-size: 12px;
 }
 </style>

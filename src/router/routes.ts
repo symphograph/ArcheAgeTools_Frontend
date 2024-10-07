@@ -14,6 +14,10 @@ const routes: RouteRecordRaw[] = [
             component: () => import('layouts/MainWindow.vue'),
             children: [
               { path: '/accounts', component: () => import('pages/AccountsPage.vue') },
+              { path: '/packs', component: () => import('pages/PackPage.vue') },
+              { path: '/prices/:accId', component: () => import('pages/PricesPage.vue') },
+              { path: '/myprices', component: () => import('pages/PricesMyPage.vue') },
+              { path: '/settings', component: () => import('pages/SettingsPage.vue') }
             ]
           },
         ]
@@ -33,14 +37,6 @@ const routes: RouteRecordRaw[] = [
         ]
       },
       {
-        path: '/settings',
-        component: () => import('layouts/MidLayout.vue'),
-        children: [
-          { path: '', component: () => import('pages/SettingsPage.vue') }
-        ]
-      },
-
-      {
         path: '/members',
         component: () => import('layouts/MidLayout.vue'),
         children: [
@@ -48,31 +44,10 @@ const routes: RouteRecordRaw[] = [
         ]
       },
       {
-        path: '/prices/:accId',
-        component: () => import('layouts/MidLayout.vue'),
-        children: [
-          { path: '', component: () => import('pages/PricesPage.vue') }
-        ]
-      },
-      {
-        path: '/myprices',
-        component: () => import('layouts/MidLayout.vue'),
-        children: [
-          { path: '', component: () => import('pages/PricesMyPage.vue') }
-        ]
-      },
-      {
         path: '/category',
         component: () => import('layouts/MidLayout.vue'),
         children: [
           { path: '', component: () => import('pages/CategoryPage.vue') }
-        ]
-      },
-      {
-        path: '/packs',
-        component: () => import('layouts/MidLayout.vue'),
-        children: [
-          { path: '', component: () => import('pages/PackPage.vue') }
         ]
       },
       {

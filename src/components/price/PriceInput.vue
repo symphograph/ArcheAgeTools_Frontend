@@ -28,6 +28,7 @@ import {api} from "boot/axios";
 import {useQuasar} from "quasar";
 import {fDate, notifyError, notifyOK} from "src/js/myFuncts";
 import {priceColor} from "src/myJS/price";
+import {PriceClass} from "src/js/price";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -100,6 +101,9 @@ const label = computed(() => {
 
 function savePrice() {
   priceRef.value.blur()
+  PriceClass.set(q,Item.value.id,nPrice.value.price)
+
+  /*
   api.post(apiUrl + 'api/price.php', {
     params: {
       method: 'set',
@@ -117,6 +121,8 @@ function savePrice() {
     .catch((error) => {
       q.notify(notifyError(error))
     })
+  */
+
 }
 
 </script>

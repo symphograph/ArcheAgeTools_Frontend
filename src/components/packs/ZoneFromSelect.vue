@@ -1,3 +1,23 @@
+<script setup>
+
+import {computed, inject, ref} from "vue";
+
+const inputClass = ref('Input')
+const ptSettings = inject('ptSettings')
+
+const zonesFrom = inject('zonesFrom')
+
+const emit = defineEmits(['onSelect'])
+
+
+
+const disabled = inject('disabled')
+
+function onSelect () {
+  emit('onSelect')
+}
+</script>
+
 <template>
   <q-select label="Откуда"
             v-model="ptSettings.zoneFromId"
@@ -13,32 +33,17 @@
             :class="inputClass"
             @focus="inputClass = 'Input InputActive'"
             @blur="inputClass = 'Input'"
-            :on-update:model-value="emit('onSelect')"
+            @update:model-value="onSelect"
   >
   </q-select>
 </template>
 
-<script setup>
-
-import {computed, inject, ref} from "vue";
-
-const inputClass = ref('Input')
-const ptSettings = inject('ptSettings')
-
-const zonesFrom = inject('zonesFrom')
-
-const emit = defineEmits(['onSelect'])
-
-
-
-const disabled = inject('disabled')
-</script>
-
 <style scoped>
 .Input {
   height: max-content;
-  max-width: 20em;
-  min-width: 15em;
+  padding: 1em 2em;
+  width: 100%;
+  max-width: 200em;
   font-size: 12px;
 }
 </style>

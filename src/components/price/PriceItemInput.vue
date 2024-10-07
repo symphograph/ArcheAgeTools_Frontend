@@ -1,3 +1,66 @@
+<script setup>
+
+import ItemIcon from "components/ItemIcon.vue";
+import {inject, ref} from "vue";
+import {copy, fDate, notifyError, notifyOK} from "src/js/myFuncts"
+import {api} from "boot/axios";
+import {copyToClipboard, useQuasar} from "quasar";
+import DelBtn from "components/price/DelBtn.vue";
+import {useRouter} from "vue-router";
+import {ItemClass} from "src/js/item";
+import {myAxios} from "src/js/myAxios";
+import {PriceClass} from "src/js/price";
+
+const q = useQuasar()
+const apiUrl = String(process.env.API)
+const router = useRouter()
+
+const Props = defineProps({
+  price: ref(null)
+})
+
+const emit = defineEmits(['delPrice'])
+
+const nPrice = ref(Props.price.price)
+const priceRef = ref(null)
+const focused = ref(false)
+const buyable = ref(Props.price.buyOnly)
+
+function goTo(id) {
+  router.push({path: '/item/' + id})
+}
+
+function setBuyable() {
+  ItemClass.setBuyOnly(q,Props.price.itemId,buyable.value)
+}
+
+function delPrice() {
+  api.post(apiUrl + 'api/price.php', {
+    params: {
+      method: 'del',
+      itemId: Props.price.itemId
+    }
+  })
+    .then((response) => {
+      if(!!!response?.data?.result){
+        throw new Error();
+      }
+      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
+      emit('delPrice')
+    })
+    .catch((error) => {
+      q.notify(notifyError(error))
+    })
+}
+
+function savePrice() {
+  priceRef.value.blur()
+  PriceClass.set(q,Props.price.itemId,nPrice.value)
+}
+
+
+</script>
+
 <template>
   <q-item dense class="PriceCell">
     <q-item-section>
@@ -48,83 +111,6 @@
     </q-item-section>
   </q-item>
 </template>
-
-<script setup>
-
-import ItemIcon from "components/ItemIcon.vue";
-import {inject, ref} from "vue";
-import {copy, fDate, notifyError, notifyOK} from "src/js/myFuncts"
-import {api} from "boot/axios";
-import {copyToClipboard, useQuasar} from "quasar";
-import DelBtn from "components/price/DelBtn.vue";
-import {useRouter} from "vue-router";
-import {ItemClass} from "src/js/item";
-
-const q = useQuasar()
-const apiUrl = String(process.env.API)
-const router = useRouter()
-
-const Props = defineProps({
-  price: ref(null)
-})
-
-const emit = defineEmits(['delPrice'])
-
-const nPrice = ref(Props.price.price)
-const priceRef = ref(null)
-const focused = ref(false)
-const buyable = ref(Props.price.buyOnly)
-
-function goTo(id) {
-  router.push({path: '/item/' + id})
-}
-
-function setBuyable() {
-  ItemClass.setBuyOnly(q,Props.price.itemId,buyable.value)
-}
-
-function delPrice() {
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'del',
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-      emit('delPrice')
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-function savePrice() {
-
-  priceRef.value.blur()
-  api.post(apiUrl + 'api/price.php', {
-    params: {
-      method: 'set',
-      price: nPrice.value,
-      itemId: Props.price.itemId
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
-}
-
-
-</script>
 
 <style scoped>
 .PriceInput {

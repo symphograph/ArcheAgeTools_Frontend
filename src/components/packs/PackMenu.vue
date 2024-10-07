@@ -202,6 +202,7 @@ function loadZones() {
       <div style="display: flex;">
         <q-input v-model="ptSettings.ratePercent"
                  class="Input"
+                 :loading="progress"
                  dense
                  style="width: 9em; height: 3em; margin: 1em"
                  suffix="%"

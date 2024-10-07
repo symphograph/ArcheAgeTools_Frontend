@@ -1,11 +1,9 @@
 <template>
-  <div class="WindowArea column">
     <PriceListMenu></PriceListMenu>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
     <q-scroll-area v-if="Prices" class="col" style="width: 100%">
       <PriceList></PriceList>
     </q-scroll-area>
-  </div>
 </template>
 
 <script setup>

@@ -8,6 +8,7 @@ import MemberAvaCell from "components/members/MemberAvaCell.vue";
 import {notifyError, notifyOK} from "src/js/myFuncts";
 import ServerGroupSelect from "components/account/ServerGroupSelect.vue";
 import {Member} from "src/js/member";
+import {myAxios} from "src/js/myAxios";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
@@ -18,23 +19,13 @@ const memberListProgress = ref(false)
 const navigatorRef = ref(null)
 
 function update(memberId: number, isFollow: boolean){
-  api.post(apiUrl + 'api/member.php', {
-    params: {
-      method: 'followToggle',
-      master: memberId,
-      serverGroupId: curAccount.value.settings.serverGroupId,
-      isFollow: isFollow
-    }
-  })
-    .then((response) => {
-      if(!!!response?.data?.result){
-        throw new Error();
-      }
-      q.notify(notifyOK(response?.data?.result ?? 'Ой!'))
-    })
-    .catch((error) => {
-      q.notify(notifyError(error))
-    })
+  const     params = {
+    method: 'followToggle',
+    master: memberId,
+    serverGroupId: curAccount.value.settings.serverGroupId,
+    isFollow: isFollow
+  }
+  myAxios.set(q, 'api/member.php', params)
 }
 
 onMounted(() => {

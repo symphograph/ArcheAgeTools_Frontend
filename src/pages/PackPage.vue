@@ -116,20 +116,32 @@ useMeta(metaData)
 </script>
 
 <template>
-  <div class="WindowArea column">
+  <div class="content-container">
     <PackMenu></PackMenu>
     <q-linear-progress :animation-speed="200"  color="green" :indeterminate="!!progress"></q-linear-progress>
-
-    <q-scroll-area class="col myScrollArea">
-      <PackList></PackList>
+    <PackList></PackList>
+    <q-scroll-area v-if="false" class="col myScrollArea" id="scroll-area-with-virtual-scroll-1">
 
     </q-scroll-area>
   </div>
+
 </template>
 
 <style>
 html {
   font-size: 14px;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .ptCol1 {

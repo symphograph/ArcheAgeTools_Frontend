@@ -3,6 +3,8 @@ import {api} from "boot/axios";
 import {notifyError, notifyOK} from "src/js/myFuncts";
 
 export class ItemClass {
+
+
   id: number;
   name: string;
   isBuyOnly: boolean;

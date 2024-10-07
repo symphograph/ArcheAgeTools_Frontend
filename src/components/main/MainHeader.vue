@@ -12,6 +12,7 @@ import {myAccSets} from "src/js/myAuth";
 
 const q = useQuasar()
 const apiUrl = String(process.env.API)
+
 const authUrl = String(process.env.Auth)
 
 const emit = defineEmits(['reLogin'])
@@ -27,18 +28,16 @@ function toggleLeftDrawer() {
 }
 
 function test() {
-  console.log('curAccount', curAccount.value)
-  return
-  api.post(authUrl + 'api/test.php',{
+  api.post(String(process.env.API) + 'api/test.php',{
     params:{
-      method: 'get'
+      method: 'test'
     }
   })
     .then((response) => {
       if (!response?.data?.result) {
-        throw new Error();
+        //throw new Error();
       }
-      q.notify(notifyOK(response.data.result))
+      //q.notify(notifyOK(response.data.result))
     })
     .catch((error) => {
       q.notify(notifyError(error))

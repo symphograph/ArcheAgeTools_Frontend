@@ -1,25 +1,25 @@
-<template>
-<q-card class="CraftCard">
-  <q-card-section>
-    <div v-html="msg"></div>
-  </q-card-section>
-  <q-card-section>
-    <div class="PricesArea">
-      <LostPriceItem v-for="item in Lost" :key="item.itemId" :price="item"></LostPriceItem>
-    </div>
-  </q-card-section>
-</q-card>
-</template>
-
 <script setup>
 import {ref} from "vue";
 import LostPriceItem from "components/price/LostPriceItem.vue";
 
-const Props = defineProps({
+const props = defineProps({
   msg: ref(null),
   Lost: ref(null)
 })
 </script>
+
+<template>
+  <q-card class="CraftCard">
+    <q-card-section>
+      <div v-html="msg"></div>
+    </q-card-section>
+    <q-card-section>
+      <div class="PricesArea">
+        <LostPriceItem v-for="item in Lost" :key="item.itemId" :price="item"></LostPriceItem>
+      </div>
+    </q-card-section>
+  </q-card>
+</template>
 
 <style scoped>
 .CraftCard {

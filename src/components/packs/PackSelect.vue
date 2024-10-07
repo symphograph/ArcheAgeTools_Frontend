@@ -1,12 +1,21 @@
 <script setup>
-import {inject, ref} from "vue";
+import {computed, inject, ref} from "vue";
 import ItemIcon from "components/ItemIcon.vue";
 
+const loading = inject('loading')
 const ptSettings = inject('ptSettings')
 const filteredPackList = inject('filteredPackList')
 const options = ref([...filteredPackList.value])
 const selectedPack = inject('selectedPack')
 const selectOptionsStyle = inject('selectOptionsStyle')
+const optionsStyle = computed(() => {
+  let style = selectOptionsStyle
+  if(!style) return {};
+  style.width = '10em'
+  console.log(style)
+  return style
+})
+
 const filteredByText = ref([])
 const emit = defineEmits(['onSelect'])
 
@@ -40,10 +49,15 @@ function clear() {
 <q-select :options="options"
           v-if="filteredPackList.length"
           v-model="selectedPack"
-          :popup-content-style="selectOptionsStyle"
+          :popup-content-style="optionsStyle"
+          popup-content-class="popup"
+          :loading="loading"
+          :disable="loading"
+          label-slot
           use-input
           fill-input
           map-options
+          item-aligned
           option-value="id"
           option-label="name"
           hide-selected
@@ -51,7 +65,14 @@ function clear() {
           @update:model-value="emit('onSelect')"
 
 >
-  <template v-slot:label>jhj</template>
+  <template v-slot:label>
+    <q-item>
+      <q-item-section>
+        <q-item-label caption>{{ selectedPack?.ZoneFrom?.name ?? '' }}</q-item-label>
+        <q-item-label caption>{{ selectedPack?.ZoneTo?.name ?? '' }}</q-item-label>
+      </q-item-section>
+    </q-item>
+  </template>
   <template v-if="selectedPack" v-slot:prepend>
     <ItemIcon
         :icon="selectedPack.Pack.icon"
@@ -60,11 +81,11 @@ function clear() {
     ></ItemIcon>
   </template>
 
-  <template v-slot:selected-item>
-    <q-item v-if="Object.keys(selectedPack).length"
+  <template v-slot:selected>
+    <q-item v-if="Object.keys(selectedPack.value).length"
             dense
     >
-      <q-item-section avatar>
+      <q-item-section avatar>лорпл
 
       </q-item-section>
       <q-item-section>
@@ -90,7 +111,7 @@ function clear() {
         ></ItemIcon>
       </q-item-section>
       <q-item-section>
-        <q-item-label>{{scope.opt.Pack.name}}</q-item-label>
+        <q-item-label lines="2">{{scope.opt.Pack.name}}</q-item-label>
         <q-item-label caption>{{scope.opt.ZoneFrom.name}}</q-item-label>
         <q-item-label caption>{{scope.opt.ZoneTo.name}}</q-item-label>
       </q-item-section>
@@ -101,5 +122,8 @@ function clear() {
 </template>
 
 <style scoped>
-
+.popup {
+  width: 2em;
+  color: red;
+}
 </style>
